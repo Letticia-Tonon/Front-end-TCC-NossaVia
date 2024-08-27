@@ -1,18 +1,19 @@
-import { StyleSheet, View, Pressable, Text } from "react-native";
+import { StyleSheet, Pressable, Text } from "react-native";
 
 export default function CTextButton(props) {
   return (
     <Pressable
       style={
-        props.backgroundColor
-          ? { ...styles.button, backgroundColor: props.backgroundColor }
+        props.buttonStyle
+          ? { ...styles.button, ...props.buttonStyle }
           : styles.button
       }
+      onPress={props.callback}
     >
       <Text
         style={
-          props.foreColor
-            ? { ...styles.text, color: props.foreColor }
+          props.textStyle
+            ? { ...styles.text, ...props.textStyle }
             : styles.text
         }
       >
@@ -30,15 +31,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: "100%",
     paddingHorizontal: 10,
-    backgroundColor: "#FF7C33",
     outlineStyle: "none",
     shadowColor: "#000",
     shadowOffset: { width: -1, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
+    margin: 5,
   },
   text: {
     fontSize: 18,
-    color: "#FFFFFF",
   },
 });

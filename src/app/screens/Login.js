@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text } from "react-native";
-import { Link } from "expo-router";
+import { router  } from "expo-router";
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
 
@@ -12,11 +12,10 @@ export default function Login() {
         </Text>
 
         <CTextInput
-          style={{ marginBottom: "10px" }}
           placeholder="E-mail"
         ></CTextInput>
+
         <CTextInput
-          style={{ marginBottom: "10px" }}
           placeholder="Senha"
           password={true}
         ></CTextInput>
@@ -30,16 +29,18 @@ export default function Login() {
           </Text>
         </View>
 
-        <Link
-          href={"/screens/Feed"}
-          style={{ width: "100%", marginBottom: "10px" }}
-        >
-          <CTextButton
-            text="Login"
-            foreColor="#FFFFFF"
-            backgroundColor="#FF7C33"
-          ></CTextButton>
-        </Link>
+        <CTextButton
+          buttonStyle={{ 
+            backgroundColor: "#FF7C33",
+          }}
+          textStyle={{
+            color: "#FFFFFF",
+          }}
+          text="Login"
+          callback={() => {
+            router.push("screens/Feed");
+          }}
+        ></CTextButton>
 
         <View style={styles.viewEsqueciSenha}>
           <Text style={{ color: "#a9a9a9" }}>
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
   viewEsqueciSenha: {
     display: "flex",
     width: "100%",
-    marginBottom: "10px",
+    margin: 5,
     alignItems: "flex-end",
   },
 });

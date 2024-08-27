@@ -1,9 +1,13 @@
-import { StyleSheet, View, TextInput } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 
 export default function CTextInput(props) {
   return (
     <TextInput
-      style={{ ...styles.input, ...props.style }}
+      style={
+        props.inputStyle
+          ? { ...styles.input, ...props.inputStyle }
+          : styles.input
+      }
       placeholder={props.placeholder}
       secureTextEntry={props.password === true}
       placeholderTextColor="#555555"
@@ -24,5 +28,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -1, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
+    margin: 5
   },
 });
