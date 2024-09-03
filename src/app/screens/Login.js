@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text, Image } from "react-native";
 import { router } from "expo-router";
 import CTextInput from "../components/CTextInput";
+import CPassInput from "../components/CPassInput";
 import CTextButton from "../components/CTextButton";
 import logo from "../../../assets/Logo_Fe_VF.png";
 
@@ -12,7 +13,7 @@ export default function Login() {
 
         <CTextInput placeholder="E-mail"></CTextInput>
 
-        <CTextInput placeholder="Senha" password={true}></CTextInput>
+        <CPassInput placeholder="Senha"></CPassInput>
 
         <View style={styles.viewEsqueciSenha}>
           <Text style={{ color: "#a9a9a9" }}>

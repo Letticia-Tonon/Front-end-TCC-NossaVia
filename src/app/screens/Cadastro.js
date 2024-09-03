@@ -1,5 +1,6 @@
 import { StyleSheet, View, ScrollView, Text} from "react-native";
 import CTextInput from "../components/CTextInput";
+import CPassInput from "../components/CPassInput";
 import CTextButton from "../components/CTextButton";
 import { Link } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -20,9 +21,9 @@ export default function Cadastro() {
 
           <CTextInput placeholder="E-mail"></CTextInput>
 
-          <CTextInput placeholder="Senha"></CTextInput>
+          <CPassInput placeholder="Senha"></CPassInput>
 
-          <CTextInput placeholder="Confirme sua senha"></CTextInput>
+          <CPassInput placeholder="Confirme sua senha"></CPassInput>
 
           <CTextInput placeholder="Telefone"></CTextInput>
 
@@ -59,7 +60,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "90%",
-    paddingVertical: 20,
+    paddingTop: 20,
+    paddingBottom: 10
   },
   seta: {
     position: "absolute",

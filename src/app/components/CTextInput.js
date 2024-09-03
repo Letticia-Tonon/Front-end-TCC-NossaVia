@@ -9,7 +9,6 @@ export default function CTextInput(props) {
           : styles.input
       }
       placeholder={props.placeholder}
-      secureTextEntry={props.password === true}
       placeholderTextColor="#555555"
     ></TextInput>
   );
