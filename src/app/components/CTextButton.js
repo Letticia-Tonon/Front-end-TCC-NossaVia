@@ -12,9 +12,7 @@ export default function CTextButton(props) {
     >
       <Text
         style={
-          props.textStyle
-            ? { ...styles.text, ...props.textStyle }
-            : styles.text
+          props.textStyle ? { ...styles.text, ...props.textStyle } : styles.text
         }
       >
         {props.text}
@@ -39,6 +37,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   text: {
-    fontSize: 18,
+    fontSize: 20,
+    fontWeight: "bold"
   },
 });

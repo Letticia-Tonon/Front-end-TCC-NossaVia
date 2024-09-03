@@ -17,9 +17,11 @@ export default function CTextInput(props) {
 
 const styles = StyleSheet.create({
   input: {
-    backgroundColor: "#e6e6e6",
+    backgroundColor: "transparent",
     height: 50,
-    borderRadius: 8,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#555555",
     width: "100%",
     paddingHorizontal: 10,
     fontSize: 18,
@@ -28,6 +30,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -1, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    margin: 5
+    margin: 8,
   },
 });

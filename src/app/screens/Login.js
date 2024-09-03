@@ -1,24 +1,18 @@
-import { StyleSheet, View, Text } from "react-native";
-import { router  } from "expo-router";
+import { StyleSheet, View, Text, Image } from "react-native";
+import { router } from "expo-router";
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
+import logo from "../../../assets/Logo_Fe_VF.png";
 
 export default function Login() {
   return (
     <View style={{ ...styles.container, width: "100%" }}>
       <View style={styles.container}>
-        <Text style={{ fontSize: 30, marginBottom: 20 }}>
-          Login
-        </Text>
+        <Image source={logo} style={styles.image} />
 
-        <CTextInput
-          placeholder="E-mail"
-        ></CTextInput>
+        <CTextInput placeholder="E-mail"></CTextInput>
 
-        <CTextInput
-          placeholder="Senha"
-          password={true}
-        ></CTextInput>
+        <CTextInput placeholder="Senha" password={true}></CTextInput>
 
         <View style={styles.viewEsqueciSenha}>
           <Text style={{ color: "#a9a9a9" }}>
@@ -30,7 +24,7 @@ export default function Login() {
         </View>
 
         <CTextButton
-          buttonStyle={{ 
+          buttonStyle={{
             backgroundColor: "#FF7C33",
           }}
           textStyle={{
@@ -43,9 +37,12 @@ export default function Login() {
         ></CTextButton>
 
         <View style={styles.viewEsqueciSenha}>
-          <Text style={{ color: "#a9a9a9" }}>
+          <Text style={{ color: "#a9a9a9", justifyContent: "left" }}>
             Ainda não tem uma conta?{" "}
-            <Text style={{ color: "#a9a9a9", fontWeight: "bold" }}>
+            <Text
+              style={{ color: "#a9a9a9", fontWeight: "bold" }}
+              onPress={() => router.push("screens/Cadastro")}
+            >
               Cadastre-se
             </Text>
           </Text>
@@ -66,6 +63,14 @@ const styles = StyleSheet.create({
     display: "flex",
     width: "100%",
     margin: 5,
-    alignItems: "flex-end",
+    alignItems: "flex-start",
+  },
+  image: {
+    width: 300, // Largura da imagem
+    height: 200, // Altura da imagem
+    marginBottom: 10, // Espaço abaixo da imagem
+    marginLeft: 18,
+    marginTop: -30,
+    resizeMode: "contain", // Mantém a proporção da imagem
   },
 });
