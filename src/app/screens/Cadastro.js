@@ -1,12 +1,83 @@
-import { StyleSheet, View, ScrollView, Text} from "react-native";
+import { StyleSheet, View, ScrollView, Text, Alert, Picker } from "react-native";
 import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
 import CTextButton from "../components/CTextButton";
 import { Link } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
+import { useState } from "react";
+
+// Função para validar e-mail
+const validateEmail = (email) => {
+  const re = /\S+@\S+\.\S+/;
+  return re.test(email);
+};
+
+// Função para validar as senhas
+const validatePasswords = (password, confirmPassword) => {
+  return password === confirmPassword;
+};
+
+// Função para validar o telefone (  deve ter 8 ou 9 dígitos)
+const validatePhone = (phone) => {
+  const re = /^\d{8,9}$/;
+  return re.test(phone);
+};
+
+// Função para validar o CEP (  deve ter 8 dígitos)
+const validateCEP = (cep) => {
+  const re = /^\d{8}$/;
+  return re.test(cep);
+};
+
+// Função para validar a data de nascimento (  deve estar no formato DD/MM/AAAA)
+const validateDate = (date) => {
+  const re = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+  return re.test(date);
+};
 
 export default function Cadastro() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [cep, setCep] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [gender, setGender] = useState(""); 
+
+  const handleSubmit = () => {
+    try {
+      if (!validateEmail(email)) {
+        throw new Error("E-mail inválido");
+      }
+
+      if (!validatePasswords(password, confirmPassword)) {
+        throw new Error("As senhas não coincidem");
+      }
+
+      if (!validatePhone(phone)) {
+        throw new Error("Telefone inválido. Deve conter 8 ou 9 dígitos");
+      }
+
+      if (!validateCEP(cep)) {
+        throw new Error("CEP inválido. Deve conter 8 dígitos");
+      }
+
+      if (!validateDate(birthDate)) {
+        throw new Error("Data de nascimento inválida. Use o formato DD/MM/AAAA");
+      }
+
+      if (!gender) {
+        throw new Error("Selecione um sexo");
+      }
+
+      // Se todas as validações passarem, o usuário é cadastrado
+      Alert.alert("Sucesso", "Conta criada com sucesso!");
+    } catch (error) {
+      Alert.alert("Erro", error.message);
+    }
+  };
+
   return (
     <ScrollView>
       <View style={{ ...styles.container, width: "100%" }}>
@@ -19,26 +90,63 @@ export default function Cadastro() {
 
           <CTextInput placeholder="Nome"></CTextInput>
 
-          <CTextInput placeholder="E-mail"></CTextInput>
+          <CTextInput 
+            placeholder="E-mail"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-          <CPassInput placeholder="Senha"></CPassInput>
+          <CPassInput 
+            placeholder="Senha"
+            value={password}
+            onChangeText={setPassword}
+          />
 
-          <CPassInput placeholder="Confirme sua senha"></CPassInput>
+          <CPassInput 
+            placeholder="Confirme sua senha"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
 
-          <CTextInput placeholder="Telefone"></CTextInput>
+          <CTextInput 
+            placeholder="Telefone" 
+            value={phone}
+            onChangeText={setPhone}
+          />
 
-          <CTextInput placeholder="Sexo"></CTextInput>
+          {/* Picker para selecionar o sexo */}
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={gender}
+              onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
+              style={styles.picker}
+              mode="dropdown" // Usar o modo dropdown para remover as bordas internas
+            >
+              <Picker.Item label="Selecione o sexo" value="" />
+              <Picker.Item label="Masculino" value="Masculino" />
+              <Picker.Item label="Feminino" value="Feminino" />
+              <Picker.Item label="Outro" value="Outro" />
+            </Picker>
+          </View>
 
-          <CTextInput placeholder="Data de nascimento"></CTextInput>
+          <CTextInput 
+            placeholder="Data de nascimento" 
+            value={birthDate}
+            onChangeText={setBirthDate}
+          />
 
-          <CTextInput placeholder="CEP"></CTextInput>
+          <CTextInput 
+            placeholder="CEP" 
+            value={cep}
+            onChangeText={setCep}
+          />
 
           <CTextInput placeholder="Endereço"></CTextInput>
 
           <CTextInput placeholder="Número"></CTextInput>
 
           <CTextInput placeholder="Complemento"></CTextInput>
-
+          
           <CTextButton 
             buttonStyle={{
               backgroundColor: "#FF7C33",
@@ -47,7 +155,8 @@ export default function Cadastro() {
               color: "#FFFFFF",
             }}
             text="Criar conta"
-          ></CTextButton>
+            onPress={handleSubmit} // Chama a função handleSubmit ao pressionar o botão
+          />
         </View>
       </View>
     </ScrollView>
@@ -67,5 +176,28 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -10,
     left: 1,
+  },
+  pickerContainer: {
+    backgroundColor: "transparent",
+    height: 50,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#555555",
+    width: "100%",
+    paddingHorizontal: 10,
+    fontSize: 18,
+    outlineStyle: "none",
+    shadowColor: "#000",
+    shadowOffset: { width: -1, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    margin: 8,
+  },
+  picker: {
+    height: 50,
+    width: "100%",
+    color: "#555555", // Para uniformizar a cor do texto
+    borderWidth: 0, // Remove a borda interna do Picker
+    backgroundColor: "transparent", // Mantém o fundo transparente
   },
 });
