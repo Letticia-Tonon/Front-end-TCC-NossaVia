@@ -1,19 +1,35 @@
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image, ScrollView } from "react-native";
 import { router } from "expo-router";
 import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
 import CTextButton from "../components/CTextButton";
 import logo from "../../../assets/Logo_Fe_VF.png";
+import { useState } from "react";
+import { post } from "../utils/api";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [senhaInvalida, setSenhaInvalida] = useState(false);
+
   return (
     <View style={{ ...styles.container, width: "100%" }}>
       <View style={styles.container}>
         <Image source={logo} style={styles.image} />
 
-        <CTextInput placeholder="E-mail"></CTextInput>
+        {senhaInvalida && (
+          <View style={styles.viewSenhaInvalida}>
+            <Text
+              style={{ color: "#ff0022", fontWeight: "bold", fontSize: 20 }}
+            >
+              E-mail ou senha inválidos
+            </Text>
+          </View>
+        )}
 
-        <CPassInput placeholder="Senha"></CPassInput>
+        <CTextInput placeholder="E-mail" setState={setEmail}></CTextInput>
+
+        <CPassInput placeholder="Senha" setState={setSenha}></CPassInput>
 
         <View style={styles.viewEsqueciSenha}>
           <Text style={{ color: "#a9a9a9" }}>
@@ -33,7 +49,14 @@ export default function Login() {
           }}
           text="Login"
           callback={() => {
-            router.push("screens/Feed");
+            setSenhaInvalida(false);
+            post("login", { email: email, senha: senha }).then((data) => {
+              if (data.status !== 200) {
+                setSenhaInvalida(true);
+                return;
+              }
+              router.push("screens/Feed");
+            });
           }}
         ></CTextButton>
 
@@ -59,6 +82,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "90%",
+  },
+  viewSenhaInvalida: {
+    display: "flex",
+    width: "100%",
+    margin: 5,
+    alignItems: "center",
   },
   viewEsqueciSenha: {
     display: "flex",

@@ -19,6 +19,11 @@ export default function CTextInput(props) {
         placeholder={props.placeholder}
         secureTextEntry={!showPassword}
         placeholderTextColor="#555555"
+        onChangeText={(text) => {
+          if (props.setState) {
+            props.setState(text);
+          }
+        }}
       ></TextInput>
       <Pressable
         style={styles.icon}
@@ -46,10 +51,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     borderColor: "#555555",
+    height: INPUT_HEIGHT,
   },
   input: {
     backgroundColor: "transparent",
-    height: INPUT_HEIGHT,
     width: "85%",
     paddingHorizontal: 10,
     fontSize: 18,

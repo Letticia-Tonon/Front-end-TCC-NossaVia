@@ -10,6 +10,11 @@ export default function CTextInput(props) {
       }
       placeholder={props.placeholder}
       placeholderTextColor="#555555"
+      onChangeText={(text) => {
+        if (props.setState) {
+          props.setState(text);
+        }
+      }}
     ></TextInput>
   );
 }
