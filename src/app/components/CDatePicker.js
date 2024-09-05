@@ -1,33 +1,43 @@
 import { StyleSheet, Text, Pressable, View } from "react-native";
-import { useActionSheet } from "@expo/react-native-action-sheet";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCaretDown } from "@fortawesome/free-solid-svg-icons/faCaretDown";
+import { faCalendar } from "@fortawesome/free-solid-svg-icons/faCalendar";
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 
 const INPUT_HEIGHT = 50;
 
-export default function CActionSheet(props) {
-  const { showActionSheetWithOptions } = useActionSheet();
+export default function CDatePicker(props) {
+
+  const onChange = (event, selectedDate) => {
+    if (event.type === "dismissed") {
+      return;
+    }
+    const date = selectedDate;
+    const yyyy = date.getFullYear();
+    let mm = date.getMonth() + 1;
+    let dd = date.getDate();
+
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+
+    const formatted = dd + '/' + mm + '/' + yyyy;
+    props.setState(formatted);
+  };
 
   const onPress = () => {
-    const options = props.itens;
-    const cancelButtonIndex = -1;
-
-    showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-      },
-      (selectedIndex) => {
-        props.setState(props.itens[selectedIndex]);
-      }
-    );
+    DateTimePickerAndroid.open({
+      value: new Date(),
+      onChange,
+      mode: "date",
+    });
   };
   return (
     <Pressable style={styles.button} onPress={onPress}>
-      <Text style={styles.text}>{props.state ? props.state : props.placeholder}</Text>
+      <Text style={styles.text}>
+        {props.state ? props.state : props.placeholder}
+      </Text>
       <View style={styles.icon}>
         <FontAwesomeIcon
-          icon={faCaretDown}
+          icon={faCalendar}
           size={INPUT_HEIGHT - 25}
           color="#FF7C33"
         ></FontAwesomeIcon>

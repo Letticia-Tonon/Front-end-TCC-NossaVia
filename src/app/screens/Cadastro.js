@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
 import { useState } from "react";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import CDatePicker from "../components/CDatePicker";
 
 // Função para validar e-mail
 const validateEmail = (email) => {
@@ -136,11 +137,17 @@ export default function Cadastro() {
               itens={["Feminino", "Masculino", "Prefiro não informar"]}
             />
 
-            <CTextInput
+            {/* <CTextInput
               placeholder="Data de nascimento"
               value={birthDate}
               onChangeText={setBirthDate}
-            />
+            /> */}
+
+            <CDatePicker
+              placeholder="Data de nascimento"
+              state={birthDate}
+              setState={setBirthDate}
+            ></CDatePicker>
 
             <CTextInput placeholder="CEP" value={cep} onChangeText={setCep} />
 
