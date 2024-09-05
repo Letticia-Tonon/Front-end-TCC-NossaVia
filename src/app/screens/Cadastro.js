@@ -1,11 +1,13 @@
-import { StyleSheet, View, ScrollView, Text, Alert, Picker } from "react-native";
+import { StyleSheet, View, ScrollView, Text, Alert } from "react-native";
 import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
 import CTextButton from "../components/CTextButton";
+import CActionSheet from "../components/CActionSheet";
 import { Link } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
 import { useState } from "react";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 // Função para validar e-mail
 const validateEmail = (email) => {
@@ -43,7 +45,7 @@ export default function Cadastro() {
   const [phone, setPhone] = useState("");
   const [cep, setCep] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [gender, setGender] = useState(""); 
+  const [gender, setGender] = useState("");
 
   const handleSubmit = () => {
     try {
@@ -64,7 +66,9 @@ export default function Cadastro() {
       }
 
       if (!validateDate(birthDate)) {
-        throw new Error("Data de nascimento inválida. Use o formato DD/MM/AAAA");
+        throw new Error(
+          "Data de nascimento inválida. Use o formato DD/MM/AAAA"
+        );
       }
 
       if (!gender) {
@@ -79,87 +83,87 @@ export default function Cadastro() {
   };
 
   return (
-    <ScrollView>
-      <View style={{ ...styles.container, width: "100%" }}>
-        <View style={styles.container}>
-          <Link style={styles.seta} href={"/screens/Login"}>
-            <FontAwesomeIcon icon={faArrowLeft} size={32}></FontAwesomeIcon>
-          </Link>
+    <ActionSheetProvider>
+      <ScrollView>
+        <View style={{ ...styles.container, width: "100%" }}>
+          <View style={styles.container}>
+            <Link style={styles.seta} href={"/screens/Login"}>
+              <FontAwesomeIcon icon={faArrowLeft} size={32}></FontAwesomeIcon>
+            </Link>
 
-          <Text style={{fontSize:28, fontWeight:"bold", marginBottom:30, marginTop:20 }}> Cadastre-se</Text>
-
-          <CTextInput placeholder="Nome"></CTextInput>
-
-          <CTextInput 
-            placeholder="E-mail"
-            value={email}
-            onChangeText={setEmail}
-          />
-
-          <CPassInput 
-            placeholder="Senha"
-            value={password}
-            onChangeText={setPassword}
-          />
-
-          <CPassInput 
-            placeholder="Confirme sua senha"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-
-          <CTextInput 
-            placeholder="Telefone" 
-            value={phone}
-            onChangeText={setPhone}
-          />
-
-          {/* Picker para selecionar o sexo */}
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={gender}
-              onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
-              style={styles.picker}
-              mode="dropdown" // Usar o modo dropdown para remover as bordas internas
+            <Text
+              style={{
+                fontSize: 28,
+                fontWeight: "bold",
+                marginBottom: 30,
+                marginTop: 20,
+              }}
             >
-              <Picker.Item label="Selecione o sexo" value="" />
-              <Picker.Item label="Masculino" value="Masculino" />
-              <Picker.Item label="Feminino" value="Feminino" />
-              <Picker.Item label="Outro" value="Outro" />
-            </Picker>
+              {" "}
+              Cadastre-se
+            </Text>
+
+            <CTextInput placeholder="Nome"></CTextInput>
+
+            <CTextInput
+              placeholder="E-mail"
+              value={email}
+              onChangeText={setEmail}
+            />
+
+            <CPassInput
+              placeholder="Senha"
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            <CPassInput
+              placeholder="Confirme sua senha"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+
+            <CTextInput
+              placeholder="Telefone"
+              value={phone}
+              onChangeText={setPhone}
+            />
+
+            <CActionSheet
+              state={gender}
+              setState={setGender}
+              placeholder="Sexo"
+              itens={["Feminino", "Masculino", "Prefiro não informar"]}
+            />
+
+            <CTextInput
+              placeholder="Data de nascimento"
+              value={birthDate}
+              onChangeText={setBirthDate}
+            />
+
+            <CTextInput placeholder="CEP" value={cep} onChangeText={setCep} />
+
+            <CTextInput placeholder="Endereço"></CTextInput>
+
+            <CTextInput placeholder="Número"></CTextInput>
+
+            <CTextInput placeholder="Complemento"></CTextInput>
+
+            <CTextButton
+              buttonStyle={{
+                backgroundColor: "#FF7C33",
+              }}
+              textStyle={{
+                color: "#FFFFFF",
+              }}
+              text="Criar conta"
+              onPress={handleSubmit} // Chama a função handleSubmit ao pressionar o botão
+            />
           </View>
-
-          <CTextInput 
-            placeholder="Data de nascimento" 
-            value={birthDate}
-            onChangeText={setBirthDate}
-          />
-
-          <CTextInput 
-            placeholder="CEP" 
-            value={cep}
-            onChangeText={setCep}
-          />
-
-          <CTextInput placeholder="Endereço"></CTextInput>
-
-          <CTextInput placeholder="Número"></CTextInput>
-
-          <CTextInput placeholder="Complemento"></CTextInput>
-          
-          <CTextButton 
-            buttonStyle={{
-              backgroundColor: "#FF7C33",
-            }}
-            textStyle={{
-              color: "#FFFFFF",
-            }}
-            text="Criar conta"
-            onPress={handleSubmit} // Chama a função handleSubmit ao pressionar o botão
-          />
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </ActionSheetProvider>
   );
 }
 
@@ -170,34 +174,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "90%",
     paddingTop: 20,
-    paddingBottom: 10
+    paddingBottom: 10,
   },
   seta: {
     position: "absolute",
     top: -10,
     left: 1,
-  },
-  pickerContainer: {
-    backgroundColor: "transparent",
-    height: 50,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#555555",
-    width: "100%",
-    paddingHorizontal: 10,
-    fontSize: 18,
-    outlineStyle: "none",
-    shadowColor: "#000",
-    shadowOffset: { width: -1, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    margin: 8,
-  },
-  picker: {
-    height: 50,
-    width: "100%",
-    color: "#555555", // Para uniformizar a cor do texto
-    borderWidth: 0, // Remove a borda interna do Picker
-    backgroundColor: "transparent", // Mantém o fundo transparente
   },
 });

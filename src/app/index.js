@@ -1,5 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import Login from "./screens/Login";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 export default function App() {
   return (
