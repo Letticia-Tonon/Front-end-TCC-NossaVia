@@ -23,8 +23,16 @@ export default function CActionSheet(props) {
     );
   };
   return (
-    <Pressable style={styles.button} onPress={onPress}>
-      <Text style={styles.text}>{props.state ? props.state : props.placeholder}</Text>
+    <View style={{ width: "100%", margin: 8 }}>
+    <Pressable
+      style={
+        props.error ? { ...styles.button, borderColor: "#ff0022" } : styles.button
+      }
+      onPress={onPress}
+    >
+      <Text style={styles.text}>
+        {props.state ? props.state : props.placeholder}
+      </Text>
       <View style={styles.icon}>
         <FontAwesomeIcon
           icon={faCaretDown}
@@ -33,6 +41,10 @@ export default function CActionSheet(props) {
         ></FontAwesomeIcon>
       </View>
     </Pressable>
+    {props.error && props.errorMessage && (
+        <Text style={{ color: "#ff0022" }}>{props.errorMessage}</Text>
+      )}
+    </View>
   );
 }
 
@@ -41,7 +53,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     height: 50,
-    borderRadius: 8,
     width: "100%",
     paddingLeft: 10,
     outlineStyle: "none",
@@ -49,7 +60,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -1, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    margin: 5,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: "#555555",

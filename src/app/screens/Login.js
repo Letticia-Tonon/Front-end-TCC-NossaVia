@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, ScrollView } from "react-native";
+import { StyleSheet, View, Text, Image } from "react-native";
 import { router } from "expo-router";
 import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
@@ -10,15 +10,15 @@ import { post } from "../utils/api";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [senhaInvalida, setSenhaInvalida] = useState(false);
+  const [senhaIncorreta, setSenhaIncorreta] = useState(false);
 
   return (
     <View style={{ ...styles.container, width: "100%" }}>
       <View style={styles.container}>
         <Image source={logo} style={styles.image} />
 
-        {senhaInvalida && (
-          <View style={styles.viewSenhaInvalida}>
+        {senhaIncorreta && (
+          <View style={styles.viewSenhaIncorreta}>
             <Text
               style={{ color: "#ff0022", fontWeight: "bold", fontSize: 20 }}
             >
@@ -49,10 +49,10 @@ export default function Login() {
           }}
           text="Login"
           callback={() => {
-            setSenhaInvalida(false);
+            setSenhaIncorreta(false);
             post("login", { email: email, senha: senha }).then((data) => {
               if (data.status !== 200) {
-                setSenhaInvalida(true);
+                setSenhaIncorreta(true);
                 return;
               }
               router.push("screens/Feed");
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "90%",
   },
-  viewSenhaInvalida: {
+  viewSenhaIncorreta: {
     display: "flex",
     width: "100%",
     margin: 5,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     display: "flex",
     width: "100%",
     margin: 5,
-    alignItems: "flex-start",
+    alignItems: "center",
   },
   image: {
     width: 300, // Largura da imagem

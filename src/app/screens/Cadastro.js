@@ -9,78 +9,123 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
 import { useState } from "react";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import CDatePicker from "../components/CDatePicker";
-
-// Função para validar e-mail
-const validateEmail = (email) => {
-  const re = /\S+@\S+\.\S+/;
-  return re.test(email);
-};
-
-// Função para validar as senhas
-const validatePasswords = (password, confirmPassword) => {
-  return password === confirmPassword;
-};
-
-// Função para validar o telefone (  deve ter 8 ou 9 dígitos)
-const validatePhone = (phone) => {
-  const re = /^\d{8,9}$/;
-  return re.test(phone);
-};
-
-// Função para validar o CEP (  deve ter 8 dígitos)
-const validateCEP = (cep) => {
-  const re = /^\d{8}$/;
-  return re.test(cep);
-};
-
-// Função para validar a data de nascimento (  deve estar no formato DD/MM/AAAA)
-const validateDate = (date) => {
-  const re = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
-  return re.test(date);
-};
+import {
+  validarEmail,
+  validarSenha,
+  validarTelefone,
+  validarCep,
+  validarData,
+} from "../utils/validators";
+import { post } from "../utils/api";
 
 export default function Cadastro() {
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [phone, setPhone] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [cep, setCep] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [gender, setGender] = useState("");
+  const [nascimento, setNascimento] = useState("");
+  const [sexo, setSexo] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [numero, setNumero] = useState("");
+  const [complemento, setComplemento] = useState("");
+
+  const [nomeInvalido, setNomeInvalido] = useState(false);
+  const [emailInvalido, setEmailInvalido] = useState(false);
+  const [senhaInvalida, setsenhaInvalida] = useState(false);
+  const [cepInvalido, setCepInvalido] = useState(false);
+  const [dataInvalida, setDataInvalida] = useState(false);
+  const [sexoInvalido, setSexoInvalido] = useState(false);
+  const [telefoneInvalido, setTelefoneInvalido] = useState(false);
 
   const handleSubmit = () => {
-    try {
-      if (!validateEmail(email)) {
-        throw new Error("E-mail inválido");
-      }
+    setNomeInvalido(false);
+    setEmailInvalido(false);
+    setsenhaInvalida(false);
+    setCepInvalido(false);
+    setDataInvalida(false);
+    setSexoInvalido(false);
+    setTelefoneInvalido(false);
+    let nomeTemp = false;
+    let emailTemp = false;
+    let senhaTemp = false;
+    let cepTemp = false;
+    let dataTemp = false;
+    let sexoTemp = false;
+    let telefoneTemp = false;
 
-      if (!validatePasswords(password, confirmPassword)) {
-        throw new Error("As senhas não coincidem");
-      }
-
-      if (!validatePhone(phone)) {
-        throw new Error("Telefone inválido. Deve conter 8 ou 9 dígitos");
-      }
-
-      if (!validateCEP(cep)) {
-        throw new Error("CEP inválido. Deve conter 8 dígitos");
-      }
-
-      if (!validateDate(birthDate)) {
-        throw new Error(
-          "Data de nascimento inválida. Use o formato DD/MM/AAAA"
-        );
-      }
-
-      if (!gender) {
-        throw new Error("Selecione um sexo");
-      }
-
-      // Se todas as validações passarem, o usuário é cadastrado
-      Alert.alert("Sucesso", "Conta criada com sucesso!");
-    } catch (error) {
-      Alert.alert("Erro", error.message);
+    if (!nome) {
+      nomeTemp = true;
+      setNomeInvalido(true);
     }
+
+    if (!validarEmail(email)) {
+      emailTemp = true;
+      setEmailInvalido(true);
+    }
+
+    if (!Object.values(validarSenha(senha)).every((item) => item === true)) {
+      senhaTemp = true;
+      setsenhaInvalida(true);
+    }
+
+    if (!validarTelefone(telefone)) {
+      telefoneTemp = true;
+      setTelefoneInvalido(true);
+    }
+
+    if (!validarCep(cep)) {
+      cepTemp = true;
+      setCepInvalido(true);
+    }
+
+    if (!validarData(nascimento)) {
+      dataTemp = true;
+      setDataInvalida(true);
+    }
+
+    if (!sexo) {
+      sexoTemp = true;
+      setSexoInvalido(true);
+    }
+
+    if (
+      nomeTemp ||
+      emailTemp ||
+      senhaTemp ||
+      cepTemp ||
+      dataTemp ||
+      sexoTemp ||
+      telefoneTemp
+    ) {
+      return;
+    }
+
+    post("usuario", {
+      email: email,
+      senha: senha,
+      nome: nome,
+      endereco: endereco,
+      cep: cep,
+      numero_endereco: numero,
+      complemento_endereco: complemento,
+      data_nascimento: `${nascimento.split("/")[2]}/${
+        nascimento.split("/")[1]
+      }/${nascimento.split("/")[0]} 00:00:00.000000`,
+    })
+      .then((data) => {
+        if (data.status !== 201) {
+          Alert.alert("Erro", "Erro ao criar conta");
+          return;
+        }
+          Alert.alert("Sucesso", "Usuário criado com sucesso");
+          return data.json();
+      })
+      .then((data) => {
+        if (!data) return;
+        console.log(data);
+      });
   };
 
   return (
@@ -104,58 +149,95 @@ export default function Cadastro() {
               Cadastre-se
             </Text>
 
-            <CTextInput placeholder="Nome"></CTextInput>
+            <CTextInput
+              placeholder="Nome"
+              state={nome}
+              setState={setNome}
+              error={nomeInvalido}
+              errorMessage="Nome não pode ser vazio"
+            ></CTextInput>
 
             <CTextInput
               placeholder="E-mail"
-              value={email}
-              onChangeText={setEmail}
+              state={email}
+              setState={setEmail}
+              error={emailInvalido}
+              errorMessage="E-mail inválido"
             />
 
             <CPassInput
               placeholder="Senha"
-              value={password}
-              onChangeText={setPassword}
+              state={senha}
+              setState={setSenha}
+              error={senhaInvalida}
+              errorMessage="Senha inválida"
             />
+
+            {senhaInvalida && (
+              <Text style={{ color: "#ff0022" }}>
+                A senha deve conter no mínimo 8 caracteres, uma letra maiúscula,
+                uma letra minúscula, um número e um caractere especial
+              </Text>
+            )}
 
             <CPassInput
               placeholder="Confirme sua senha"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
+              state={confirmarSenha}
+              setState={setConfirmarSenha}
+              error={senha !== confirmarSenha}
+              errorMessage="As senhas devem ser iguais"
             />
 
             <CTextInput
-              placeholder="Telefone"
-              value={phone}
-              onChangeText={setPhone}
+              placeholder="Telefone Ex.: 00 00000-0000"
+              state={telefone}
+              setState={setTelefone}
+              error={telefoneInvalido}
+              errorMessage="Telefone inválido"
             />
 
             <CActionSheet
-              state={gender}
-              setState={setGender}
+              state={sexo}
+              setState={setSexo}
               placeholder="Sexo"
               itens={["Feminino", "Masculino", "Prefiro não informar"]}
+              error={sexoInvalido}
+              errorMessage="Selecione uma opção"
             />
-
-            {/* <CTextInput
-              placeholder="Data de nascimento"
-              value={birthDate}
-              onChangeText={setBirthDate}
-            /> */}
 
             <CDatePicker
               placeholder="Data de nascimento"
-              state={birthDate}
-              setState={setBirthDate}
+              state={nascimento}
+              setState={setNascimento}
+              error={dataInvalida}
+              errorMessage="Data inválida"
             ></CDatePicker>
 
-            <CTextInput placeholder="CEP" value={cep} onChangeText={setCep} />
+            <CTextInput
+              placeholder="CEP"
+              state={cep}
+              setState={setCep}
+              error={cepInvalido}
+              errorMessage="CEP inválido"
+            />
 
-            <CTextInput placeholder="Endereço"></CTextInput>
+            <CTextInput
+              placeholder="Endereço"
+              state={endereco}
+              setState={setEndereco}
+            ></CTextInput>
 
-            <CTextInput placeholder="Número"></CTextInput>
+            <CTextInput
+              placeholder="Número"
+              state={numero}
+              setState={setNumero}
+            ></CTextInput>
 
-            <CTextInput placeholder="Complemento"></CTextInput>
+            <CTextInput
+              placeholder="Complemento"
+              state={complemento}
+              setState={setComplemento}
+            ></CTextInput>
 
             <CTextButton
               buttonStyle={{
@@ -165,7 +247,7 @@ export default function Cadastro() {
                 color: "#FFFFFF",
               }}
               text="Criar conta"
-              onPress={handleSubmit} // Chama a função handleSubmit ao pressionar o botão
+              callback={handleSubmit}
             />
           </View>
         </View>

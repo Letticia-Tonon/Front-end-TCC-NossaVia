@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, TextInput, View, Text } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons/faEye";
 import { faEyeSlash } from "@fortawesome/free-solid-svg-icons/faEyeSlash";
@@ -9,34 +9,45 @@ const INPUT_HEIGHT = 50;
 export default function CTextInput(props) {
   const [showPassword, setShowPassword] = useState(false);
   return (
-    <View style={styles.container}>
-      <TextInput
+    <View style={{ width: "100%", margin: 8 }}>
+      <View
         style={
-          props.inputStyle
-            ? { ...styles.input, ...props.inputStyle }
-            : styles.input
+          props.error
+            ? { ...styles.container, borderColor: "#ff0022" }
+            : styles.container
         }
-        placeholder={props.placeholder}
-        secureTextEntry={!showPassword}
-        placeholderTextColor="#555555"
-        onChangeText={(text) => {
-          if (props.setState) {
-            props.setState(text);
-          }
-        }}
-      ></TextInput>
-      <Pressable
-        style={styles.icon}
-        onPress={() => {
-          setShowPassword(!showPassword);
-        }}
       >
-        <FontAwesomeIcon
-          icon={showPassword ? faEye : faEyeSlash}
-          size={INPUT_HEIGHT - 25}
-          color="#FF7C33"
-        ></FontAwesomeIcon>
-      </Pressable>
+        <TextInput
+          style={
+            props.inputStyle
+              ? { ...styles.input, ...props.inputStyle }
+              : styles.input
+          }
+          placeholder={props.placeholder}
+          secureTextEntry={!showPassword}
+          placeholderTextColor="#555555"
+          onChangeText={(text) => {
+            if (props.setState) {
+              props.setState(text);
+            }
+          }}
+        ></TextInput>
+        <Pressable
+          style={styles.icon}
+          onPress={() => {
+            setShowPassword(!showPassword);
+          }}
+        >
+          <FontAwesomeIcon
+            icon={showPassword ? faEye : faEyeSlash}
+            size={INPUT_HEIGHT - 25}
+            color="#FF7C33"
+          ></FontAwesomeIcon>
+        </Pressable>
+      </View>
+      {props.error && props.errorMessage && (
+        <Text style={{ color: "#ff0022" }}>{props.errorMessage}</Text>
+      )}
     </View>
   );
 }
@@ -46,7 +57,6 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     justifyContent: "center",
-    margin: 8,
     flexDirection: "row",
     borderRadius: 10,
     borderWidth: 2,

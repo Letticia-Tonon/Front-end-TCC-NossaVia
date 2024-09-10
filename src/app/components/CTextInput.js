@@ -1,21 +1,30 @@
-import { StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TextInput, View, Text } from "react-native";
 
 export default function CTextInput(props) {
   return (
-    <TextInput
-      style={
-        props.inputStyle
-          ? { ...styles.input, ...props.inputStyle }
-          : styles.input
-      }
-      placeholder={props.placeholder}
-      placeholderTextColor="#555555"
-      onChangeText={(text) => {
-        if (props.setState) {
-          props.setState(text);
+    <View style={{ width: "100%", margin: 8 }}>
+      <TextInput
+        style={
+          props.inputStyle
+            ? props.error
+              ? { ...styles.input, ...props.inputStyle }
+              : { ...styles.input, ...props.inputStyle, borderColor: "#ff0022" }
+            : props.error
+            ? { ...styles.input, borderColor: "#ff0022" }
+            : styles.input
         }
-      }}
-    ></TextInput>
+        placeholder={props.placeholder}
+        placeholderTextColor="#555555"
+        onChangeText={(text) => {
+          if (props.setState) {
+            props.setState(text);
+          }
+        }}
+      ></TextInput>
+      {props.error && props.errorMessage && (
+        <Text style={{ color: "#ff0022" }}>{props.errorMessage}</Text>
+      )}
+    </View>
   );
 }
 
@@ -34,6 +43,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -1, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    margin: 8,
   },
 });
