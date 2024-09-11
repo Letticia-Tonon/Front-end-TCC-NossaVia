@@ -113,14 +113,20 @@ export default function Cadastro() {
       data_nascimento: `${nascimento.split("/")[2]}/${
         nascimento.split("/")[1]
       }/${nascimento.split("/")[0]} 00:00:00.000000`,
+      sexo: {
+        Feminino: "f",
+        Masculino: "m",
+        "Prefiro não informar": "n",
+      }[sexo],
+      telefone: telefone,
     })
       .then((data) => {
         if (data.status !== 201) {
           Alert.alert("Erro", "Erro ao criar conta");
           return;
         }
-          Alert.alert("Sucesso", "Usuário criado com sucesso");
-          return data.json();
+        Alert.alert("Sucesso", "Usuário criado com sucesso");
+        return data.json();
       })
       .then((data) => {
         if (!data) return;

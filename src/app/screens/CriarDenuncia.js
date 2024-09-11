@@ -1,25 +1,51 @@
-import { StyleSheet, View, TextInput, ScrollView, Text } from "react-native";
-import { router } from "expo-router";
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  Text,
+  ScrollView,
+  Image,
+  Dimensions,
+  Pressable,
+} from "react-native";
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
 import CActionSheet from "../components/CActionSheet";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
 import { useState, useEffect } from "react";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import PagerView from "react-native-pager-view";
 import * as Location from "expo-location";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
+import { faCamera } from "@fortawesome/free-solid-svg-icons/faCamera";
+import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
+import * as ImagePicker from "expo-image-picker";
+
+const { height, width } = Dimensions.get("window");
 
 export default function CriarDenuncia() {
   const [categoria, setCategoria] = useState("");
   const [location, setLocation] = useState(false);
   const [marker, setMarker] = useState(null);
+  const [imageList, setImageList] = useState([]);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && imageList.length < 5) {
+      setImageList([...imageList, result.assets[0].uri]);
+    }
+  };
 
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      setErrorMsg("Permission to access location was denied");
       return;
     }
 
@@ -35,18 +61,62 @@ export default function CriarDenuncia() {
       <ScrollView>
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
-            <PagerView style={styles.container} initialPage={0}>
-              <View style={styles.page} key="1">
-                <Text>First page</Text>
-                <Text>Swipe ➡️</Text>
-              </View>
-              <View style={styles.page} key="2">
-                <Text>Second page</Text>
-              </View>
-              <View style={styles.page} key="3">
-                <Text>Third page</Text>
-              </View>
-            </PagerView>
+            {imageList.length === 0 ? (
+              <Pressable style={styles.adicionarImagem} onPress={pickImage}>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faCamera}
+                    size={100}
+                    color="#666666"
+                  ></FontAwesomeIcon>
+                  <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                    <Text
+                      style={{
+                        fontSize: 25,
+                        fontWeight: "bold",
+                        color: "#666666",
+                      }}
+                    >
+                      Adicionar Foto{" "}
+                    </Text>
+                    <FontAwesomeIcon
+                      icon={faPlus}
+                      size={25}
+                      color="#666666"
+                    ></FontAwesomeIcon>
+                  </View>
+                </View>
+              </Pressable>
+            ) : (
+              <PagerView style={styles.fotos} initialPage={1}>
+                {imageList.map((image, index) => (
+                  <View style={styles.page} key={index}>
+                    <Image source={{ uri: image }} style={styles.image} />
+                    <Pressable
+                      style={styles.icon}
+                      onPress={() => {
+                        setImageList(
+                          imageList.filter((item, i) => i !== index)
+                        );
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faTrash}
+                        size={30}
+                        color="#FF7C33"
+                      ></FontAwesomeIcon>
+                    </Pressable>
+                  </View>
+                ))}
+              </PagerView>
+            )}
+
             <CTextButton
               buttonStyle={{
                 backgroundColor: "#FF7C33",
@@ -54,7 +124,8 @@ export default function CriarDenuncia() {
               textStyle={{
                 color: "#FFFFFF",
               }}
-              text="Adicionar foto 0/5"
+              callback={pickImage}
+              text={`Adicionar Foto ${imageList.length}/5`}
             ></CTextButton>
 
             <CActionSheet
@@ -127,8 +198,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "90%",
-    paddingTop: 100,
-    paddingBottom: 100,
+    paddingTop: 20,
+    paddingBottom: 10,
   },
   caixaTexto: {
     borderWidth: 1,
@@ -146,14 +217,42 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
-  seta: {
-    position: "absolute",
-    top: -10,
-    left: 1,
-  },
   map: {
     margin: 20,
+    width: width,
+    height: width,
+  },
+  adicionarImagem: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: width,
+    height: width,
+    backgroundColor: "#DDDDDD",
+    margin: 8,
+  },
+  fotos: {
+    flex: 1,
+    width: width,
+    height: width,
+    margin: 8,
+  },
+  page: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#333333",
+  },
+  image: {
     width: "100%",
-    height: "50%",
+    height: "100%",
+    resizeMode: "contain",
+  },
+  icon: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 10,
+    borderRadius: 10,
+    position: "absolute",
+    top: 10,
+    right: 10,
   },
 });

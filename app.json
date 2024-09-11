@@ -32,7 +32,14 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Para adicionar fotos, precisamos de permissão para acessar sua galeria.",
+          "cameraPermission": "Para adicionar fotos, precisamos de permissão para acessar sua câmera."
+        }
+      ]
     ],
     "extra": {
       "router": {

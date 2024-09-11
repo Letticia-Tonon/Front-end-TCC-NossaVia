@@ -1,20 +1,5 @@
-import { StyleSheet, View } from "react-native";
-import Login from "./screens/Login";
-import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import Feed from "./screens/Feed";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Login />
-    </View>
-  );
+  return <Feed />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-  },
-});
