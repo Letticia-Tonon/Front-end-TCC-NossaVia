@@ -1,10 +1,22 @@
 import { StyleSheet, View } from "react-native";
-import { Link } from "expo-router";
+import { router } from "expo-router";
+import CTextButton from "../components/CTextButton";
 
 export default function Feed() {
   return (
     <View style={styles.container}>
-      <Link href={"/screens/Login"}>Abrir Login</Link>
+      <CTextButton
+        buttonStyle={{
+          backgroundColor: "#FF7C33",
+        }}
+        textStyle={{
+          color: "#FFFFFF",
+        }}
+        text="Criar Denúncia"
+        callback={() => {
+          router.push("screens/CriarDenuncia");
+        }}
+      ></CTextButton>
     </View>
   );
 }

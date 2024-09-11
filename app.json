@@ -20,7 +20,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.frsouzaa.nossavia"
+      "package": "com.frsouzaa.nossavia",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyD-90ewwkdJ78ApkIUY6i9iCO6Msdf47L0"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png",
