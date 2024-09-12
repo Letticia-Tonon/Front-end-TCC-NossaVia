@@ -23,7 +23,9 @@ import { faCamera } from "@fortawesome/free-solid-svg-icons/faCamera";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
 import * as ImagePicker from "expo-image-picker";
-const { height, width } = Dimensions.get("window");
+import CTextBox from "../components/CTextBox";
+
+const { width } = Dimensions.get("window");
 
 export default function CriarDenuncia() {
   const [categoria, setCategoria] = useState("");
@@ -63,7 +65,7 @@ export default function CriarDenuncia() {
       <ScrollView>
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
-            <CHeader titulo={"Criação de Denúncia"}/>
+            <CHeader titulo={"Criação de Denúncia"} />
             {imageList.length === 0 ? (
               <Pressable style={styles.adicionarImagem} onPress={pickImage}>
                 <View
@@ -178,10 +180,10 @@ export default function CriarDenuncia() {
               ]}
             />
 
-            <TextInput
-              style={styles.caixaTexto}
+            <CTextBox
               placeholder="Descreva aqui o seu problema"
-            ></TextInput>
+              maxLength={500}
+            ></CTextBox>
 
             <MapView
               provider={PROVIDER_GOOGLE}
@@ -235,24 +237,8 @@ const styles = StyleSheet.create({
     width: "90%",
     paddingBottom: 5,
   },
-  caixaTexto: {
-    borderWidth: 1,
-    borderColor: "#555555",
-    padding: 10,
-    borderRadius: 5,
-    height: 100,
-    textAlignVertical: "top",
-    borderRadius: 10,
-    borderWidth: 2,
-    width: "100%",
-    paddingHorizontal: 10,
-    fontSize: 18,
-    shadowOffset: { width: -1, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
   map: {
-    margin: 20,
+    margin: 8,
     width: width,
     height: width,
   },
