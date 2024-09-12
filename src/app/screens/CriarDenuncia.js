@@ -21,6 +21,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import { faCamera } from "@fortawesome/free-solid-svg-icons/faCamera";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
+import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
 import * as ImagePicker from "expo-image-picker";
 const { height, width } = Dimensions.get("window");
 
@@ -29,6 +30,7 @@ export default function CriarDenuncia() {
   const [location, setLocation] = useState(false);
   const [marker, setMarker] = useState(null);
   const [imageList, setImageList] = useState([]);
+  const [imageIndex, setImageIndex] = useState(0);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -101,7 +103,13 @@ export default function CriarDenuncia() {
                 </View>
               </Pressable>
             ) : (
-              <PagerView style={styles.fotos} initialPage={1}>
+              <PagerView
+                style={styles.fotos}
+                initialPage={1}
+                onPageSelected={(e) => {
+                  setImageIndex(e.nativeEvent.position);
+                }}
+              >
                 {imageList.map((image, index) => (
                   <View style={styles.page} key={index}>
                     <Image source={{ uri: image }} style={styles.image} />
@@ -122,6 +130,26 @@ export default function CriarDenuncia() {
                   </View>
                 ))}
               </PagerView>
+            )}
+
+            {imageList.length > 0 && (
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: 5,
+                  margin: 8,
+                  alignItems: "center",
+                }}
+              >
+                {imageList.map((image, index) => (
+                  <FontAwesomeIcon
+                    icon={faCircle}
+                    size={imageIndex === index ? 11 : 8}
+                    color="#666666"
+                  ></FontAwesomeIcon>
+                ))}
+              </View>
             )}
 
             <CTextButton
