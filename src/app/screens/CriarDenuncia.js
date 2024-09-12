@@ -233,7 +233,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "90%",
-    paddingTop: 5,
     paddingBottom: 5,
   },
   caixaTexto: {

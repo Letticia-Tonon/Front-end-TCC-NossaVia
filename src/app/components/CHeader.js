@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native"; // Para controlar a na
 
 const { height, width } = Dimensions.get("window");
 
-export default function CHeader() {
+export default function CHeader(props) {
   const navigation = useNavigation(); // Para controlar a navegação com a seta
   return (
     <View style={styles.headerContainer}>
