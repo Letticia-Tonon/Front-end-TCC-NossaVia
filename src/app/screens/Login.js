@@ -6,6 +6,7 @@ import CTextButton from "../components/CTextButton";
 import logo from "../../../assets/Logo_Fe_VF.png";
 import { useState } from "react";
 import { post } from "../utils/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -52,10 +53,14 @@ export default function Login() {
             setSenhaIncorreta(false);
             post("login", { email: email, senha: senha }).then((data) => {
               if (data.status !== 200) {
+                AsyncStorage.setItem("token", "");
                 setSenhaIncorreta(true);
                 return;
               }
-              router.push("screens/Feed");
+              data.json().then((data) => {
+                AsyncStorage.setItem("token", data.token);
+                router.push("screens/Feed?logado=true");
+              })
             });
           }}
         ></CTextButton>
