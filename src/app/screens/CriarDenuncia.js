@@ -11,6 +11,7 @@ import {
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
 import CActionSheet from "../components/CActionSheet";
+import CHeader from "../components/CHeader";
 import { useState, useEffect } from "react";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
@@ -21,7 +22,6 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import { faCamera } from "@fortawesome/free-solid-svg-icons/faCamera";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import * as ImagePicker from "expo-image-picker";
-
 const { height, width } = Dimensions.get("window");
 
 export default function CriarDenuncia() {
@@ -61,6 +61,7 @@ export default function CriarDenuncia() {
       <ScrollView>
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
+            <CHeader titulo={"Criação de Denúncia"}/>
             {imageList.length === 0 ? (
               <Pressable style={styles.adicionarImagem} onPress={pickImage}>
                 <View
@@ -75,7 +76,13 @@ export default function CriarDenuncia() {
                     size={100}
                     color="#666666"
                   ></FontAwesomeIcon>
-                  <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: 25,
@@ -198,8 +205,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "90%",
-    paddingTop: 20,
-    paddingBottom: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
   caixaTexto: {
     borderWidth: 1,
