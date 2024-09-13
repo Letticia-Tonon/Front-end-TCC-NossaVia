@@ -2,6 +2,7 @@ import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import CTextButton from "../components/CTextButton";
 import { useLocalSearchParams } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Feed() {
   const { logado } = useLocalSearchParams();
@@ -34,6 +35,21 @@ export default function Feed() {
             router.push("screens/CriarDenuncia");
           }}
         ></CTextButton>
+        {logado === "true" && (
+          <CTextButton
+            buttonStyle={{
+              backgroundColor: "#FF7C33",
+            }}
+            textStyle={{
+              color: "#FFFFFF",
+            }}
+            text="Deslogar"
+            callback={() => {
+              AsyncStorage.setItem("token", "");
+              router.push("screens/Feed?logado=false");
+            }}
+          ></CTextButton>
+        )}
       </View>
     </View>
   );

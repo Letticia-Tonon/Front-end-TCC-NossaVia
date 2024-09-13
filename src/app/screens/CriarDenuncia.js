@@ -1,12 +1,12 @@
 import {
   StyleSheet,
   View,
-  TextInput,
   Text,
   ScrollView,
   Image,
   Dimensions,
   Pressable,
+  Alert,
 } from "react-native";
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
@@ -24,6 +24,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
 import * as ImagePicker from "expo-image-picker";
 import CTextBox from "../components/CTextBox";
+import { post } from "../utils/api";
 
 const { width } = Dimensions.get("window");
 
@@ -33,6 +34,90 @@ export default function CriarDenuncia() {
   const [marker, setMarker] = useState(null);
   const [imageList, setImageList] = useState([]);
   const [imageIndex, setImageIndex] = useState(0);
+  const [descricao, setDescricao] = useState("");
+  const [cep, setCep] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [numero, setNumero] = useState("");
+  const [complemento, setComplemento] = useState("");
+  const [latitude, setLatitude] = useState();
+  const [longitude, setLongitude] = useState();
+
+  const [categoriaInvalida, setCategoriaInvalida] = useState(false);
+  const [descricaoInvalida, setDescricaoInvalida] = useState(false);
+
+  const handleSubmit = () => {
+    setCategoriaInvalida(false);
+    setDescricaoInvalida(false);
+    let imagemTemp = false;
+    let categoriaTemp = false;
+    let descricaoTemp = false;
+    let localTemp = false;
+
+    if (imageList.length === 0) {
+      imagemTemp = true;
+      Alert.alert(
+        "Atenção!",
+        "Adicione pelo menos uma imagem para prosseguir com a criação da sua denúncia."
+      );
+    }
+
+    if (!categoria) {
+      categoriaTemp = true;
+      setCategoriaInvalida(true);
+    }
+
+    if (!descricao) {
+      descricaoTemp = true;
+      setDescricaoInvalida(true);
+    }
+
+    if (!(latitude && longitude)) {
+      localTemp = true;
+      Alert.alert(
+        "Atenção!",
+        "Selecione um local no mapa para prosseguir com a criação da sua denúncia."
+      );
+    }
+
+    if (imagemTemp || categoriaTemp || descricaoTemp || localTemp) {
+      return;
+    }
+
+    const imageListBase64 = imageList.map((image) => image.base64);
+
+    post("denuncia", {
+      descricao: descricao,
+      categoria: {
+        "Irregularidades no Asfalto": "via",
+        "Irregularidades na Calçada": "calcada",
+        "Falta de Sinalização": "iluminacao",
+        "Lixo na Via": "lixo",
+        "Veículo Abandonado": "carro",
+        "Falta de Iluminação": "sinalizacao",
+        Outros: "outros",
+      }[categoria],
+      data: new Date().toISOString().replace("T", " "),
+      endereco: endereco,
+      numero_endereco: numero,
+      ponto_referencia: complemento,
+      cep: cep,
+      latitude: latitude.toString(),
+      longitude: longitude.toString(),
+      fotos: imageListBase64,
+    }, true)
+      .then((data) => {
+        if (data.status !== 201) {
+          Alert.alert("Erro", "Erro ao criar denúncia");
+          return data.json();
+        }
+        Alert.alert("Sucesso", "Denúncia criada com sucesso");
+        return data.json();
+      })
+      .then((data) => {
+        if (!data) return;
+        console.log(data);
+      });
+  };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -40,10 +125,11 @@ export default function CriarDenuncia() {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
+      base64: true,
     });
 
     if (!result.canceled && imageList.length < 5) {
-      setImageList([...imageList, result.assets[0].uri]);
+      setImageList([...imageList, result.assets[0]]);
     }
   };
 
@@ -114,7 +200,7 @@ export default function CriarDenuncia() {
               >
                 {imageList.map((image, index) => (
                   <View style={styles.page} key={index}>
-                    <Image source={{ uri: image }} style={styles.image} />
+                    <Image source={{ uri: image.uri }} style={styles.image} />
                     <Pressable
                       style={styles.icon}
                       onPress={() => {
@@ -178,10 +264,16 @@ export default function CriarDenuncia() {
                 "Falta de Iluminação",
                 "Outros",
               ]}
+              error={categoriaInvalida}
+              errorMessage="Selecione uma categoria"
             />
 
             <CTextBox
               placeholder="Descreva aqui o seu problema"
+              state={descricao}
+              setState={setDescricao}
+              error={descricaoInvalida}
+              errorMessage="Campo obrigatório"
               maxLength={500}
             ></CTextBox>
 
@@ -199,6 +291,8 @@ export default function CriarDenuncia() {
                 }
               }
               onPress={(event) => {
+                setLatitude(event.nativeEvent.coordinate.latitude);
+                setLongitude(event.nativeEvent.coordinate.longitude);
                 setMarker({
                   latitude: event.nativeEvent.coordinate.latitude,
                   longitude: event.nativeEvent.coordinate.longitude,
@@ -208,10 +302,26 @@ export default function CriarDenuncia() {
               {marker && <Marker coordinate={marker} />}
             </MapView>
 
-            <CTextInput placeholder="CEP"></CTextInput>
-            <CTextInput placeholder="Endereço"></CTextInput>
-            <CTextInput placeholder="Número Aproximado"></CTextInput>
-            <CTextInput placeholder="Ponto de Referência"></CTextInput>
+            <CTextInput
+              placeholder="CEP"
+              state={cep}
+              setState={setCep}
+            ></CTextInput>
+            <CTextInput
+              placeholder="Endereço"
+              state={endereco}
+              setState={setEndereco}
+            ></CTextInput>
+            <CTextInput
+              placeholder="Número Aproximado"
+              state={numero}
+              setState={setNumero}
+            ></CTextInput>
+            <CTextInput
+              placeholder="Ponto de Referência"
+              state={complemento}
+              setState={setComplemento}
+            ></CTextInput>
 
             <CTextButton
               buttonStyle={{
@@ -221,6 +331,7 @@ export default function CriarDenuncia() {
                 color: "#FFFFFF",
               }}
               text="Criar Denúncia"
+              callback={handleSubmit}
             ></CTextButton>
           </View>
         </View>
