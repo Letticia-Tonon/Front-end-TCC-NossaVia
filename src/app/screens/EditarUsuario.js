@@ -13,17 +13,17 @@ import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
 import CActionSheet from "../components/CActionSheet";
 import CDatePicker from "../components/CDatePicker";
+import CHeader from "../components/CHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
-  faArrowLeft,
   faCamera,
   faPlus,
   faTrash,
+  faPencil,
 } from "@fortawesome/free-solid-svg-icons";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
 import { put } from "../utils/api";
-import { router } from "expo-router";
 import { validarTelefone, validarCep, validarData } from "../utils/validators";
 import { observer } from "mobx-react-lite";
 import userContext from "../utils/context";
@@ -38,11 +38,15 @@ const EditarUsuario = observer(() => {
     }/${userContext.user.data_nascimento.split("-")[0]}`
   );
   const [sexo, setSexo] = useState(
-    { f: "Feminino", m: "Masculino", n: "Prefiro não informar" }[userContext.user.sexo]
+    { f: "Feminino", m: "Masculino", n: "Prefiro não informar" }[
+      userContext.user.sexo
+    ]
   );
   const [endereco, setEndereco] = useState(userContext.user.endereco);
   const [numero, setNumero] = useState(userContext.user.numero_endereco);
-  const [complemento, setComplemento] = useState(userContext.user.complemento_endereco);
+  const [complemento, setComplemento] = useState(
+    userContext.user.complemento_endereco
+  );
   const [image, setImage] = useState(userContext.user.foto);
 
   const [nomeInvalido, setNomeInvalido] = useState(false);
@@ -98,22 +102,19 @@ const EditarUsuario = observer(() => {
       payload.foto = null;
     }
 
-    await put("usuario", payload, true)
-      .then((data) => {
-        if (data.status !== 200) {
-          Alert.alert(
-            "Ops!",
-            "Ocorreu um erro inesperado, tente novamente mais tarde."
-          );
-          return data.json();
-        }
-        Alert.alert("Sucesso", "Usuário alterado com sucesso.");
-        return data.json();
-      })
-      .then((data) => {
-        if (!data) return;
-        console.log(data);
+    await put("usuario", payload, true).then((data) => {
+      if (data.status !== 200) {
+        Alert.alert(
+          "Ops!",
+          "Ocorreu um erro inesperado, tente novamente mais tarde."
+        );
+        return;
+      }
+      Alert.alert("Sucesso", "Usuário alterado com sucesso.");
+      data.json().then((data) => {
+        userContext.set(data);
       });
+    });
   };
 
   const pickImage = async () => {
@@ -138,110 +139,119 @@ const EditarUsuario = observer(() => {
     <ActionSheetProvider>
       <ScrollView contentContainerStyle={styles.scrollView}>
         <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
-        <View style={styles.container}>
-          <Pressable style={styles.seta} onPress={() => router.back()}>
-            <FontAwesomeIcon icon={faArrowLeft} size={32} />
-          </Pressable>
-
-          <Text style={styles.title}>Editar Perfil</Text>
-
-          <Pressable style={styles.adicionarImagem} onPress={pickImage}>
-            {image ? (
-              <View style={styles.imageContainer}>
-                <Image
-                  source={
-                    image && image.base64
-                      ? { uri: `data:image/jpeg;base64,${image.base64}` }
-                      : { uri: image }
-                  }
-                  style={styles.image}
-                />
-                <Pressable style={styles.icon} onPress={removeImage}>
-                  <FontAwesomeIcon icon={faTrash} size={30} color="#FF7C33" />
-                </Pressable>
-              </View>
-            ) : (
-              <View style={styles.imageContainer}>
-                <FontAwesomeIcon icon={faCamera} size={80} color="#666666" />
-                <View style={styles.imageTextContainer}>
-                  <Text style={styles.imageText}>Adicionar Foto</Text>
-                  <FontAwesomeIcon icon={faPlus} size={25} color="#666666" />
+        <View style={{ ...styles.container, width: "100%" }}>
+          <View style={styles.container}>
+            <CHeader
+              titulo={"Editar Perfil"}
+              logado={true}
+              goBack={true}
+              showIcon={false}
+            />
+            <Pressable style={styles.adicionarImagem} onPress={pickImage}>
+              {image ? (
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={
+                      image && image.base64
+                        ? { uri: `data:image/jpeg;base64,${image.base64}` }
+                        : { uri: image }
+                    }
+                    style={styles.image}
+                  />
+                  <Pressable style={styles.editIcon} onPress={pickImage}>
+                    <FontAwesomeIcon
+                      icon={faPencil}
+                      size={30}
+                      color="#FF7C33"
+                    />
+                  </Pressable>
+                  <Pressable style={styles.trashIcon} onPress={removeImage}>
+                    <FontAwesomeIcon icon={faTrash} size={30} color="#FF7C33" />
+                  </Pressable>
                 </View>
-              </View>
-            )}
-          </Pressable>
+              ) : (
+                <View style={styles.imageContainer}>
+                  <FontAwesomeIcon icon={faCamera} size={80} color="#666666" />
+                  <View style={styles.imageTextContainer}>
+                    <Text style={styles.imageText}>Adicionar Foto</Text>
+                    <FontAwesomeIcon icon={faPlus} size={25} color="#666666" />
+                  </View>
+                </View>
+              )}
+            </Pressable>
 
-          <CTextInput
-            placeholder="Nome"
-            state={nome}
-            setState={setNome}
-            error={nomeInvalido}
-            errorMessage="Nome não pode ser vazio"
-          />
+            <CTextInput
+              placeholder="Nome"
+              state={nome}
+              setState={setNome}
+              error={nomeInvalido}
+              errorMessage="Nome não pode ser vazio"
+            />
 
-          <CTextInput
-            placeholder="email"
-            state={userContext.user.email}
-            disabled={true}
-          />
+            <CTextInput
+              placeholder="email"
+              state={userContext.user.email}
+              disabled={true}
+            />
 
-          <CTextInput
-            placeholder="Telefone Ex.: 00 00000-0000"
-            state={telefone}
-            setState={setTelefone}
-            error={telefoneInvalido}
-            errorMessage="Telefone inválido"
-          />
+            <CTextInput
+              placeholder="Telefone Ex.: 00 00000-0000"
+              state={telefone}
+              setState={setTelefone}
+              error={telefoneInvalido}
+              errorMessage="Telefone inválido"
+            />
 
-          <CActionSheet
-            state={sexo}
-            setState={setSexo}
-            placeholder="Sexo"
-            itens={["Feminino", "Masculino", "Prefiro não informar"]}
-            error={sexoInvalido}
-            errorMessage="Selecione uma opção"
-          />
+            <CActionSheet
+              state={sexo}
+              setState={setSexo}
+              placeholder="Sexo"
+              itens={["Feminino", "Masculino", "Prefiro não informar"]}
+              error={sexoInvalido}
+              errorMessage="Selecione uma opção"
+            />
 
-          <CDatePicker
-            placeholder="Data de nascimento"
-            state={nascimento}
-            setState={setNascimento}
-            error={dataInvalida}
-            errorMessage="Data inválida"
-          />
+            <CDatePicker
+              placeholder="Data de nascimento"
+              state={nascimento}
+              setState={setNascimento}
+              error={dataInvalida}
+              errorMessage="Data inválida"
+            />
 
-          <CTextInput
-            placeholder="CEP"
-            state={cep}
-            setState={setCep}
-            error={cepInvalido}
-            errorMessage="CEP inválido"
-          />
+            <CTextInput
+              placeholder="CEP"
+              state={cep}
+              setState={setCep}
+              error={cepInvalido}
+              errorMessage="CEP inválido"
+            />
 
-          <CTextInput
-            placeholder="Endereço"
-            state={endereco}
-            setState={setEndereco}
-          />
+            <CTextInput
+              placeholder="Endereço"
+              state={endereco}
+              setState={setEndereco}
+            />
 
-          <CTextInput
-            placeholder="Número"
-            state={numero}
-            setState={setNumero}
-          />
+            <CTextInput
+              placeholder="Número"
+              state={numero}
+              setState={setNumero}
+            />
 
-          <CTextInput
-            placeholder="Complemento"
-            state={complemento}
-            setState={setComplemento}
-          />
+            <CTextInput
+              placeholder="Complemento"
+              state={complemento}
+              setState={setComplemento}
+            />
 
-          <CTextButton
-            buttonStyle={{ backgroundColor: "#FF7C33" }}
-            textStyle={{ color: "#FFFFFF" }}
-            text="Salvar"
-            callback={handleSubmit}
-          />
+            <CTextButton
+              buttonStyle={{ backgroundColor: "#FF7C33" }}
+              textStyle={{ color: "#FFFFFF" }}
+              text="Salvar"
+              callback={handleSubmit}
+            />
+          </View>
         </View>
       </ScrollView>
     </ActionSheetProvider>
@@ -257,8 +267,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
-    padding: 20,
+    width: "90%",
   },
   seta: {
     position: "absolute",
@@ -286,16 +295,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     position: "relative",
+    marginTop: 20,
   },
   image: {
     width: "100%",
     height: "100%",
     borderRadius: 100,
   },
-  icon: {
+  trashIcon: {
     position: "absolute",
-    bottom: 5,
-    right: 5,
+    bottom: 40,
+    right: -50,
+    backgroundColor: "#fff",
+    borderRadius: 50,
+    padding: 5,
+  },
+  editIcon: {
+    position: "absolute",
+    top: 40,
+    right: -50,
     backgroundColor: "#fff",
     borderRadius: 50,
     padding: 5,

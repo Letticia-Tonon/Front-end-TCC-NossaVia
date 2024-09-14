@@ -84,7 +84,7 @@ const CHeader = observer((props) => {
             <Text style={styles.title}></Text>
           )}
 
-          {props.logado ? (
+          {props.showIcon && props.logado ? (
             <Pressable
               onPress={abrirMenu}
               style={[styles.iconContainer, styles.centerIcon]}
@@ -98,7 +98,7 @@ const CHeader = observer((props) => {
                 <FontAwesomeIcon icon={faCircleUser} size={35} color="#000" />
               )}
             </Pressable>
-          ) : (
+          ) : props.showIcon ? (
             <Pressable
               onPress={() => {
                 router.push("screens/Login");
@@ -107,6 +107,8 @@ const CHeader = observer((props) => {
             >
               <Text style={styles.title}>Entrar</Text>
             </Pressable>
+          ) : (
+            <View style={{ width: 35, height: 35, borderRadius: 35 }} />
           )}
         </View>
         <View style={styles.topLine} />

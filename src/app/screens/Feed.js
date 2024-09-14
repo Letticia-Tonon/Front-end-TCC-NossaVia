@@ -14,6 +14,7 @@ const Feed = observer(() => {
         titulo={"Feed"}
         logado={logado === "true"}
         goBack={logado === "true"}
+        showIcon={true}
       />
       <View style={styles.feed}>
         <CTextButton
