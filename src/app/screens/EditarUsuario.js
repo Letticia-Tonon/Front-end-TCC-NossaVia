@@ -23,27 +23,27 @@ import {
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
 import { put } from "../utils/api";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { validarTelefone, validarCep, validarData } from "../utils/validators";
+import { observer } from "mobx-react-lite";
+import userContext from "../utils/context";
 
-export default function EditarUsuario() {
-  const params = useLocalSearchParams();
-
-  const [nome, setNome] = useState(params.nome);
-  const [telefone, setTelefone] = useState(params.telefone);
-  const [cep, setCep] = useState(params.cep);
+const EditarUsuario = observer(() => {
+  const [nome, setNome] = useState(userContext.user.nome);
+  const [telefone, setTelefone] = useState(userContext.user.telefone);
+  const [cep, setCep] = useState(userContext.user.cep);
   const [nascimento, setNascimento] = useState(
-    `${params.data_nascimento.split("-")[2].split(" ")[0]}/${
-      params.data_nascimento.split("-")[1]
-    }/${params.data_nascimento.split("-")[0]}`
+    `${userContext.user.data_nascimento.split("-")[2].split(" ")[0]}/${
+      userContext.user.data_nascimento.split("-")[1]
+    }/${userContext.user.data_nascimento.split("-")[0]}`
   );
   const [sexo, setSexo] = useState(
-    { f: "Feminino", m: "Masculino", n: "Prefiro não informar" }[params.sexo]
+    { f: "Feminino", m: "Masculino", n: "Prefiro não informar" }[userContext.user.sexo]
   );
-  const [endereco, setEndereco] = useState(params.endereco);
-  const [numero, setNumero] = useState(params.numero_endereco);
-  const [complemento, setComplemento] = useState(params.complemento_endereco);
-  const [image, setImage] = useState(params.foto);
+  const [endereco, setEndereco] = useState(userContext.user.endereco);
+  const [numero, setNumero] = useState(userContext.user.numero_endereco);
+  const [complemento, setComplemento] = useState(userContext.user.complemento_endereco);
+  const [image, setImage] = useState(userContext.user.foto);
 
   const [nomeInvalido, setNomeInvalido] = useState(false);
   const [telefoneInvalido, setTelefoneInvalido] = useState(false);
@@ -101,7 +101,10 @@ export default function EditarUsuario() {
     put("usuario", payload, true)
       .then((data) => {
         if (data.status !== 200) {
-          Alert.alert("Ops!", "Ocorreu um erro inesperado, tente novamente mais tarde.");
+          Alert.alert(
+            "Ops!",
+            "Ocorreu um erro inesperado, tente novamente mais tarde."
+          );
           return data.json();
         }
         Alert.alert("Sucesso", "Usuário alterado com sucesso.");
@@ -178,7 +181,7 @@ export default function EditarUsuario() {
 
           <CTextInput
             placeholder="email"
-            state={params.email}
+            state={userContext.user.email}
             disabled={true}
           />
 
@@ -243,7 +246,7 @@ export default function EditarUsuario() {
       </ScrollView>
     </ActionSheetProvider>
   );
-}
+});
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -305,3 +308,5 @@ const styles = StyleSheet.create({
     color: "#666666",
   },
 });
+
+export default EditarUsuario;

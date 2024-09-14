@@ -3,8 +3,10 @@ import { router } from "expo-router";
 import CTextButton from "../components/CTextButton";
 import { useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { observer } from "mobx-react-lite";
+import userContext from "../utils/context";
 
-export default function Feed() {
+const Feed = observer(() => {
   const { logado } = useLocalSearchParams();
   return (
     <View style={styles.container}>
@@ -47,6 +49,7 @@ export default function Feed() {
             text="Deslogar"
             callback={() => {
               AsyncStorage.setItem("token", "");
+              userContext.set(null);
               router.push("screens/Feed?logado=false");
             }}
           ></CTextButton>
@@ -54,7 +57,7 @@ export default function Feed() {
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -70,3 +73,5 @@ const styles = StyleSheet.create({
     width: "90%",
   },
 });
+
+export default Feed;

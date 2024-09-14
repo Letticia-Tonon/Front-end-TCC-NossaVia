@@ -9,17 +9,19 @@ import {
   Animated,
   Pressable,
   Alert,
+  Image,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft, faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import packageJson from "../../../package.json";
-import { get } from "../utils/api";
+import { observer } from "mobx-react-lite";
+import userContext from "../utils/context";
 
 const { width } = Dimensions.get("window");
 
-export default function CHeader(props) {
+const CHeader = observer((props) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(width)).current;
 
@@ -79,7 +81,14 @@ export default function CHeader(props) {
             onPress={abrirMenu}
             style={[styles.iconContainer, styles.centerIcon]}
           >
-            <FontAwesomeIcon icon={faCircleUser} size={35} color="#000" />
+            {userContext.user && userContext.user.foto ? (
+              <Image
+                source={{ uri: userContext.user.foto }}
+                style={{ width: 35, height: 35, borderRadius: 35 }}
+              />
+            ) : (
+              <FontAwesomeIcon icon={faCircleUser} size={35} color="#000" />
+            )}
           </Pressable>
         </View>
         <View style={styles.topLine} />
@@ -96,22 +105,21 @@ export default function CHeader(props) {
             style={[styles.modal, { transform: [{ translateX: slideAnim }] }]}
           >
             <View style={styles.menu}>
-              <FontAwesomeIcon icon={faCircleUser} size={120} color="#000" />
+              {userContext.user && userContext.user.foto ? (
+                <Image
+                  source={{ uri: userContext.user.foto }}
+                  style={{ width: 120, height: 120, borderRadius: 120 }}
+                />
+              ) : (
+                <FontAwesomeIcon icon={faCircleUser} size={120} color="#000" />
+              )}
 
               <View style={styles.innerLine} />
 
               <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {
-                  get("usuario", true).then((data) => {
-                    data.json().then((json) => {
-                      if (data.status !== 200) {
-                        Alert.alert("Ops!", "Ocorreu um erro inesperado, tente novamente mais tarde.");
-                        return;
-                      }
-                      router.push({pathname: "screens/EditarUsuario",  params: json});
-                    });
-                  });
+                  router.push({ pathname: "screens/EditarUsuario" });
                 }}
               >
                 <Text style={styles.menuText}>Editar Perfil</Text>
@@ -156,7 +164,7 @@ export default function CHeader(props) {
       </Modal>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -232,3 +240,5 @@ const styles = StyleSheet.create({
     margin: 10,
   },
 });
+
+export default CHeader;
