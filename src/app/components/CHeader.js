@@ -117,6 +117,16 @@ export default function CHeader(props) {
                 <Text style={styles.menuText}>Editar Perfil</Text>
               </TouchableOpacity>
 
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                  abrirMenu();
+                  router.push("screens/EditarSenha");
+                }}
+              >
+                <Text style={styles.menuText}>Editar Senha</Text>
+              </TouchableOpacity>
+
               {/* TODO: tela minhas denuncias programada para próximas sprints */}
               {/* <TouchableOpacity
                 style={styles.menuItem}

@@ -15,7 +15,7 @@ export const validarSenha = (password) => {
 };
 
 export const validarTelefone = (telefone) => {
-  const re = /^\d{8,9}$/;
+  const re = /^\d{11}$/;
   return re.test(telefone);
 };
 
