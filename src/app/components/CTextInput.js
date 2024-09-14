@@ -20,6 +20,8 @@ export default function CTextInput(props) {
             props.setState(text);
           }
         }}
+        editable={!props.disabled}
+        value={props.state}
       ></TextInput>
       {props.error && props.errorMessage && (
         <Text style={{ color: "#ff0022" }}>{props.errorMessage}</Text>

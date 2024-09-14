@@ -15,6 +15,7 @@ import { faArrowLeft, faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import packageJson from "../../../package.json";
+import { get } from "../utils/api";
 
 const { width } = Dimensions.get("window");
 
@@ -102,8 +103,15 @@ export default function CHeader(props) {
               <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {
-                  abrirMenu();
-                  router.push("screens/EditarUsuario");
+                  get("usuario", true).then((data) => {
+                    data.json().then((json) => {
+                      if (data.status !== 200) {
+                        Alert.alert("Ops!", "Ocorreu um erro inesperado, tente novamente mais tarde.");
+                        return;
+                      }
+                      router.push({pathname: "screens/EditarUsuario",  params: json});
+                    });
+                  });
                 }}
               >
                 <Text style={styles.menuText}>Editar Perfil</Text>

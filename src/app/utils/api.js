@@ -16,3 +16,33 @@ export const post = async (endpoint, data, authorization = false) => {
   });
   return response;
 };
+
+export const get = async (endpoint, authorization = false) => {
+  let token;
+  if (authorization) {
+    token = await AsyncStorage.getItem("token");
+  }
+  const response = await fetch(`${URL}/${endpoint}`, {
+    method: "GET",
+    headers: {
+      Authorization: authorization ? `Bearer ${token}` : "",
+    },
+  });
+  return response;
+};
+
+export const put = async (endpoint, data, authorization = false) => {
+  let token;
+  if (authorization) {
+    token = await AsyncStorage.getItem("token");
+  }
+  const response = await fetch(`${URL}/${endpoint}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: authorization ? `Bearer ${token}` : "",
+    },
+    body: JSON.stringify(data),
+  });
+  return response;
+};

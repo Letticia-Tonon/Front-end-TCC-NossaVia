@@ -117,9 +117,9 @@ export default function Cadastro() {
       cep: cep,
       numero_endereco: numero,
       complemento_endereco: complemento,
-      data_nascimento: `${nascimento.split("/")[2]}/${
+      data_nascimento: `${nascimento.split("/")[2]}-${
         nascimento.split("/")[1]
-      }/${nascimento.split("/")[0]} 00:00:00.000000`,
+      }-${nascimento.split("/")[0]} 00:00:00.000000`,
       sexo: {
         Feminino: "f",
         Masculino: "m",

@@ -7,7 +7,7 @@ import {
   Alert,
   Pressable,
   Image,
-  StatusBar
+  StatusBar,
 } from "react-native";
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
@@ -22,25 +22,30 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
-import { post } from "../utils/api"; // Certifique-se de que o caminho está correto
+import { put } from "../utils/api";
+import { router, useLocalSearchParams } from "expo-router";
+import { validarTelefone, validarCep, validarData } from "../utils/validators";
 
 export default function EditarUsuario() {
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [confirmarSenha, setConfirmarSenha] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [cep, setCep] = useState("");
-  const [nascimento, setNascimento] = useState("");
-  const [sexo, setSexo] = useState("");
-  const [endereco, setEndereco] = useState("");
-  const [numero, setNumero] = useState("");
-  const [complemento, setComplemento] = useState("");
-  const [image, setImage] = useState(null); // Estado para armazenar a imagem
+  const params = useLocalSearchParams();
+
+  const [nome, setNome] = useState(params.nome);
+  const [telefone, setTelefone] = useState(params.telefone);
+  const [cep, setCep] = useState(params.cep);
+  const [nascimento, setNascimento] = useState(
+    `${params.data_nascimento.split("-")[2].split(" ")[0]}/${
+      params.data_nascimento.split("-")[1]
+    }/${params.data_nascimento.split("-")[0]}`
+  );
+  const [sexo, setSexo] = useState(
+    { f: "Feminino", m: "Masculino", n: "Prefiro não informar" }[params.sexo]
+  );
+  const [endereco, setEndereco] = useState(params.endereco);
+  const [numero, setNumero] = useState(params.numero_endereco);
+  const [complemento, setComplemento] = useState(params.complemento_endereco);
+  const [image, setImage] = useState(params.foto);
 
   const [nomeInvalido, setNomeInvalido] = useState(false);
-  const [emailInvalido, setEmailInvalido] = useState(false);
-  const [senhaInvalida, setSenhaInvalida] = useState(false);
   const [telefoneInvalido, setTelefoneInvalido] = useState(false);
   const [cepInvalido, setCepInvalido] = useState(false);
   const [dataInvalida, setDataInvalida] = useState(false);
@@ -48,35 +53,19 @@ export default function EditarUsuario() {
 
   const handleSubmit = () => {
     setNomeInvalido(false);
-    setEmailInvalido(false);
-    setSenhaInvalida(false);
     setTelefoneInvalido(false);
     setCepInvalido(false);
     setDataInvalida(false);
     setSexoInvalido(false);
 
     let nomeTemp = !nome;
-    let emailTemp = !validarEmail(email);
-    let senhaTemp = !Object.values(validarSenha(senha)).every(
-      (item) => item === true
-    );
     let telefoneTemp = !validarTelefone(telefone);
     let cepTemp = !validarCep(cep);
     let dataTemp = !validarData(nascimento);
     let sexoTemp = !sexo;
 
-    if (
-      nomeTemp ||
-      emailTemp ||
-      senhaTemp ||
-      telefoneTemp ||
-      cepTemp ||
-      dataTemp ||
-      sexoTemp
-    ) {
+    if (nomeTemp || telefoneTemp || cepTemp || dataTemp || sexoTemp) {
       setNomeInvalido(nomeTemp);
-      setEmailInvalido(emailTemp);
-      setSenhaInvalida(senhaTemp);
       setTelefoneInvalido(telefoneTemp);
       setCepInvalido(cepTemp);
       setDataInvalida(dataTemp);
@@ -84,9 +73,7 @@ export default function EditarUsuario() {
       return;
     }
 
-    post("usuario", {
-      email: email,
-      senha: senha,
+    const payload = {
       nome: nome,
       endereco: endereco,
       cep: cep,
@@ -101,14 +88,23 @@ export default function EditarUsuario() {
         "Prefiro não informar": "n",
       }[sexo],
       telefone: telefone,
-      foto: image ? image.base64 : null, // Adicionando a imagem ao POST
-    })
+    };
+
+    if (image && image.base64) {
+      payload.foto = image.base64;
+    }
+
+    if (!image) {
+      payload.foto = null;
+    }
+
+    put("usuario", payload, true)
       .then((data) => {
-        if (data.status !== 201) {
-          Alert.alert("Erro", "Erro ao criar conta");
-          return;
+        if (data.status !== 200) {
+          Alert.alert("Ops!", "Ocorreu um erro inesperado, tente novamente mais tarde.");
+          return data.json();
         }
-        Alert.alert("Sucesso", "Usuário criado com sucesso");
+        Alert.alert("Sucesso", "Usuário alterado com sucesso.");
         return data.json();
       })
       .then((data) => {
@@ -140,18 +136,21 @@ export default function EditarUsuario() {
       <ScrollView contentContainerStyle={styles.scrollView}>
         <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
         <View style={styles.container}>
-          {/* não ta funcionando */}
           <Pressable style={styles.seta} onPress={() => router.back()}>
             <FontAwesomeIcon icon={faArrowLeft} size={32} />
           </Pressable>
 
-          <Text style={styles.title}>Editar Informações</Text>
+          <Text style={styles.title}>Editar Perfil</Text>
 
           <Pressable style={styles.adicionarImagem} onPress={pickImage}>
             {image ? (
               <View style={styles.imageContainer}>
                 <Image
-                  source={{ uri: `data:image/jpeg;base64,${image.base64}` }}
+                  source={
+                    image && image.base64
+                      ? { uri: `data:image/jpeg;base64,${image.base64}` }
+                      : { uri: image }
+                  }
                   style={styles.image}
                 />
                 <Pressable style={styles.icon} onPress={removeImage}>
@@ -175,6 +174,12 @@ export default function EditarUsuario() {
             setState={setNome}
             error={nomeInvalido}
             errorMessage="Nome não pode ser vazio"
+          />
+
+          <CTextInput
+            placeholder="email"
+            state={params.email}
+            disabled={true}
           />
 
           <CTextInput
