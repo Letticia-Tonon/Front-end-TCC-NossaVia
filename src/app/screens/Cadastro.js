@@ -46,7 +46,7 @@ export default function Cadastro() {
   const [sexoInvalido, setSexoInvalido] = useState(false);
   const [telefoneInvalido, setTelefoneInvalido] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setNomeInvalido(false);
     setEmailInvalido(false);
     setsenhaInvalida(false);
@@ -109,7 +109,7 @@ export default function Cadastro() {
       return;
     }
 
-    post("usuario", {
+    await post("usuario", {
       email: email,
       senha: senha,
       nome: nome,

@@ -50,9 +50,9 @@ export default function Login() {
             color: "#FFFFFF",
           }}
           text="Login"
-          callback={() => {
+          callback={async () => {
             setSenhaIncorreta(false);
-            post("login", { email: email, senha: senha }).then((data) => {
+            await post("login", { email: email, senha: senha }).then((data) => {
               if (data.status !== 200) {
                 AsyncStorage.setItem("token", "");
                 setSenhaIncorreta(true);

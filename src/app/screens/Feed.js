@@ -21,7 +21,7 @@ const Feed = observer(() => {
               color: "#FFFFFF",
             }}
             text="Fazer Login"
-            callback={() => {
+            callback={async () => {
               router.push("screens/Login");
             }}
           ></CTextButton>
@@ -34,7 +34,7 @@ const Feed = observer(() => {
             color: "#FFFFFF",
           }}
           text="Criar Denúncia"
-          callback={() => {
+          callback={async () => {
             router.push("screens/CriarDenuncia");
           }}
         ></CTextButton>
@@ -47,7 +47,7 @@ const Feed = observer(() => {
               color: "#FFFFFF",
             }}
             text="Deslogar"
-            callback={() => {
+            callback={async () => {
               AsyncStorage.setItem("token", "");
               userContext.set(null);
               router.push("screens/Feed?logado=false");

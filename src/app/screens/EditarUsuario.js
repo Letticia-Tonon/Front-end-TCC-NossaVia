@@ -51,7 +51,7 @@ const EditarUsuario = observer(() => {
   const [dataInvalida, setDataInvalida] = useState(false);
   const [sexoInvalido, setSexoInvalido] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setNomeInvalido(false);
     setTelefoneInvalido(false);
     setCepInvalido(false);
@@ -98,7 +98,7 @@ const EditarUsuario = observer(() => {
       payload.foto = null;
     }
 
-    put("usuario", payload, true)
+    await put("usuario", payload, true)
       .then((data) => {
         if (data.status !== 200) {
           Alert.alert(
