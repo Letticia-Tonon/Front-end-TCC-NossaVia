@@ -13,7 +13,7 @@ const Feed = observer(() => {
       <CHeader
         titulo={"Feed"}
         logado={logado === "true"}
-        goBack={logado === "true"}
+        goBack={false}
         showIcon={true}
       />
       <View style={styles.feed}>
