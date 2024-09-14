@@ -7,11 +7,14 @@ import {
   Dimensions,
   Modal,
   Animated,
+  Pressable,
+  Alert,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft, faCircleUser } from "@fortawesome/free-solid-svg-icons";
-import { router } from "expo-router"; 
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Para gerenciamento do AsyncStorage
+import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import packageJson from "../../../package.json";
 
 const { width } = Dimensions.get("window");
 
@@ -23,39 +26,60 @@ export default function CHeader(props) {
     if (menuVisible) {
       Animated.timing(slideAnim, {
         toValue: width,
-        duration: 100,
+        duration: 150,
         useNativeDriver: true,
       }).start(() => setMenuVisible(false));
     } else {
       setMenuVisible(true);
       Animated.timing(slideAnim, {
         toValue: 0,
-        duration: 300,
+        duration: 150,
         useNativeDriver: true,
       }).start();
     }
   };
 
   const deslogar = async () => {
-    // Limpa o token do AsyncStorage
-    await AsyncStorage.setItem("token", "");
-    // Navega para a tela de Feed com logado=false
-    router.push("screens/Feed?logado=false");
+    Alert.alert(
+      "Atenção!",
+      "Ao confirmar a saída você será desconectado de todas as sessões.",
+      [
+        {
+          text: "Cancelar",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            await AsyncStorage.setItem("token", "");
+            router.push("screens/Feed?logado=false");
+          },
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
   };
 
   return (
     <View>
       <View style={styles.headerContainer}>
         <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.iconContainer}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.iconContainer}
+          >
             <FontAwesomeIcon icon={faArrowLeft} size={28} color="#000" />
           </TouchableOpacity>
 
           <Text style={styles.title}>{props.titulo}</Text>
 
-          <TouchableOpacity onPress={abrirMenu} style={[styles.iconContainer, styles.centerIcon]}>
+          <Pressable
+            onPress={abrirMenu}
+            style={[styles.iconContainer, styles.centerIcon]}
+          >
             <FontAwesomeIcon icon={faCircleUser} size={35} color="#000" />
-          </TouchableOpacity>
+          </Pressable>
         </View>
         <View style={styles.topLine} />
       </View>
@@ -66,48 +90,51 @@ export default function CHeader(props) {
         visible={menuVisible}
         onRequestClose={abrirMenu}
       >
-        <TouchableOpacity style={styles.overlay} onPress={abrirMenu}>
+        <Pressable style={styles.overlay} onPress={abrirMenu}>
           <Animated.View
-            style={[
-              styles.menu,
-              { transform: [{ translateX: slideAnim }] },
-            ]}
+            style={[styles.modal, { transform: [{ translateX: slideAnim }] }]}
           >
-            <Text style={styles.menuTitle}>Menu Usuário</Text>
-            
-            <FontAwesomeIcon icon={faCircleUser} size={100} color="#000"  />
+            <View style={styles.menu}>
+              <FontAwesomeIcon icon={faCircleUser} size={120} color="#000" />
 
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => {
-                abrirMenu();
-                router.push("screens/EditarUsuario");
-              }}
-            >
-              <Text style={styles.menuText}>Editar Perfil</Text>
-            </TouchableOpacity>
+              <View style={styles.innerLine} />
 
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => {
-                abrirMenu();
-                router.push("/denuncias");
-              }}
-            >
-              <Text style={styles.menuText}>Minhas Denúncias</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                  abrirMenu();
+                  router.push("screens/EditarUsuario");
+                }}
+              >
+                <Text style={styles.menuText}>Editar Perfil</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => {
-                abrirMenu();
-                deslogar(); // Chama a função de logout
-              }}
-            >
-              <Text style={styles.menuText}>Sair</Text>
-            </TouchableOpacity>
+              {/* TODO: tela minhas denuncias programada para próximas sprints */}
+              {/* <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                  abrirMenu();
+                  router.push("screens/MinhasDenuncias");
+                }}
+              >
+                <Text style={styles.menuText}>Minhas Denúncias</Text>
+              </TouchableOpacity> */}
+
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                  abrirMenu();
+                  deslogar();
+                }}
+              >
+                <Text style={styles.menuText}>Sair</Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <Text style={styles.versao}>Versão: {packageJson.version}</Text>
+            </View>
           </Animated.View>
-        </TouchableOpacity>
+        </Pressable>
       </Modal>
     </View>
   );
@@ -123,7 +150,14 @@ const styles = StyleSheet.create({
     height: 4,
     width: width,
   },
-  centerIcon:{
+  innerLine: {
+    backgroundColor: "#FF7C33",
+    height: 4,
+    width: "100%",
+    marginTop: 30,
+    marginBottom: 10,
+  },
+  centerIcon: {
     textAlign: "center",
   },
   headerContent: {
@@ -143,16 +177,18 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "center",
   },
-  menu: {
+  modal: {
     position: "absolute",
     right: 0,
     top: 0,
-    width: 250,
+    width: width - width / 3,
     height: "100%",
-    backgroundColor: "#FFF",
-    padding: 20,
-    borderLeftWidth: 1,
-    borderColor: "#ccc",
+    backgroundColor: "#fff",
+  },
+  menu: {
+    paddingTop: 50,
+    flex: 1,
+    alignItems: "center",
   },
   overlay: {
     flex: 1,
@@ -165,9 +201,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   menuItem: {
-    marginVertical: 10,
+    marginTop: 20,
   },
   menuText: {
-    fontSize: 18,
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+  versao: {
+    fontSize: 13,
+    textAlign: "center",
+    color: "#555555",
+    margin: 10,
   },
 });
