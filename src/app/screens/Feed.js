@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, StatusBar } from "react-native";
 import { router } from "expo-router";
 import CTextButton from "../components/CTextButton";
 import { useLocalSearchParams } from "expo-router";
@@ -8,6 +8,7 @@ export default function Feed() {
   const { logado } = useLocalSearchParams();
   return (
     <View style={styles.container}>
+      <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
       <View style={styles.feed}>
         {logado === "false" && (
           <CTextButton

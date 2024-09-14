@@ -7,13 +7,19 @@ import {
   Alert,
   Pressable,
   Image,
+  StatusBar
 } from "react-native";
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
 import CActionSheet from "../components/CActionSheet";
 import CDatePicker from "../components/CDatePicker";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faArrowLeft, faCamera, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faCamera,
+  faPlus,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
 import { post } from "../utils/api"; // Certifique-se de que o caminho está correto
@@ -51,13 +57,23 @@ export default function EditarUsuario() {
 
     let nomeTemp = !nome;
     let emailTemp = !validarEmail(email);
-    let senhaTemp = !Object.values(validarSenha(senha)).every((item) => item === true);
+    let senhaTemp = !Object.values(validarSenha(senha)).every(
+      (item) => item === true
+    );
     let telefoneTemp = !validarTelefone(telefone);
     let cepTemp = !validarCep(cep);
     let dataTemp = !validarData(nascimento);
     let sexoTemp = !sexo;
 
-    if (nomeTemp || emailTemp || senhaTemp || telefoneTemp || cepTemp || dataTemp || sexoTemp) {
+    if (
+      nomeTemp ||
+      emailTemp ||
+      senhaTemp ||
+      telefoneTemp ||
+      cepTemp ||
+      dataTemp ||
+      sexoTemp
+    ) {
       setNomeInvalido(nomeTemp);
       setEmailInvalido(emailTemp);
       setSenhaInvalida(senhaTemp);
@@ -76,7 +92,9 @@ export default function EditarUsuario() {
       cep: cep,
       numero_endereco: numero,
       complemento_endereco: complemento,
-      data_nascimento: `${nascimento.split("/")[2]}/${nascimento.split("/")[1]}/${nascimento.split("/")[0]} 00:00:00.000000`,
+      data_nascimento: `${nascimento.split("/")[2]}/${
+        nascimento.split("/")[1]
+      }/${nascimento.split("/")[0]} 00:00:00.000000`,
       sexo: {
         Feminino: "f",
         Masculino: "m",
@@ -120,9 +138,10 @@ export default function EditarUsuario() {
   return (
     <ActionSheetProvider>
       <ScrollView contentContainerStyle={styles.scrollView}>
+        <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
         <View style={styles.container}>
-        {/* não ta funcionando */}
-          <Pressable style={styles.seta} onPress={() => router.back()}> 
+          {/* não ta funcionando */}
+          <Pressable style={styles.seta} onPress={() => router.back()}>
             <FontAwesomeIcon icon={faArrowLeft} size={32} />
           </Pressable>
 
@@ -131,7 +150,10 @@ export default function EditarUsuario() {
           <Pressable style={styles.adicionarImagem} onPress={pickImage}>
             {image ? (
               <View style={styles.imageContainer}>
-                <Image source={{ uri: `data:image/jpeg;base64,${image.base64}` }} style={styles.image} />
+                <Image
+                  source={{ uri: `data:image/jpeg;base64,${image.base64}` }}
+                  style={styles.image}
+                />
                 <Pressable style={styles.icon} onPress={removeImage}>
                   <FontAwesomeIcon icon={faTrash} size={30} color="#FF7C33" />
                 </Pressable>
@@ -221,7 +243,7 @@ export default function EditarUsuario() {
 const styles = StyleSheet.create({
   scrollView: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   container: {
     flex: 1,
@@ -243,8 +265,8 @@ const styles = StyleSheet.create({
   },
   adicionarImagem: {
     marginBottom: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   imageContainer: {
     width: 200,
@@ -255,23 +277,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: "#ccc",
-    position: 'relative',
+    position: "relative",
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderRadius: 100,
   },
   icon: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 5,
     right: 5,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 50,
     padding: 5,
   },
   imageTextContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   imageText: {
     fontSize: 16,

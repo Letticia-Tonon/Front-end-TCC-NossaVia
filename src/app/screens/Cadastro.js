@@ -1,4 +1,11 @@
-import { StyleSheet, View, ScrollView, Text, Alert } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  Alert,
+  StatusBar,
+} from "react-native";
 import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
 import CTextButton from "../components/CTextButton";
@@ -137,6 +144,7 @@ export default function Cadastro() {
   return (
     <ActionSheetProvider>
       <ScrollView>
+        <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
             <Link style={styles.seta} href={"/screens/Login"}>

@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image, StatusBar } from "react-native";
 import { router } from "expo-router";
 import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
@@ -15,6 +15,7 @@ export default function Login() {
 
   return (
     <View style={{ ...styles.container, width: "100%" }}>
+      <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
       <View style={styles.container}>
         <Image source={logo} style={styles.image} />
 
@@ -60,7 +61,7 @@ export default function Login() {
               data.json().then((data) => {
                 AsyncStorage.setItem("token", data.token);
                 router.push("screens/Feed?logado=true");
-              })
+              });
             });
           }}
         ></CTextButton>

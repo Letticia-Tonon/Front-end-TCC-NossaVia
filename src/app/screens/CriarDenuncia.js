@@ -7,6 +7,7 @@ import {
   Dimensions,
   Pressable,
   Alert,
+  StatusBar,
 } from "react-native";
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
@@ -85,26 +86,30 @@ export default function CriarDenuncia() {
 
     const imageListBase64 = imageList.map((image) => image.base64);
 
-    post("denuncia", {
-      descricao: descricao,
-      categoria: {
-        "Irregularidades no Asfalto": "via",
-        "Irregularidades na Calçada": "calcada",
-        "Falta de Sinalização": "iluminacao",
-        "Lixo na Via": "lixo",
-        "Veículo Abandonado": "carro",
-        "Falta de Iluminação": "sinalizacao",
-        Outros: "outros",
-      }[categoria],
-      data: new Date().toISOString().replace("T", " "),
-      endereco: endereco,
-      numero_endereco: numero,
-      ponto_referencia: complemento,
-      cep: cep,
-      latitude: latitude.toString(),
-      longitude: longitude.toString(),
-      fotos: imageListBase64,
-    }, true)
+    post(
+      "denuncia",
+      {
+        descricao: descricao,
+        categoria: {
+          "Irregularidades no Asfalto": "via",
+          "Irregularidades na Calçada": "calcada",
+          "Falta de Sinalização": "iluminacao",
+          "Lixo na Via": "lixo",
+          "Veículo Abandonado": "carro",
+          "Falta de Iluminação": "sinalizacao",
+          Outros: "outros",
+        }[categoria],
+        data: new Date().toISOString().replace("T", " "),
+        endereco: endereco,
+        numero_endereco: numero,
+        ponto_referencia: complemento,
+        cep: cep,
+        latitude: latitude.toString(),
+        longitude: longitude.toString(),
+        fotos: imageListBase64,
+      },
+      true
+    )
       .then((data) => {
         if (data.status !== 201) {
           Alert.alert("Erro", "Erro ao criar denúncia");
@@ -149,6 +154,7 @@ export default function CriarDenuncia() {
   return (
     <ActionSheetProvider>
       <ScrollView>
+        <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
             <CHeader titulo={"Criação de Denúncia"} />
