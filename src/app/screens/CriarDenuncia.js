@@ -45,14 +45,17 @@ export default function CriarDenuncia() {
 
   const [categoriaInvalida, setCategoriaInvalida] = useState(false);
   const [descricaoInvalida, setDescricaoInvalida] = useState(false);
+  const [enderecoInvalido, setEnderecoInvalido] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setCategoriaInvalida(false);
     setDescricaoInvalida(false);
+    setEnderecoInvalido(false);
     let imagemTemp = false;
     let categoriaTemp = false;
     let descricaoTemp = false;
     let localTemp = false;
+    let enderecoTemp = false;
 
     if (imageList.length === 0) {
       imagemTemp = true;
@@ -65,6 +68,11 @@ export default function CriarDenuncia() {
     if (!categoria) {
       categoriaTemp = true;
       setCategoriaInvalida(true);
+    }
+
+    if (!endereco) {
+      enderecoTemp = true;
+      setEnderecoInvalido(true);
     }
 
     if (!descricao) {
@@ -80,13 +88,19 @@ export default function CriarDenuncia() {
       );
     }
 
-    if (imagemTemp || categoriaTemp || descricaoTemp || localTemp) {
+    if (
+      imagemTemp ||
+      categoriaTemp ||
+      descricaoTemp ||
+      localTemp ||
+      enderecoTemp
+    ) {
       return;
     }
 
     const imageListBase64 = imageList.map((image) => image.base64);
 
-    post(
+    await post(
       "denuncia",
       {
         descricao: descricao,
@@ -317,6 +331,7 @@ export default function CriarDenuncia() {
               placeholder="Endereço"
               state={endereco}
               setState={setEndereco}
+              errorMessage="Campo obrigatório"
             ></CTextInput>
             <CTextInput
               placeholder="Número Aproximado"
