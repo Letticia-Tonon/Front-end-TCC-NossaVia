@@ -53,7 +53,8 @@ const CHeader = observer((props) => {
         {
           text: "OK",
           onPress: async () => {
-            await AsyncStorage.setItem("token", "");
+            userContext.set(null);
+            AsyncStorage.setItem("token", "");
             router.push("screens/Feed?logado=false");
           },
         },
@@ -68,28 +69,45 @@ const CHeader = observer((props) => {
     <View>
       <View style={styles.headerContainer}>
         <View style={styles.headerContent}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.iconContainer}
-          >
-            <FontAwesomeIcon icon={faArrowLeft} size={28} color="#000" />
-          </TouchableOpacity>
+          {props.goBack && (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.iconContainer}
+            >
+              <FontAwesomeIcon icon={faArrowLeft} size={28} color="#000" />
+            </TouchableOpacity>
+          )}
 
-          <Text style={styles.title}>{props.titulo}</Text>
+          {props.logado ? (
+            <Text style={styles.title}>{props.titulo}</Text>
+          ) : (
+            <Text style={styles.title}></Text>
+          )}
 
-          <Pressable
-            onPress={abrirMenu}
-            style={[styles.iconContainer, styles.centerIcon]}
-          >
-            {userContext.user && userContext.user.foto ? (
-              <Image
-                source={{ uri: userContext.user.foto }}
-                style={{ width: 35, height: 35, borderRadius: 35 }}
-              />
-            ) : (
-              <FontAwesomeIcon icon={faCircleUser} size={35} color="#000" />
-            )}
-          </Pressable>
+          {props.logado ? (
+            <Pressable
+              onPress={abrirMenu}
+              style={[styles.iconContainer, styles.centerIcon]}
+            >
+              {userContext.user && userContext.user.foto ? (
+                <Image
+                  source={{ uri: userContext.user.foto }}
+                  style={{ width: 35, height: 35, borderRadius: 35 }}
+                />
+              ) : (
+                <FontAwesomeIcon icon={faCircleUser} size={35} color="#000" />
+              )}
+            </Pressable>
+          ) : (
+            <Pressable
+              onPress={() => {
+                router.push("screens/Login");
+              }}
+              style={[styles.iconContainer, styles.centerIcon]}
+            >
+              <Text style={styles.title}>Entrar</Text>
+            </Pressable>
+          )}
         </View>
         <View style={styles.topLine} />
       </View>

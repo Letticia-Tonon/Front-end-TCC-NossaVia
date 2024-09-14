@@ -157,7 +157,7 @@ export default function CriarDenuncia() {
         <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
-            <CHeader titulo={"Criação de Denúncia"} />
+            <CHeader titulo={"Criação de Denúncia"} logado={true} goBack={true} />
             {imageList.length === 0 ? (
               <Pressable style={styles.adicionarImagem} onPress={pickImage}>
                 <View

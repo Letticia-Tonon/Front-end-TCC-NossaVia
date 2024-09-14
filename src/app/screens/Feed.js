@@ -1,31 +1,21 @@
-import { StyleSheet, View, StatusBar } from "react-native";
+import { StyleSheet, View, StatusBar, Alert } from "react-native";
 import { router } from "expo-router";
 import CTextButton from "../components/CTextButton";
 import { useLocalSearchParams } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { observer } from "mobx-react-lite";
-import userContext from "../utils/context";
+import CHeader from "../components/CHeader";
 
 const Feed = observer(() => {
   const { logado } = useLocalSearchParams();
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
+      <CHeader
+        titulo={"Feed"}
+        logado={logado === "true"}
+        goBack={logado === "true"}
+      />
       <View style={styles.feed}>
-        {logado === "false" && (
-          <CTextButton
-            buttonStyle={{
-              backgroundColor: "#FF7C33",
-            }}
-            textStyle={{
-              color: "#FFFFFF",
-            }}
-            text="Fazer Login"
-            callback={() => {
-              router.push("screens/Login");
-            }}
-          ></CTextButton>
-        )}
         <CTextButton
           buttonStyle={{
             backgroundColor: "#FF7C33",
@@ -35,25 +25,30 @@ const Feed = observer(() => {
           }}
           text="Criar Denúncia"
           callback={() => {
+            if (logado === "false") {
+              Alert.alert(
+                "Atenção!",
+                "Para criar uma denúncia você precisa entrar na sua conta.",
+                [
+                  {
+                    text: "Cancelar",
+                  },
+                  {
+                    text: "Entrar",
+                    onPress: async () => {
+                      router.push("screens/Login");
+                    },
+                  },
+                ],
+                {
+                  cancelable: true,
+                }
+              );
+              return;
+            }
             router.push("screens/CriarDenuncia");
           }}
         ></CTextButton>
-        {logado === "true" && (
-          <CTextButton
-            buttonStyle={{
-              backgroundColor: "#FF7C33",
-            }}
-            textStyle={{
-              color: "#FFFFFF",
-            }}
-            text="Deslogar"
-            callback={() => {
-              AsyncStorage.setItem("token", "");
-              userContext.set(null);
-              router.push("screens/Feed?logado=false");
-            }}
-          ></CTextButton>
-        )}
       </View>
     </View>
   );

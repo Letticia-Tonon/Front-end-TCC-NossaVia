@@ -7,8 +7,10 @@ import logo from "../../../assets/Logo_Fe_VF.png";
 import { useState } from "react";
 import { post } from "../utils/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { observer } from "mobx-react-lite";
+import userContext from "../utils/context";
 
-export default function Login() {
+const Login = observer(() => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [senhaIncorreta, setSenhaIncorreta] = useState(false);
@@ -59,6 +61,7 @@ export default function Login() {
                 return;
               }
               data.json().then((data) => {
+                userContext.set(data);
                 AsyncStorage.setItem("token", data.token);
                 router.push("screens/Feed?logado=true");
               });
@@ -80,7 +83,7 @@ export default function Login() {
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -110,3 +113,5 @@ const styles = StyleSheet.create({
     resizeMode: "contain", // Mantém a proporção da imagem
   },
 });
+
+export default Login;
