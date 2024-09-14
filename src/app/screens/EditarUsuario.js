@@ -251,6 +251,12 @@ const EditarUsuario = observer(() => {
               text="Salvar"
               callback={handleSubmit}
             />
+
+          <CTextButton
+           buttonStyle={{ backgroundColor: "#FFFFFF",borderWidth:2, borderColor:"#ff0022" }}
+           textStyle={{ color: "#ff0022" }}
+           text="Excluir conta">
+          </CTextButton>
           </View>
         </View>
       </ScrollView>
