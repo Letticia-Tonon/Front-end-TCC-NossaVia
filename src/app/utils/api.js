@@ -46,3 +46,17 @@ export const put = async (endpoint, data, authorization = false) => {
   });
   return response;
 };
+
+export const del = async (endpoint, authorization = false) => {
+  let token;
+  if (authorization) {
+    token = await AsyncStorage.getItem("token");
+  }
+  const response = await fetch(`${URL}/${endpoint}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: authorization ? `Bearer ${token}` : "",
+    },
+  });
+  return response;
+};

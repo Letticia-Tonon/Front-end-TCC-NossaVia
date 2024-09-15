@@ -23,10 +23,50 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
-import { put } from "../utils/api";
+import { put, del } from "../utils/api"; 
 import { validarTelefone, validarCep, validarData } from "../utils/validators";
 import { observer } from "mobx-react-lite";
 import userContext from "../utils/context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import CHeader from "../components/CHeader";
+
+
+
+const deletar = async () => {
+  Alert.alert(
+    "Atenção!",
+    "Ao confirmar, sua conta será permanentemente excluída.",
+    [
+      {
+        text: "Cancelar",
+      },
+      {
+        text: "OK",
+        onPress: async () => {
+          try {
+            const response = await del("usuario", true);  
+
+            if (response.status === 200) {
+              Alert.alert("Sucesso", "Conta deletada com sucesso.");
+              userContext.set(null);
+              await AsyncStorage.removeItem("token");
+              router.push("screens/Feed?logado=false"); // Redireciona para o feed
+            } else if (response.status === 404) {
+              Alert.alert("Erro", "Usuário não encontrado.");
+            } else {
+              Alert.alert("Erro", "Ocorreu um erro desconhecido.");
+            }
+          } catch (error) {
+            Alert.alert("Erro", "Ocorreu um erro ao tentar deletar a conta.");
+          }
+        },
+      },
+    ],
+    {
+      cancelable: true,
+    }
+  );
+};
 
 const EditarUsuario = observer(() => {
   const [nome, setNome] = useState(userContext.user.nome);
@@ -252,11 +292,12 @@ const EditarUsuario = observer(() => {
               callback={handleSubmit}
             />
 
-          <CTextButton
-           buttonStyle={{ backgroundColor: "#FFFFFF",borderWidth:2, borderColor:"#ff0022" }}
-           textStyle={{ color: "#ff0022" }}
-           text="Excluir conta">
-          </CTextButton>
+            <CTextButton
+              buttonStyle={{ backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: "#ff0022" }}
+              textStyle={{ color: "#ff0022" }}
+              text="Excluir conta"
+              callback={deletar}
+            />
           </View>
         </View>
       </ScrollView>
