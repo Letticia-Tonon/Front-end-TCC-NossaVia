@@ -28,7 +28,6 @@ import { validarTelefone, validarCep, validarData } from "../utils/validators";
 import { observer } from "mobx-react-lite";
 import userContext from "../utils/context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import CHeader from "../components/CHeader";
 
 
 
