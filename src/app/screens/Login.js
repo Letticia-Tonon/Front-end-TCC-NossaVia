@@ -105,12 +105,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 300, // Largura da imagem
-    height: 200, // Altura da imagem
-    marginBottom: 10, // Espaço abaixo da imagem
+    width: 300, 
+    height: 200, 
+    marginBottom: 10, 
     marginLeft: 18,
     marginTop: -30,
-    resizeMode: "contain", // Mantém a proporção da imagem
+    resizeMode: "contain",
   },
 });
 

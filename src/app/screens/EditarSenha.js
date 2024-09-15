@@ -6,13 +6,8 @@ import {
   Alert,
   StatusBar,
 } from "react-native";
-import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
 import CTextButton from "../components/CTextButton";
-import CActionSheet from "../components/CActionSheet";
-import { Link } from "expo-router";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
 import { useState } from "react";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { validarSenha } from "../utils/validators";
@@ -85,58 +80,49 @@ export default function EditarSenha() {
 
   return (
     <ActionSheetProvider>
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollView}>
         <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
-          <CHeader
-              titulo={"Alter"}
+            <CHeader
+              titulo={"Editar Senha"}
               logado={true}
               goBack={true}
-              showIcon={true}
+              showIcon={false}
             />
+            <View style={styles.innerContainer}>
+              <CPassInput
+                placeholder="Senha atual"
+                state={senhaVelha}
+                setState={setSenhaVelha}
+                error={!senhaCorreta}
+                errorMessage="Senha incorreta"
+              />
 
-            <Text
-              style={{
-                fontSize: 28,
-                fontWeight: "bold",
-                marginBottom: 30,
-                marginTop: 20,
-              }}
-            >
-              Editar senha
-            </Text>
+              <CPassInput
+                placeholder="Nova senha"
+                state={senhaNova}
+                setState={setSenhaNova}
+                error={senhaInvalida}
+                errorMessage="Senha inválida"
+              />
 
-            <CPassInput
-              placeholder="Senha atual"
-              state={senhaVelha}
-              setState={setSenhaVelha}
-              error={!senhaCorreta}
-              errorMessage="Senha incorreta"
-            />
+              {senhaInvalida && (
+                <Text style={{ color: "#ff0022" }}>
+                  A senha deve conter no mínimo 8 caracteres, uma letra maiúscula,
+                  uma letra minúscula, um número e um caractere especial
+                </Text>
+              )}
 
-            <CPassInput
-              placeholder="Nova senha"
-              state={senhaNova}
-              setState={setSenhaNova}
-              error={senhaInvalida}
-              errorMessage="Senha inválida"
-            />
+              <CPassInput
+                placeholder="Confirme sua nova senha"
+                state={confirmarSenhaNova}
+                setState={setConfirmarSenhaNova}
+                error={senhaNova !== confirmarSenhaNova}
+                errorMessage="As senhas devem ser iguais"
+              />
 
-            {senhaInvalida && (
-              <Text style={{ color: "#ff0022" }}>
-                A senha deve conter no mínimo 8 caracteres, uma letra maiúscula,
-                uma letra minúscula, um número e um caractere especial
-              </Text>
-            )}
-
-            <CPassInput
-              placeholder="Confirme sua nova senha"
-              state={confirmarSenhaNova}
-              setState={setConfirmarSenhaNova}
-              error={senhaNova !== confirmarSenhaNova}
-              errorMessage="As senhas devem ser iguais"
-            />
+              <View style={{ padding: 20 }}></View>
 
             <CTextButton
               buttonStyle={{
@@ -148,6 +134,7 @@ export default function EditarSenha() {
               text="Alterar senha"
               callback={handleSubmit}
             />
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -156,17 +143,22 @@ export default function EditarSenha() {
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     width: "90%",
-    paddingTop: 20,
-    paddingBottom: 10,
+    paddingBottom: 5,
   },
-  seta: {
-    position: "absolute",
-    top: -10,
-    left: 1,
+  innerContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    height: "70%",
   },
 });

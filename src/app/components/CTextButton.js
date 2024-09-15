@@ -27,7 +27,7 @@ export default function CTextButton(props) {
       disabled={loading}
     >
       {loading ? (
-        <ActivityIndicator size="small" color="#FFFFFF" /> // Indicador de carregamento
+        <ActivityIndicator size="small" color="#FFFFFF" /> 
       ) : (
         <Text
           style={
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   disabledButton: {
-    opacity: 0.7, // Estilo de desativado quando em loading
+    opacity: 0.7, 
   },
   text: {
     fontSize: 20,
