@@ -26,6 +26,7 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
 import * as ImagePicker from "expo-image-picker";
 import CTextBox from "../components/CTextBox";
 import { post } from "../utils/api";
+import { TextInputMask } from "react-native-masked-text";
 
 const { width } = Dimensions.get("window");
 
@@ -327,11 +328,17 @@ export default function CriarDenuncia() {
               {marker && <Marker coordinate={marker} />}
             </MapView>
 
-            <CTextInput
+            <TextInputMask
+              type={'custom'}
+              options={{
+                mask: '99999-999'
+              }}
+              value={cep}
+              onChangeText={text => setCep(text)}
               placeholder="CEP"
-              state={cep}
-              setState={setCep}
-            ></CTextInput>
+              style={{ ...styles.input, borderColor: enderecoInvalido ? 'red' : '#ccc' }}
+            />
+
             <CTextInput
               placeholder="Endereço"
               state={endereco}
