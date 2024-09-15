@@ -29,42 +29,7 @@ import { observer } from "mobx-react-lite";
 import userContext from "../utils/context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { cepMask, phoneMask } from "../utils/masks";
-
-const deletar = async () => {
-  Alert.alert(
-    "Atenção!",
-    "Ao confirmar, sua conta será permanentemente excluída.",
-    [
-      {
-        text: "Cancelar",
-      },
-      {
-        text: "OK",
-        onPress: async () => {
-          try {
-            const response = await del("usuario", true);
-
-            if (response.status === 200) {
-              Alert.alert("Sucesso", "Conta deletada com sucesso.");
-              userContext.set(null);
-              await AsyncStorage.removeItem("token");
-              router.push("screens/Feed?logado=false"); // Redireciona para o feed
-            } else if (response.status === 404) {
-              Alert.alert("Erro", "Usuário não encontrado.");
-            } else {
-              Alert.alert("Erro", "Ocorreu um erro desconhecido.");
-            }
-          } catch (error) {
-            Alert.alert("Erro", "Ocorreu um erro ao tentar deletar a conta.");
-          }
-        },
-      },
-    ],
-    {
-      cancelable: true,
-    }
-  );
-};
+import { router } from "expo-router";
 
 const EditarUsuario = observer(() => {
   const [nome, setNome] = useState(userContext.user.nome);
@@ -93,6 +58,41 @@ const EditarUsuario = observer(() => {
   const [dataInvalida, setDataInvalida] = useState(false);
   const [sexoInvalido, setSexoInvalido] = useState(false);
   const [enderecoInvalido, setEnderecoInvalido] = useState(false);
+
+  const deletar = async () => {
+    Alert.alert(
+      "Atenção!",
+      "Ao confirmar, sua conta será permanentemente excluída.",
+      [
+        {
+          text: "Cancelar",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            try {
+              const response = await del("usuario", true);
+              if (response.status === 200) {
+                Alert.alert("Sucesso", "Conta excluida.");
+                AsyncStorage.setItem("token", "");
+                router.push("screens/Feed?logado=false");
+                userContext.set(null);
+              } else if (response.status === 404) {
+                Alert.alert("Erro", "Usuário não encontrado.");
+              } else {
+                Alert.alert("Erro", "Ocorreu um erro desconhecido.");
+              }
+            } catch (error) {
+              Alert.alert("Erro", "Ocorreu um erro ao tentar excluir a conta.");
+            }
+          },
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
+  };
 
   const handleSubmit = async () => {
     setNomeInvalido(false);
@@ -335,6 +335,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "90%",
+    paddingBottom: 5,
   },
   seta: {
     position: "absolute",
