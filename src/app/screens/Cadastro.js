@@ -1,10 +1,12 @@
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Text,
-  Alert,
-  StatusBar,
+import { useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
+import { 
+  StyleSheet, 
+  View, 
+  ScrollView, 
+  Text, 
+  Alert, 
+  StatusBar, 
 } from "react-native";
 import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
@@ -17,12 +19,12 @@ import { useState } from "react";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import CDatePicker from "../components/CDatePicker";
 import {
-  validarEmail,
-  validarSenha,
-  validarTelefone,
-  validarCep,
-  validarData,
-} from "../utils/validators";
+   validarEmail,
+    validarSenha,
+     validarTelefone,
+      validarCep,
+       validarData, 
+      } from "../utils/validators";
 import { post } from "../utils/api";
 
 export default function Cadastro() {
@@ -138,6 +140,7 @@ export default function Cadastro() {
       .then((data) => {
         if (!data) return;
         console.log(data);
+        router.push("screens/Login"); 
       });
   };
 
