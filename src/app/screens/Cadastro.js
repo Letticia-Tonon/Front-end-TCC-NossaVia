@@ -1,12 +1,12 @@
 import { useLocalSearchParams } from "expo-router";
 import { router } from "expo-router";
-import { 
-  StyleSheet, 
-  View, 
-  ScrollView, 
-  Text, 
-  Alert, 
-  StatusBar, 
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  Alert,
+  StatusBar,
 } from "react-native";
 import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
@@ -19,13 +19,14 @@ import { useState } from "react";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import CDatePicker from "../components/CDatePicker";
 import {
-   validarEmail,
-    validarSenha,
-     validarTelefone,
-      validarCep,
-       validarData, 
-      } from "../utils/validators";
+  validarEmail,
+  validarSenha,
+  validarTelefone,
+  validarCep,
+  validarData,
+} from "../utils/validators";
 import { post } from "../utils/api";
+import { cepMask, phoneMask } from "../utils/masks";
 
 export default function Cadastro() {
   const [nome, setNome] = useState("");
@@ -47,6 +48,7 @@ export default function Cadastro() {
   const [dataInvalida, setDataInvalida] = useState(false);
   const [sexoInvalido, setSexoInvalido] = useState(false);
   const [telefoneInvalido, setTelefoneInvalido] = useState(false);
+  const [enderecoInvalido, setEnderecoInvalido] = useState(false);
 
   const handleSubmit = async () => {
     setNomeInvalido(false);
@@ -56,6 +58,7 @@ export default function Cadastro() {
     setDataInvalida(false);
     setSexoInvalido(false);
     setTelefoneInvalido(false);
+    setEnderecoInvalido(false);
     let nomeTemp = false;
     let emailTemp = false;
     let senhaTemp = false;
@@ -63,6 +66,7 @@ export default function Cadastro() {
     let dataTemp = false;
     let sexoTemp = false;
     let telefoneTemp = false;
+    let enderecoTemp = false;
 
     if (!nome) {
       nomeTemp = true;
@@ -99,6 +103,11 @@ export default function Cadastro() {
       setSexoInvalido(true);
     }
 
+    if (!endereco) {
+      enderecoTemp = true;
+      setEnderecoInvalido(true);
+    }
+
     if (
       nomeTemp ||
       emailTemp ||
@@ -106,7 +115,8 @@ export default function Cadastro() {
       cepTemp ||
       dataTemp ||
       sexoTemp ||
-      telefoneTemp
+      telefoneTemp ||
+      enderecoTemp
     ) {
       return;
     }
@@ -140,7 +150,7 @@ export default function Cadastro() {
       .then((data) => {
         if (!data) return;
         console.log(data);
-        router.push("screens/Login"); 
+        router.push("screens/Login");
       });
   };
 
@@ -206,11 +216,14 @@ export default function Cadastro() {
             />
 
             <CTextInput
-              placeholder="Telefone Ex.: 00 00000-0000"
+              placeholder="Telefone Ex.: (00) 00000-0000"
               state={telefone}
               setState={setTelefone}
               error={telefoneInvalido}
               errorMessage="Telefone inválido"
+              mask={phoneMask}
+              keyboardType="numeric"
+              maxLength={15}
             />
 
             <CActionSheet
@@ -236,12 +249,17 @@ export default function Cadastro() {
               setState={setCep}
               error={cepInvalido}
               errorMessage="CEP inválido"
+              mask={cepMask}
+              maxLength={9}
+              keyboardType="numeric"
             />
 
             <CTextInput
               placeholder="Endereço"
               state={endereco}
               setState={setEndereco}
+              error={enderecoInvalido}
+              errorMessage="Campo obrigatório"
             ></CTextInput>
 
             <CTextInput

@@ -21,7 +21,9 @@ export default function CTextInput(props) {
           }
         }}
         editable={!props.disabled}
-        value={props.state}
+        value={props.mask ? props.mask(props.state) : props.state}
+        maxLength={props.maxLength}
+        keyboardType={props.keyboardType ? props.keyboardType : "default"}
       ></TextInput>
       {props.error && props.errorMessage && (
         <Text style={{ color: "#ff0022" }}>{props.errorMessage}</Text>

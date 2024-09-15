@@ -23,13 +23,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
-import { put, del } from "../utils/api"; 
+import { put, del } from "../utils/api";
 import { validarTelefone, validarCep, validarData } from "../utils/validators";
 import { observer } from "mobx-react-lite";
 import userContext from "../utils/context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-
+import { cepMask, phoneMask } from "../utils/masks";
 
 const deletar = async () => {
   Alert.alert(
@@ -43,7 +42,7 @@ const deletar = async () => {
         text: "OK",
         onPress: async () => {
           try {
-            const response = await del("usuario", true);  
+            const response = await del("usuario", true);
 
             if (response.status === 200) {
               Alert.alert("Sucesso", "Conta deletada com sucesso.");
@@ -93,6 +92,7 @@ const EditarUsuario = observer(() => {
   const [cepInvalido, setCepInvalido] = useState(false);
   const [dataInvalida, setDataInvalida] = useState(false);
   const [sexoInvalido, setSexoInvalido] = useState(false);
+  const [enderecoInvalido, setEnderecoInvalido] = useState(false);
 
   const handleSubmit = async () => {
     setNomeInvalido(false);
@@ -100,19 +100,28 @@ const EditarUsuario = observer(() => {
     setCepInvalido(false);
     setDataInvalida(false);
     setSexoInvalido(false);
-
+    setEnderecoInvalido(false);
     let nomeTemp = !nome;
     let telefoneTemp = !validarTelefone(telefone);
     let cepTemp = !validarCep(cep);
     let dataTemp = !validarData(nascimento);
     let sexoTemp = !sexo;
+    let enderecoTemp = !endereco;
 
-    if (nomeTemp || telefoneTemp || cepTemp || dataTemp || sexoTemp) {
+    if (
+      nomeTemp ||
+      telefoneTemp ||
+      cepTemp ||
+      dataTemp ||
+      sexoTemp ||
+      enderecoTemp
+    ) {
       setNomeInvalido(nomeTemp);
       setTelefoneInvalido(telefoneTemp);
       setCepInvalido(cepTemp);
       setDataInvalida(dataTemp);
       setSexoInvalido(sexoTemp);
+      setEnderecoInvalido(enderecoTemp);
       return;
     }
 
@@ -234,11 +243,14 @@ const EditarUsuario = observer(() => {
             />
 
             <CTextInput
-              placeholder="Telefone Ex.: 00 00000-0000"
+              placeholder="Telefone Ex.: (00) 00000-0000"
               state={telefone}
               setState={setTelefone}
               error={telefoneInvalido}
               errorMessage="Telefone inválido"
+              mask={phoneMask}
+              keyboardType="numeric"
+              maxLength={15}
             />
 
             <CActionSheet
@@ -264,12 +276,17 @@ const EditarUsuario = observer(() => {
               setState={setCep}
               error={cepInvalido}
               errorMessage="CEP inválido"
+              mask={cepMask}
+              maxLength={9}
+              keyboardType="numeric"
             />
 
             <CTextInput
               placeholder="Endereço"
               state={endereco}
               setState={setEndereco}
+              error={enderecoInvalido}
+              errorMessage="Campo obrigatório"
             />
 
             <CTextInput
@@ -292,7 +309,11 @@ const EditarUsuario = observer(() => {
             />
 
             <CTextButton
-              buttonStyle={{ backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: "#ff0022" }}
+              buttonStyle={{
+                backgroundColor: "#FFFFFF",
+                borderWidth: 2,
+                borderColor: "#ff0022",
+              }}
               textStyle={{ color: "#ff0022" }}
               text="Excluir conta"
               callback={deletar}

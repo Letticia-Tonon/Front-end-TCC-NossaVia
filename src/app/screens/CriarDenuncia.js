@@ -26,7 +26,8 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
 import * as ImagePicker from "expo-image-picker";
 import CTextBox from "../components/CTextBox";
 import { post } from "../utils/api";
-import { TextInputMask } from "react-native-masked-text";
+import { cepMask } from "../utils/masks";
+import { validarCep } from "../utils/validators";
 
 const { width } = Dimensions.get("window");
 
@@ -47,16 +48,19 @@ export default function CriarDenuncia() {
   const [categoriaInvalida, setCategoriaInvalida] = useState(false);
   const [descricaoInvalida, setDescricaoInvalida] = useState(false);
   const [enderecoInvalido, setEnderecoInvalido] = useState(false);
+  const [cepInvalido, setCepInvalido] = useState(false);
 
   const handleSubmit = async () => {
     setCategoriaInvalida(false);
     setDescricaoInvalida(false);
     setEnderecoInvalido(false);
+    setCepInvalido(false);
     let imagemTemp = false;
     let categoriaTemp = false;
     let descricaoTemp = false;
     let localTemp = false;
     let enderecoTemp = false;
+    let cepTemp = false;
 
     if (imageList.length === 0) {
       imagemTemp = true;
@@ -64,6 +68,11 @@ export default function CriarDenuncia() {
         "Atenção!",
         "Adicione pelo menos uma imagem para prosseguir com a criação da sua denúncia."
       );
+    }
+
+    if (!validarCep(cep)) {
+      cepTemp = true;
+      setCepInvalido(true);
     }
 
     if (!categoria) {
@@ -94,7 +103,8 @@ export default function CriarDenuncia() {
       categoriaTemp ||
       descricaoTemp ||
       localTemp ||
-      enderecoTemp
+      enderecoTemp ||
+      cepTemp
     ) {
       return;
     }
@@ -328,28 +338,31 @@ export default function CriarDenuncia() {
               {marker && <Marker coordinate={marker} />}
             </MapView>
 
-            <TextInputMask
-              type={'custom'}
-              options={{
-                mask: '99999-999'
-              }}
-              value={cep}
-              onChangeText={text => setCep(text)}
+            <CTextInput
               placeholder="CEP"
-              style={{ ...styles.input, borderColor: enderecoInvalido ? 'red' : '#ccc' }}
+              state={cep}
+              setState={setCep}
+              mask={cepMask}
+              error={cepInvalido}
+              errorMessage="Campo obrigatório"
+              maxLength={9}
+              keyboardType="numeric"
             />
 
             <CTextInput
               placeholder="Endereço"
               state={endereco}
               setState={setEndereco}
+              error={enderecoInvalido}
               errorMessage="Campo obrigatório"
             ></CTextInput>
+
             <CTextInput
               placeholder="Número Aproximado"
               state={numero}
               setState={setNumero}
             ></CTextInput>
+
             <CTextInput
               placeholder="Ponto de Referência"
               state={complemento}

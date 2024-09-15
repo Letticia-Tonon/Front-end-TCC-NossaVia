@@ -15,12 +15,12 @@ export const validarSenha = (password) => {
 };
 
 export const validarTelefone = (telefone) => {
-  const re = /^\d{11}$/;
+  const re = /^\(\d{2}\)\s\d{5}\-\d{4}$/;
   return re.test(telefone);
 };
 
 export const validarCep = (cep) => {
-  const re = /^\d{8}$/;
+  const re = /^\d{5}\-\d{3}$/;
   return re.test(cep);
 };
 
