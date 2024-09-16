@@ -50,6 +50,7 @@ export default function Cadastro() {
   const [sexoInvalido, setSexoInvalido] = useState(false);
   const [telefoneInvalido, setTelefoneInvalido] = useState(false);
   const [enderecoInvalido, setEnderecoInvalido] = useState(false);
+  const [confirmarSenhaInvalida, setConfirmarSenhaInvalida] = useState(false);
 
   const handleSubmit = async () => {
     setNomeInvalido(false);
@@ -60,6 +61,7 @@ export default function Cadastro() {
     setSexoInvalido(false);
     setTelefoneInvalido(false);
     setEnderecoInvalido(false);
+    setConfirmarSenhaInvalida(false);
     let nomeTemp = false;
     let emailTemp = false;
     let senhaTemp = false;
@@ -68,6 +70,7 @@ export default function Cadastro() {
     let sexoTemp = false;
     let telefoneTemp = false;
     let enderecoTemp = false;
+    let confirmarSenhaTemp = false;
 
     if (!nome) {
       nomeTemp = true;
@@ -109,6 +112,11 @@ export default function Cadastro() {
       setEnderecoInvalido(true);
     }
 
+    if (senha !== confirmarSenha) {
+      confirmarSenhaTemp = true;
+      setConfirmarSenhaInvalida(true);
+    }
+
     if (
       nomeTemp ||
       emailTemp ||
@@ -117,7 +125,8 @@ export default function Cadastro() {
       dataTemp ||
       sexoTemp ||
       telefoneTemp ||
-      enderecoTemp
+      enderecoTemp ||
+      confirmarSenhaTemp
     ) {
       return;
     }
@@ -212,7 +221,7 @@ export default function Cadastro() {
               placeholder="Confirme sua senha"
               state={confirmarSenha}
               setState={setConfirmarSenha}
-              error={senha !== confirmarSenha}
+              error={senha !== confirmarSenha || confirmarSenhaInvalida}
               errorMessage="As senhas devem ser iguais"
             />
 

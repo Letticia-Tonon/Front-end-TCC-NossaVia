@@ -22,19 +22,36 @@ export default function EditarSenha() {
   const [senhaNova, setSenhaNova] = useState("");
   const [confirmarSenhaNova, setConfirmarSenhaNova] = useState("");
 
-  const [senhaInvalida, setSenhaInvalida] = useState(false);
-  const [senhaCorreta, setSenhaCorreta] = useState(true);
+  const [senhaAtualInvalida, setSenhaAtualInvalida] = useState(false);
+  const [senhaNovaInvalida, setSenhaNovaInvalida] = useState(false);
+  const [confirmarSenhaInvalida, setConfirmarSenhaInvalida] = useState(false);
 
   const handleSubmit = async () => {
-    setSenhaInvalida(false);
-    setSenhaCorreta(true);
+    setSenhaNovaInvalida(false);
+    setConfirmarSenhaInvalida(false);
+    setSenhaAtualInvalida(false);
+    let senhaTemp = false;
+    let confirmarSenhaTemp = false;
+    let senhaAtualTemp = false;
+
+    if (!senhaAtual) {
+      senhaAtualTemp = true;
+      setSenhaAtualInvalida(true);
+    }
 
     if (
       !Object.values(validarSenha(senhaNova)).every((item) => item === true)
     ) {
-      setSenhaInvalida(true);
-      return;
+      senhaTemp = true;
+      setSenhaNovaInvalida(true);
     }
+
+    if (senhaNova !== confirmarSenhaNova) {
+      confirmarSenhaTemp = true;
+      setConfirmarSenhaInvalida(true);
+    }
+
+    if (senhaAtualTemp || senhaTemp || confirmarSenhaTemp) return;
 
     alterar();
   };
@@ -88,19 +105,19 @@ export default function EditarSenha() {
                 placeholder="Senha atual"
                 state={senhaAtual}
                 setState={setSenhaAtual}
-                error={!senhaCorreta}
-                errorMessage="Senha incorreta"
+                error={senhaAtualInvalida}
+                errorMessage="Campo obrigatório"
               />
 
               <CPassInput
                 placeholder="Nova senha"
                 state={senhaNova}
                 setState={setSenhaNova}
-                error={senhaInvalida}
+                error={senhaNovaInvalida}
                 errorMessage="Senha inválida"
               />
 
-              {senhaInvalida && (
+              {senhaNovaInvalida && (
                 <Text style={{ color: "#ff0022" }}>
                   A senha deve conter no mínimo 8 caracteres, uma letra
                   maiúscula, uma letra minúscula, um número e um caractere
@@ -112,7 +129,9 @@ export default function EditarSenha() {
                 placeholder="Confirme sua nova senha"
                 state={confirmarSenhaNova}
                 setState={setConfirmarSenhaNova}
-                error={senhaNova !== confirmarSenhaNova}
+                error={
+                  senhaNova !== confirmarSenhaNova || confirmarSenhaInvalida
+                }
                 errorMessage="As senhas devem ser iguais"
               />
 
