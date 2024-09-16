@@ -12,14 +12,13 @@ import { useState } from "react";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { validarSenha } from "../utils/validators";
 import { post } from "../utils/api";
-import AsyncStorage from "@react-native-async-storage/async-storage"; 
 import { router, useLocalSearchParams } from "expo-router";
 import CHeader from "../components/CHeader";
 
 export default function EditarSenha() {
   const params = useLocalSearchParams();
 
-  const [senhaVelha, setSenhaVelha] = useState(""); 
+  const [senhaAtual, setSenhaAtual] = useState(""); 
   const [senhaNova, setSenhaNova] = useState("");
   const [confirmarSenhaNova, setConfirmarSenhaNova] = useState("");
   
@@ -46,7 +45,6 @@ export default function EditarSenha() {
   };
 
   const alterar = async () => {
-    const token = await AsyncStorage.getItem("token");
     Alert.alert(
       "Atenção!",
       "Ao confirmar, sua senha será alterada e você precisará utilizá-la para o próximo acesso",
@@ -57,17 +55,14 @@ export default function EditarSenha() {
         {
           text: "OK",
           onPress: async () => {
-            const payload = { senhaAtual: senhaVelha, senhaNova };
-            const response = await post("usuario/alterarSenha", payload, true, {
-              Authorization: `Bearer ${token}`,
-            });
-
+            const payload = { senhaAtual: senhaAtual, senhaNova: senhaNova };
+            const response = await post("alterar-senha", payload, true);
             if (response.status === 200) {
-              await AsyncStorage.setItem("token", "");
-              router.push("screens/Feed?logado=false");
+              router.push("screens/Feed?logado=true");
               Alert.alert("Sucesso", "Sua senha foi alterada com sucesso.");
             } else {
-              Alert.alert("Erro", response.data.msg || "Ocorreu um erro ao alterar sua senha.");
+              console.log(response);
+              Alert.alert("Erro", "Ocorreu um erro ao alterar sua senha.");
             }
           },
         },
@@ -93,8 +88,8 @@ export default function EditarSenha() {
             <View style={styles.innerContainer}>
               <CPassInput
                 placeholder="Senha atual"
-                state={senhaVelha}
-                setState={setSenhaVelha}
+                state={senhaAtual}
+                setState={setSenhaAtual}
                 error={!senhaCorreta}
                 errorMessage="Senha incorreta"
               />
