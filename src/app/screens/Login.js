@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
 import CTextButton from "../components/CTextButton";
-import logo from "../../../assets/Logo_Fe_VF.png";
+import logo from "../../../assets/logo.png";
 import { useState } from "react";
 import { post } from "../utils/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
