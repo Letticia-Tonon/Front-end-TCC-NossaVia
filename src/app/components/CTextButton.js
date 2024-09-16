@@ -1,17 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Pressable, Text, ActivityIndicator } from "react-native";
 
 export default function CTextButton(props) {
-  const [loading, setLoading] = useState(false);
-
-  const handlePress = async () => {
-    if (loading) return;
-    setLoading(true);
-    props.callback().finally(() => {
-      setLoading(false);
-    });
-  };
-
   return (
     <Pressable
       style={
@@ -19,15 +9,24 @@ export default function CTextButton(props) {
           ? {
               ...styles.button,
               ...props.buttonStyle,
-              ...(loading && styles.disabledButton),
+              ...(props.loading && styles.disabledButton),
             }
-          : { ...styles.button, ...(loading && styles.disabledButton) }
+          : { ...styles.button, ...(props.loading && styles.disabledButton) }
       }
-      onPress={handlePress}
-      disabled={loading}
+      onPress={() => {
+        if (props.callback) props.callback();
+      }}
+      disabled={props.loading}
     >
-      {loading ? (
-        <ActivityIndicator size="small" color="#FFFFFF" /> 
+      {props.loading ? (
+        <ActivityIndicator
+          size={35}
+          color={
+            props.textStyle && props.textStyle["color"]
+              ? props.textStyle["color"]
+              : "#FFF"
+          }
+        />
       ) : (
         <Text
           style={
@@ -58,7 +57,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   disabledButton: {
-    opacity: 0.7, 
+    opacity: 0.7,
   },
   text: {
     fontSize: 20,

@@ -32,6 +32,8 @@ import { validarCep } from "../utils/validators";
 const { width } = Dimensions.get("window");
 
 export default function CriarDenuncia() {
+  const [loading, setLoading] = useState(false);
+
   const [categoria, setCategoria] = useState("");
   const [location, setLocation] = useState(false);
   const [marker, setMarker] = useState(null);
@@ -137,10 +139,10 @@ export default function CriarDenuncia() {
     )
       .then((data) => {
         if (data.status !== 201) {
-          Alert.alert("Erro", "Erro ao criar denúncia");
+          Alert.alert("Ops!", "Ocorreu um erro inesperado ao criar a denúncia.");
           return data.json();
         }
-        Alert.alert("Sucesso", "Denúncia criada com sucesso");
+        Alert.alert("Sucesso", "Denúncia criada com sucesso.");
         return data.json();
       })
       .then((data) => {
@@ -377,7 +379,12 @@ export default function CriarDenuncia() {
                 color: "#FFFFFF",
               }}
               text="Criar Denúncia"
-              callback={handleSubmit}
+              loading={loading}
+              callback={() => {
+                if (loading) return;
+                setLoading(true);
+                handleSubmit().finally(() => setLoading(false));
+              }}
             ></CTextButton>
           </View>
         </View>

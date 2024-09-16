@@ -1,4 +1,3 @@
-import { useLocalSearchParams } from "expo-router";
 import { router } from "expo-router";
 import {
   StyleSheet,
@@ -29,6 +28,8 @@ import { post } from "../utils/api";
 import { cepMask, phoneMask } from "../utils/masks";
 
 export default function Cadastro() {
+  const [loading, setLoading] = useState(false);
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -141,10 +142,10 @@ export default function Cadastro() {
     })
       .then((data) => {
         if (data.status !== 201) {
-          Alert.alert("Erro", "Erro ao criar conta");
+          Alert.alert("Ops!", "Ocorreu um erro inesperado ao criar sua conta.");
           return;
         }
-        Alert.alert("Sucesso", "Usuário criado com sucesso");
+        Alert.alert("Sucesso", "Conta criada com sucesso.");
         return data.json();
       })
       .then((data) => {
@@ -282,7 +283,12 @@ export default function Cadastro() {
                 color: "#FFFFFF",
               }}
               text="Criar conta"
-              callback={handleSubmit}
+              loading={loading}
+              callback={() => {
+                if (loading) return;
+                setLoading(true);
+                handleSubmit().finally(() => setLoading(false));
+              }}
             />
           </View>
         </View>

@@ -25,7 +25,7 @@ const Feed = observer(() => {
             color: "#FFFFFF",
           }}
           text="Criar Denúncia"
-          callback={async () => {
+          callback={() => {
             if (logado === "false") {
               Alert.alert(
                 "Atenção!",
@@ -36,7 +36,7 @@ const Feed = observer(() => {
                   },
                   {
                     text: "Entrar",
-                    onPress: async () => {
+                    onPress: () => {
                       router.push("screens/Login");
                     },
                   },

@@ -11,9 +11,26 @@ import { observer } from "mobx-react-lite";
 import userContext from "../utils/context";
 
 const Login = observer(() => {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [senhaIncorreta, setSenhaIncorreta] = useState(false);
+
+  const handleSubmit = async () => {
+    setSenhaIncorreta(false);
+    await post("login", { email: email, senha: senha }).then((data) => {
+      if (data.status !== 200) {
+        AsyncStorage.setItem("token", "");
+        setSenhaIncorreta(true);
+        return;
+      }
+      data.json().then((data) => {
+        userContext.set(data);
+        AsyncStorage.setItem("token", data.token);
+        router.push("screens/Feed?logado=true");
+      });
+    });
+  };
 
   return (
     <View style={{ ...styles.container, width: "100%" }}>
@@ -52,20 +69,11 @@ const Login = observer(() => {
             color: "#FFFFFF",
           }}
           text="Login"
-          callback={async () => {
-            setSenhaIncorreta(false);
-            await post("login", { email: email, senha: senha }).then((data) => {
-              if (data.status !== 200) {
-                AsyncStorage.setItem("token", "");
-                setSenhaIncorreta(true);
-                return;
-              }
-              data.json().then((data) => {
-                userContext.set(data);
-                AsyncStorage.setItem("token", data.token);
-                router.push("screens/Feed?logado=true");
-              });
-            });
+          loading={loading}
+          callback={() => {
+            if (loading) return;
+            setLoading(true);
+            handleSubmit().finally(() => setLoading(false));
           }}
         ></CTextButton>
 
@@ -105,9 +113,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 300, 
-    height: 200, 
-    marginBottom: 10, 
+    width: 300,
+    height: 200,
+    marginBottom: 10,
     marginLeft: 18,
     marginTop: -30,
     resizeMode: "contain",

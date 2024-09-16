@@ -12,32 +12,27 @@ import { useState } from "react";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { validarSenha } from "../utils/validators";
 import { post } from "../utils/api";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import CHeader from "../components/CHeader";
 
 export default function EditarSenha() {
-  const params = useLocalSearchParams();
+  const [loading, setLoading] = useState(false);
 
-  const [senhaAtual, setSenhaAtual] = useState(""); 
+  const [senhaAtual, setSenhaAtual] = useState("");
   const [senhaNova, setSenhaNova] = useState("");
   const [confirmarSenhaNova, setConfirmarSenhaNova] = useState("");
-  
+
   const [senhaInvalida, setSenhaInvalida] = useState(false);
-  const [senhaCorreta, setSenhaCorreta] = useState(true); 
+  const [senhaCorreta, setSenhaCorreta] = useState(true);
 
   const handleSubmit = async () => {
     setSenhaInvalida(false);
     setSenhaCorreta(true);
 
-    if (!Object.values(validarSenha(senhaNova)).every((item) => item === true)) {
+    if (
+      !Object.values(validarSenha(senhaNova)).every((item) => item === true)
+    ) {
       setSenhaInvalida(true);
-      Alert.alert("Erro", "A nova senha não atende aos requisitos.");
-      return;
-    }
-
-    if (senhaNova !== confirmarSenhaNova) {
-      setSenhaInvalida(true);
-      Alert.alert("Erro", "A confirmação de senha não corresponde à nova senha.");
       return;
     }
 
@@ -55,15 +50,18 @@ export default function EditarSenha() {
         {
           text: "OK",
           onPress: async () => {
+            if (loading) return;
+            setLoading(true);
             const payload = { senhaAtual: senhaAtual, senhaNova: senhaNova };
-            const response = await post("alterar-senha", payload, true);
-            if (response.status === 200) {
+            await post("alterar-senha", payload, true).then((data) => {
+              setLoading(false);
+              if (data.status !== 200) {
+                Alert.alert("Ops!", "Ocorreu um erro ao alterar sua senha.");
+                return;
+              }
               router.push("screens/Feed?logado=true");
               Alert.alert("Sucesso", "Sua senha foi alterada com sucesso.");
-            } else {
-              console.log(response);
-              Alert.alert("Erro", "Ocorreu um erro ao alterar sua senha.");
-            }
+            });
           },
         },
       ],
@@ -104,8 +102,9 @@ export default function EditarSenha() {
 
               {senhaInvalida && (
                 <Text style={{ color: "#ff0022" }}>
-                  A senha deve conter no mínimo 8 caracteres, uma letra maiúscula,
-                  uma letra minúscula, um número e um caractere especial
+                  A senha deve conter no mínimo 8 caracteres, uma letra
+                  maiúscula, uma letra minúscula, um número e um caractere
+                  especial
                 </Text>
               )}
 
@@ -119,16 +118,17 @@ export default function EditarSenha() {
 
               <View style={{ padding: 20 }}></View>
 
-            <CTextButton
-              buttonStyle={{
-                backgroundColor: "#FF7C33",
-              }}
-              textStyle={{
-                color: "#FFFFFF",
-              }}
-              text="Alterar senha"
-              callback={handleSubmit}
-            />
+              <CTextButton
+                buttonStyle={{
+                  backgroundColor: "#FF7C33",
+                }}
+                textStyle={{
+                  color: "#FFFFFF",
+                }}
+                text="Alterar senha"
+                loading={loading}
+                callback={handleSubmit}
+              />
             </View>
           </View>
         </View>

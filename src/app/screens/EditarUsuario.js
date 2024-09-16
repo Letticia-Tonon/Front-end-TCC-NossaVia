@@ -32,6 +32,8 @@ import { cepMask, phoneMask } from "../utils/masks";
 import { router } from "expo-router";
 
 const EditarUsuario = observer(() => {
+  const [loading, setLoading] = useState(false);
+
   const [nome, setNome] = useState(userContext.user.nome);
   const [telefone, setTelefone] = useState(userContext.user.telefone);
   const [cep, setCep] = useState(userContext.user.cep);
@@ -70,6 +72,8 @@ const EditarUsuario = observer(() => {
         {
           text: "OK",
           onPress: async () => {
+            if (loading) return;
+            setLoading(true);
             try {
               const response = await del("usuario", true);
               if (response.status === 200) {
@@ -78,12 +82,14 @@ const EditarUsuario = observer(() => {
                 router.push("screens/Feed?logado=false");
                 userContext.set(null);
               } else if (response.status === 404) {
-                Alert.alert("Erro", "Usuário não encontrado.");
+                Alert.alert("Ops!", "Usuário não encontrado.");
               } else {
-                Alert.alert("Erro", "Ocorreu um erro desconhecido.");
+                Alert.alert("Ops!", "Ocorreu um erro inesperado.");
               }
             } catch (error) {
-              Alert.alert("Erro", "Ocorreu um erro ao tentar excluir a conta.");
+              Alert.alert("Ops!", "Ocorreu um erro inesperado.");
+            } finally {
+              setLoading(false);
             }
           },
         },
@@ -158,7 +164,7 @@ const EditarUsuario = observer(() => {
         );
         return;
       }
-      Alert.alert("Sucesso", "Usuário alterado com sucesso.");
+      Alert.alert("Sucesso", "Dados alterados com sucesso.");
       data.json().then((data) => {
         userContext.set(data);
       });
@@ -305,7 +311,12 @@ const EditarUsuario = observer(() => {
               buttonStyle={{ backgroundColor: "#FF7C33" }}
               textStyle={{ color: "#FFFFFF" }}
               text="Salvar"
-              callback={handleSubmit}
+              loading={loading}
+              callback={() => {
+                if (loading) return;
+                setLoading(true);
+                handleSubmit().finally(() => setLoading(false));
+              }}
             />
 
             <CTextButton
@@ -316,6 +327,7 @@ const EditarUsuario = observer(() => {
               }}
               textStyle={{ color: "#ff0022" }}
               text="Excluir conta"
+              loading={loading}
               callback={deletar}
             />
           </View>
