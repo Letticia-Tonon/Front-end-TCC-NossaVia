@@ -11,12 +11,10 @@ import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
 import CTextButton from "../components/CTextButton";
 import CActionSheet from "../components/CActionSheet";
-import { Link } from "expo-router";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
 import { useState } from "react";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import CDatePicker from "../components/CDatePicker";
+import CHeader from "../components/CHeader";
 import {
   validarEmail,
   validarSenha,
@@ -170,24 +168,17 @@ export default function Cadastro() {
         <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
-            <Link style={styles.seta} href={"/screens/Login"}>
-              <FontAwesomeIcon icon={faArrowLeft} size={32}></FontAwesomeIcon>
-            </Link>
-
-            <Text
-              style={{
-                fontSize: 28,
-                fontWeight: "bold",
-                marginBottom: 30,
-                marginTop: 20,
-              }}
-            >
-              {" "}
-              Cadastre-se
-            </Text>
+            <CHeader
+              titulo={"Cadastre-se"}
+              logado={false}
+              showText={true}
+              goBack={true}
+              showIcon={false}
+            ></CHeader>
 
             <CTextInput
               placeholder="Nome"
+              inputStyle={{ marginTop: 8 }}
               state={nome}
               setState={setNome}
               error={nomeInvalido}
@@ -312,12 +303,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "90%",
-    paddingTop: 20,
-    paddingBottom: 10,
-  },
-  seta: {
-    position: "absolute",
-    top: -10,
-    left: 1,
+    paddingBottom: 5,
   },
 });

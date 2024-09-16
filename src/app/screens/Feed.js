@@ -13,6 +13,7 @@ const Feed = observer(() => {
       <CHeader
         titulo={"Feed"}
         logado={logado === "true"}
+        showText={logado === "true"}
         goBack={false}
         showIcon={true}
       />

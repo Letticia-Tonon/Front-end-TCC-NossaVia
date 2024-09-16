@@ -97,6 +97,7 @@ export default function EditarSenha() {
             <CHeader
               titulo={"Editar Senha"}
               logado={true}
+              showText={true}
               goBack={true}
               showIcon={false}
             />

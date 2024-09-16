@@ -198,6 +198,7 @@ const EditarUsuario = observer(() => {
             <CHeader
               titulo={"Editar Perfil"}
               logado={true}
+              showText={true}
               goBack={true}
               showIcon={false}
             />

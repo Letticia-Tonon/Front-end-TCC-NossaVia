@@ -187,6 +187,7 @@ export default function CriarDenuncia() {
             <CHeader
               titulo={"Criação de Denúncia"}
               logado={true}
+              showText={true}
               goBack={true}
               showIcon={true}
             />

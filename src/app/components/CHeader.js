@@ -78,7 +78,7 @@ const CHeader = observer((props) => {
             </TouchableOpacity>
           )}
 
-          {props.logado ? (
+          {props.showText ? (
             <Text style={styles.title}>{props.titulo}</Text>
           ) : (
             <Text style={styles.title}></Text>
