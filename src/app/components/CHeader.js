@@ -142,7 +142,7 @@ const CHeader = observer((props) => {
                   router.push({ pathname: "screens/EditarUsuario" });
                 }}
               >
-                <Text style={styles.menuText}>Editar Perfil</Text>
+                <Text style={styles.menuText}>Vizualizar perfil</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -152,7 +152,7 @@ const CHeader = observer((props) => {
                   router.push("screens/EditarSenha");
                 }}
               >
-                <Text style={styles.menuText}>Editar Senha</Text>
+                <Text style={styles.menuText}>Editar senha</Text>
               </TouchableOpacity>
 
               {/* TODO: tela minhas denuncias programada para próximas sprints */}
@@ -163,7 +163,7 @@ const CHeader = observer((props) => {
                   router.push("screens/MinhasDenuncias");
                 }}
               >
-                <Text style={styles.menuText}>Minhas Denúncias</Text>
+                <Text style={styles.menuText}>Minhas denúncias</Text>
               </TouchableOpacity> */}
 
               <TouchableOpacity

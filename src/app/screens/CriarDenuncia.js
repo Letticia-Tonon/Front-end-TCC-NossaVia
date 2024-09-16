@@ -219,7 +219,7 @@ export default function CriarDenuncia() {
                         color: "#666666",
                       }}
                     >
-                      Adicionar Foto{" "}
+                      Adicionar foto{" "}
                     </Text>
                     <FontAwesomeIcon
                       icon={faPlus}
@@ -287,7 +287,7 @@ export default function CriarDenuncia() {
                 color: "#FFFFFF",
               }}
               callback={pickImage}
-              text={`Adicionar Foto ${imageList.length}/5`}
+              text={`Adicionar foto ${imageList.length}/5`}
             ></CTextButton>
 
             <CActionSheet
@@ -361,13 +361,13 @@ export default function CriarDenuncia() {
             ></CTextInput>
 
             <CTextInput
-              placeholder="Número Aproximado"
+              placeholder="Número aproximado"
               state={numero}
               setState={setNumero}
             ></CTextInput>
 
             <CTextInput
-              placeholder="Ponto de Referência"
+              placeholder="Ponto de referência"
               state={complemento}
               setState={setComplemento}
             ></CTextInput>
@@ -379,7 +379,7 @@ export default function CriarDenuncia() {
               textStyle={{
                 color: "#FFFFFF",
               }}
-              text="Criar Denúncia"
+              text="Criar denúncia"
               loading={loading}
               callback={() => {
                 if (loading) return;

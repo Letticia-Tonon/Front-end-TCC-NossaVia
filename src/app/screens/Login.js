@@ -52,14 +52,15 @@ const Login = observer(() => {
 
         <CPassInput placeholder="Senha" setState={setSenha}></CPassInput>
 
-        <View style={styles.viewEsqueciSenha}>
+        {/* TODO: funcionalçidade reculperar senha programada para próximas sprints */}
+        {/* <View style={styles.viewLinks}>
           <Text style={{ color: "#a9a9a9" }}>
             Esqueceu sua senha?{" "}
             <Text style={{ color: "#a9a9a9", fontWeight: "bold" }}>
               Clique aqui
             </Text>
           </Text>
-        </View>
+        </View> */}
 
         <CTextButton
           buttonStyle={{
@@ -77,7 +78,7 @@ const Login = observer(() => {
           }}
         ></CTextButton>
 
-        <View style={styles.viewEsqueciSenha}>
+        <View style={styles.viewLinks}>
           <Text style={{ color: "#a9a9a9", justifyContent: "left" }}>
             Ainda não tem uma conta?{" "}
             <Text
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     margin: 5,
     alignItems: "center",
   },
-  viewEsqueciSenha: {
+  viewLinks: {
     display: "flex",
     width: "100%",
     margin: 5,

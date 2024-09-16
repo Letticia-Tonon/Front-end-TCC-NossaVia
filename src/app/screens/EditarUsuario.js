@@ -196,7 +196,7 @@ const EditarUsuario = observer(() => {
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
             <CHeader
-              titulo={"Editar Perfil"}
+              titulo={"Dados Pessoais"}
               logado={true}
               showText={true}
               goBack={true}
@@ -311,7 +311,7 @@ const EditarUsuario = observer(() => {
             <CTextButton
               buttonStyle={{ backgroundColor: "#FF7C33" }}
               textStyle={{ color: "#FFFFFF" }}
-              text="Salvar"
+              text="Salvar alterações"
               loading={loading}
               callback={() => {
                 if (loading) return;

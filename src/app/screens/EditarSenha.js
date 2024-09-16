@@ -59,19 +59,23 @@ export default function EditarSenha() {
   const alterar = async () => {
     Alert.alert(
       "Atenção!",
-      "Ao confirmar, sua senha será alterada e você precisará utilizá-la para o próximo acesso",
+      "Tem certeza que deseja alterar sua senha?",
       [
         {
           text: "Cancelar",
         },
         {
-          text: "OK",
+          text: "Sim",
           onPress: async () => {
             if (loading) return;
             setLoading(true);
             const payload = { senhaAtual: senhaAtual, senhaNova: senhaNova };
             await post("alterar-senha", payload, true).then((data) => {
               setLoading(false);
+              if (data.status === 400) {
+                Alert.alert("Atenção!", "Senha atual incorreta, corrija para poder criar uma senha nova.");
+                return;
+              }
               if (data.status !== 200) {
                 Alert.alert("Ops!", "Ocorreu um erro ao alterar sua senha.");
                 return;

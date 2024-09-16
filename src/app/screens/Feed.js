@@ -25,7 +25,7 @@ const Feed = observer(() => {
           textStyle={{
             color: "#FFFFFF",
           }}
-          text="Criar Denúncia"
+          text="Criar denúncia"
           callback={() => {
             if (logado === "false") {
               Alert.alert(
