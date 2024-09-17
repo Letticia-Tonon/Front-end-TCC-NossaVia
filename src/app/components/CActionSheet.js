@@ -40,7 +40,7 @@ export default function CActionSheet(props) {
           <FontAwesomeIcon
             icon={faCaretDown}
             size={INPUT_HEIGHT - 25}
-            color="#FF7C33"
+            color={props.error ? "#ff0022" : "#FF7C33"}
           ></FontAwesomeIcon>
         </View>
       </Pressable>

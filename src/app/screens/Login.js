@@ -48,9 +48,17 @@ const Login = observer(() => {
           </View>
         )}
 
-        <CTextInput placeholder="E-mail" setState={setEmail}></CTextInput>
+        <CTextInput
+          placeholder="E-mail"
+          setState={setEmail}
+          error={senhaIncorreta}
+        ></CTextInput>
 
-        <CPassInput placeholder="Senha" setState={setSenha}></CPassInput>
+        <CPassInput
+          placeholder="Senha"
+          setState={setSenha}
+          error={senhaIncorreta}
+        ></CPassInput>
 
         {/* TODO: funcionalçidade reculperar senha programada para próximas sprints */}
         {/* <View style={styles.viewLinks}>
