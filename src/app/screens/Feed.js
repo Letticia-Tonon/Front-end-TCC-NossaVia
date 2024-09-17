@@ -1,12 +1,29 @@
-import { StyleSheet, View, StatusBar, Alert } from "react-native";
+import { StyleSheet, View, StatusBar, Alert, BackHandler } from "react-native";
 import { router } from "expo-router";
 import CTextButton from "../components/CTextButton";
 import { useLocalSearchParams } from "expo-router";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
+import { useEffect } from "react";
 
 const Feed = observer(() => {
   const { logado } = useLocalSearchParams();
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        try {
+          return true;
+        } finally {
+          BackHandler.exitApp();
+        }
+      }
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />

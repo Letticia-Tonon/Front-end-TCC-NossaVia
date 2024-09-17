@@ -28,6 +28,7 @@ import CTextBox from "../components/CTextBox";
 import { post } from "../utils/api";
 import { cepMask } from "../utils/masks";
 import { validarCep } from "../utils/validators";
+import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -140,14 +141,9 @@ export default function CriarDenuncia() {
       .then((data) => {
         if (data.status !== 201) {
           Alert.alert("Ops!", "Ocorreu um erro inesperado ao criar a denúncia.");
-          return data.json();
         }
+        router.push("screens/Feed?logado=true");
         Alert.alert("Sucesso", "Denúncia criada com sucesso.");
-        return data.json();
-      })
-      .then((data) => {
-        if (!data) return;
-        console.log(data);
       });
   };
 
