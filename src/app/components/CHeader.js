@@ -142,7 +142,7 @@ const CHeader = observer((props) => {
                   router.push({ pathname: "screens/EditarUsuario" });
                 }}
               >
-                <Text style={styles.menuText}>Vizualizar perfil</Text>
+                <Text style={styles.menuText}>Visualizar perfil</Text>
               </TouchableOpacity>
 
               <TouchableOpacity

@@ -4,6 +4,7 @@ import CTextButton from "../components/CTextButton";
 import { useLocalSearchParams } from "expo-router";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
+import CDenunciaCard from "../components/CDenunciaCard";
 import { useEffect } from "react";
 
 const Feed = observer(() => {
@@ -35,6 +36,15 @@ const Feed = observer(() => {
         showIcon={true}
       />
       <View style={styles.feed}>
+      
+      <CDenunciaCard
+  nome="Julinho"
+  rua="Rua tal"
+  descricao="Buraco na via"
+
+/>
+
+
         <CTextButton
           buttonStyle={{
             backgroundColor: "#FF7C33",
