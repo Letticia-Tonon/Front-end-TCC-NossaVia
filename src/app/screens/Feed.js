@@ -5,10 +5,12 @@ import { useLocalSearchParams } from "expo-router";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
 import CDenunciaCard from "../components/CDenunciaCard";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { get } from "../utils/api";
 
 const Feed = observer(() => {
   const { logado } = useLocalSearchParams();
+  const [denuncias, setDenuncias] = useState([]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -21,6 +23,12 @@ const Feed = observer(() => {
         }
       }
     );
+
+    get("denuncia?longitude=0&latitude=0&page=0").then((data) => {
+      data.json().then((json) => {
+        setDenuncias(json);
+      });
+    });
 
     return () => backHandler.remove();
   }, []);
@@ -36,14 +44,15 @@ const Feed = observer(() => {
         showIcon={true}
       />
       <View style={styles.feed}>
-      
-      <CDenunciaCard
-  nome="Julinho"
-  rua="Rua tal"
-  descricao="Buraco na via"
-
-/>
-
+        {denuncias.map((denuncia) => (
+          <CDenunciaCard
+            nome={denuncia.nome_usuario}
+            rua={denuncia.endereco}
+            descricao={denuncia.descricao}
+            imagens={denuncia.fotos}
+            categoria={denuncia.categoria}
+          />
+        ))}
 
         <CTextButton
           buttonStyle={{

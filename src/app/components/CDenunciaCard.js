@@ -1,22 +1,46 @@
-import React from "react";
-import { SvgUri } from "react-native-svg";
+import React, { useState } from "react";
+import { useEffect } from "react";
+import { LocalSvg } from "react-native-svg/css";
 import { View, Text, Dimensions, Image, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import { Lixo_via } from "../../../assets/icons/lixo_via.svg";
 
 const { width } = Dimensions.get("window");
-const CDenunciaCard = ({
-  nome,
-  rua,
-  descricao,
-  denunciaImagem,
-  categoriaIcone,
-}) => {
+
+const CDenunciaCard = ({ nome, rua, descricao, imagens, categoria }) => {
+  const [icon, setIcon] = useState(null);
+  useEffect(() => {
+    switch (categoria) {
+      case "iluminacao":
+        setIcon(require("../../../assets/icons/falta_iluminacao.svg"));
+        break;
+      case "sinalizacao":
+        setIcon(require("../../../assets/icons/falta_sinalizacao.svg"));
+        break;
+      case "via":
+        setIcon(require("../../../assets/icons/irregularidades_asfalto.svg"));
+        break;
+      case "calcada":
+        setIcon(require("../../../assets/icons/irregularidades_calcada.svg"));
+        break;
+      case "lixo":
+        setIcon(require("../../../assets/icons/lixo_via.svg"));
+        break;
+      case "carro":
+        setIcon(require("../../../assets/icons/veiculo_abandonado.svg"));
+        break;
+      case "outros":
+        setIcon(require("../../../assets/icons/outros.svg"));
+        break;
+    }
+  }, []);
   return (
     <View style={styles.card}>
-      <View style={styles.imagePlaceholder}></View>
-
-      {/* Informações da denúncia */}
+      <View style={styles.imagePlaceholder}>
+        <Image
+          source={{ uri: imagens[0] }}
+          style={styles.denunciaImage}
+        />
+      </View>
       <View style={styles.content}>
         <View style={styles.header}>
           <FontAwesome name="user-circle" size={40} color="black" />
@@ -25,11 +49,8 @@ const CDenunciaCard = ({
             <Text style={styles.name}>{nome}</Text>
             <Text>{rua}</Text>
             <Text>{descricao}</Text>
-            <SvgUri
-              width="100%"
-              height="100%"
-            />
           </View>
+          {icon && <LocalSvg asset={icon} height={40} width={40} />}
         </View>
       </View>
     </View>
@@ -74,16 +95,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: "bold",
-  },
-  categoryIcon: {
-    // backgroundColor: "#fff",
-    // borderRadius: 20,
-    // padding: 5,
-    // elevation: 2, // Sombra no ícone
-    // shadowColor: "#000",
-    // shadowOpacity: 0.2,
-    // shadowRadius: 3,
-    // shadowOffset: { width: 0, height: 2 },
   },
 });
 
