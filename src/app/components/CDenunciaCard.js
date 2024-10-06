@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { LocalSvg } from "react-native-svg/css";
 import { View, Text, Dimensions, Image, StyleSheet } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import PagerView from "react-native-pager-view";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCircle, faCircleUser } from "@fortawesome/free-solid-svg-icons";
 
 const { width } = Dimensions.get("window");
 
 const CDenunciaCard = ({ nome, rua, descricao, imagens, categoria }) => {
   const [icon, setIcon] = useState(null);
+  const [imageIndex, setImageIndex] = useState(0);
+
   useEffect(() => {
     switch (categoria) {
       case "iluminacao":
@@ -35,16 +39,42 @@ const CDenunciaCard = ({ nome, rua, descricao, imagens, categoria }) => {
   }, []);
   return (
     <View style={styles.card}>
-      <View style={styles.imagePlaceholder}>
-        <Image
-          source={{ uri: imagens[0] }}
-          style={styles.denunciaImage}
-        />
+      <View style={styles.center}>
+        <PagerView
+          style={styles.imagePlaceholder}
+          initialPage={0}
+          onPageSelected={(e) => {
+            setImageIndex(e.nativeEvent.position);
+          }}
+        >
+          {imagens.map((image, index) => (
+            <View style={styles.page} key={index}>
+              <Image source={{ uri: image }} style={styles.denunciaImage} />
+            </View>
+          ))}
+        </PagerView>
+
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 5,
+            marginTop: 8,
+            alignItems: "center",
+          }}
+        >
+          {imagens.map((image, index) => (
+            <FontAwesomeIcon
+              icon={faCircle}
+              size={imageIndex === index ? 11 : 8}
+              color="#666666"
+            ></FontAwesomeIcon>
+          ))}
+        </View>
       </View>
       <View style={styles.content}>
         <View style={styles.header}>
-          <FontAwesome name="user-circle" size={40} color="black" />
-
+          <FontAwesomeIcon icon={faCircleUser} size={40} color="#000" />
           <View style={styles.userInfo}>
             <Text style={styles.name}>{nome}</Text>
             <Text>{rua}</Text>
@@ -67,6 +97,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     width: width,
+  },
+  center: {
+    alignItems: "center",
   },
   imagePlaceholder: {
     borderRadius: 10,
