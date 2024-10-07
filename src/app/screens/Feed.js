@@ -1,4 +1,11 @@
-import { StyleSheet, View, StatusBar, Alert, BackHandler, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  StatusBar,
+  Alert,
+  BackHandler,
+  ScrollView,
+} from "react-native";
 import { router } from "expo-router";
 import CTextButton from "../components/CTextButton";
 import { useLocalSearchParams } from "expo-router";
@@ -7,6 +14,7 @@ import CHeader from "../components/CHeader";
 import CDenunciaCard from "../components/CDenunciaCard";
 import { useEffect, useState } from "react";
 import { get } from "../utils/api";
+import locationContext from "../contexts/location";
 
 const Feed = observer(() => {
   const { logado } = useLocalSearchParams();
@@ -23,12 +31,21 @@ const Feed = observer(() => {
         }
       }
     );
-
-    get("denuncia?longitude=0&latitude=0&page=0").then((data) => {
-      data.json().then((json) => {
-        setDenuncias(json);
+    if (
+      locationContext &&
+      locationContext.location &&
+      locationContext.location.coords &&
+      locationContext.location.coords.latitude &&
+      locationContext.location.coords.longitude
+    ) {
+      get(
+        `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.longitude}&page=0`
+      ).then((data) => {
+        data.json().then((json) => {
+          setDenuncias(json);
+        });
       });
-    });
+    }
 
     return () => backHandler.remove();
   }, []);

@@ -26,7 +26,7 @@ import * as ImagePicker from "expo-image-picker";
 import { put, del } from "../utils/api";
 import { validarTelefone, validarCep, validarData } from "../utils/validators";
 import { observer } from "mobx-react-lite";
-import userContext from "../utils/context";
+import userContext from "../contexts/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { cepMask, phoneMask } from "../utils/masks";
 import { router } from "expo-router";

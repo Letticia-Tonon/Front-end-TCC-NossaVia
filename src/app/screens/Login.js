@@ -8,7 +8,7 @@ import { useState } from "react";
 import { post } from "../utils/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { observer } from "mobx-react-lite";
-import userContext from "../utils/context";
+import userContext from "../contexts/user";
 
 const Login = observer(() => {
   const [loading, setLoading] = useState(false);

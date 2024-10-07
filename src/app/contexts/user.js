@@ -1,5 +1,4 @@
 import { makeObservable, observable, action } from "mobx";
-
 class UserContext {
   user = null;
 
@@ -12,7 +11,7 @@ class UserContext {
 
   set = (userInfo) => {
     this.user = userInfo;
-  }
+  };
 }
 
 const userContext = new UserContext();

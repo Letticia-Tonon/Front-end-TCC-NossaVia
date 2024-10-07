@@ -17,7 +17,7 @@ import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import packageJson from "../../../package.json";
 import { observer } from "mobx-react-lite";
-import userContext from "../utils/context";
+import userContext from "../contexts/user";
 
 const { width } = Dimensions.get("window");
 

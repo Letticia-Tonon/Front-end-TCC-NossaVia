@@ -29,6 +29,7 @@ import { post } from "../utils/api";
 import { cepMask } from "../utils/masks";
 import { validarCep } from "../utils/validators";
 import { router } from "expo-router";
+import locationContext from "../contexts/location";
 
 const { width } = Dimensions.get("window");
 
@@ -168,8 +169,8 @@ export default function CriarDenuncia() {
     }
 
     let location = await Location.getCurrentPositionAsync({});
-    setLocation(false);
     setLocation(location);
+    locationContext.set(location);
   };
   useEffect(() => {
     getLocation();
