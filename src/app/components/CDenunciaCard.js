@@ -8,7 +8,7 @@ import { faCircle, faCircleUser } from "@fortawesome/free-solid-svg-icons";
 
 const { width } = Dimensions.get("window");
 
-const CDenunciaCard = ({ nome, rua, descricao, imagens, categoria }) => {
+const CDenunciaCard = ({ nome, foto, rua, descricao, imagens, categoria }) => {
   const [icon, setIcon] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
 
@@ -73,14 +73,23 @@ const CDenunciaCard = ({ nome, rua, descricao, imagens, categoria }) => {
         </View>
       </View>
       <View style={styles.content}>
-        <View style={styles.header}>
-          <FontAwesomeIcon icon={faCircleUser} size={40} color="#000" />
-          <View style={styles.userInfo}>
-            <Text style={styles.name}>{nome}</Text>
-            <Text>{rua}</Text>
-            <Text>{descricao}</Text>
-          </View>
-          {icon && <LocalSvg asset={icon} height={40} width={40} />}
+        <View style={styles.overlayIcons}>
+          <Image source={{ uri: foto }}
+          style={{ width: 65, height: 65, borderRadius: 40, borderColor: "#fff", borderWidth: 5.5 }}/>
+          {icon && (
+            <LocalSvg
+              asset={icon}
+              height={65}
+              width={65}
+              style={styles.categoriaIcon}
+            />
+          )}
+        </View>
+
+        <View style={styles.userInfo}>
+          <Text style={styles.name}>{nome}</Text>
+          <Text>{rua}</Text>
+          <Text>{descricao}</Text>
         </View>
       </View>
     </View>
@@ -91,7 +100,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     borderRadius: 10,
-    marginVertical: 20,
+    marginVertical: 10,
     elevation: 2, //sombra
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -118,16 +127,31 @@ const styles = StyleSheet.create({
   content: {
     padding: 10,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   userInfo: {
-    marginLeft: 20,
+    marginLeft: 5,
+    marginTop: 5,
   },
   name: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 20,
+  },
+  userIcon: {
+    backgroundColor: "#fff",
+    borderRadius: 40,
+  },
+  categoriaIcon: {
+    marginLeft: 100,
+    backgroundColor: "#fff",
+    borderRadius: 40,
+    padding: 5,
+  },
+  overlayIcons: {
+    position: "absolute",
+    top: -50, // é o que sobrepõem os icones sobre a imagem
+    left: 10,
+    right: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
 
