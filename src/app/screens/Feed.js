@@ -1,13 +1,16 @@
-import { StyleSheet, View, StatusBar, Alert, BackHandler } from "react-native";
+import { StyleSheet, View, StatusBar, Alert, BackHandler, ScrollView } from "react-native";
 import { router } from "expo-router";
 import CTextButton from "../components/CTextButton";
 import { useLocalSearchParams } from "expo-router";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
-import { useEffect } from "react";
+import CDenunciaCard from "../components/CDenunciaCard";
+import { useEffect, useState } from "react";
+import { get } from "../utils/api";
 
 const Feed = observer(() => {
   const { logado } = useLocalSearchParams();
+  const [denuncias, setDenuncias] = useState([]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -21,55 +24,74 @@ const Feed = observer(() => {
       }
     );
 
+    get("denuncia?longitude=0&latitude=0&page=0").then((data) => {
+      data.json().then((json) => {
+        setDenuncias(json);
+      });
+    });
+
     return () => backHandler.remove();
   }, []);
 
   return (
-    <View style={styles.container}>
-      <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
-      <CHeader
-        titulo={"Feed"}
-        logado={logado === "true"}
-        showText={logado === "true"}
-        goBack={false}
-        showIcon={true}
-      />
-      <View style={styles.feed}>
-        <CTextButton
-          buttonStyle={{
-            backgroundColor: "#FF7C33",
-          }}
-          textStyle={{
-            color: "#FFFFFF",
-          }}
-          text="Criar denúncia"
-          callback={() => {
-            if (logado === "false") {
-              Alert.alert(
-                "Atenção!",
-                "Para criar uma denúncia você precisa entrar na sua conta.",
-                [
-                  {
-                    text: "Cancelar",
-                  },
-                  {
-                    text: "Entrar",
-                    onPress: () => {
-                      router.push("screens/Login");
+    <ScrollView>
+      <View style={styles.container}>
+        <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
+        <CHeader
+          titulo={"Feed"}
+          logado={logado === "true"}
+          showText={logado === "true"}
+          goBack={false}
+          showIcon={true}
+        />
+        <View style={styles.feed}>
+          {denuncias.map((denuncia) => (
+            <CDenunciaCard
+              nome={denuncia.nome_usuario}
+              foto={denuncia.foto_usuario}
+              rua={denuncia.endereco}
+              descricao={denuncia.descricao}
+              imagens={denuncia.fotos}
+              categoria={denuncia.categoria}
+            />
+          ))}
+
+          <CTextButton
+            buttonStyle={{
+              backgroundColor: "#FF7C33",
+            }}
+            textStyle={{
+              color: "#FFFFFF",
+            }}
+            text="Criar denúncia"
+            callback={() => {
+              if (logado === "false") {
+                Alert.alert(
+                  "Atenção!",
+                  "Para criar uma denúncia você precisa entrar na sua conta.",
+                  [
+                    {
+                      text: "Cancelar",
                     },
-                  },
-                ],
-                {
-                  cancelable: true,
-                }
-              );
-              return;
-            }
-            router.push("screens/CriarDenuncia");
-          }}
-        ></CTextButton>
+                    {
+                      text: "Entrar",
+                      onPress: () => {
+                        router.push("screens/Login");
+                      },
+                    },
+                  ],
+                  {
+                    cancelable: true,
+                  }
+                );
+                return;
+              }
+              router.push("screens/CriarDenuncia");
+            }}
+          ></CTextButton>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 });
 
@@ -79,6 +101,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    paddingBottom: 5,
   },
   feed: {
     flex: 1,

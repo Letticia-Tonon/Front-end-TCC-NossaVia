@@ -113,7 +113,6 @@ export default function CriarDenuncia() {
     }
 
     const imageListBase64 = imageList.map((image) => image.base64);
-
     await post(
       "denuncia",
       {
@@ -121,13 +120,13 @@ export default function CriarDenuncia() {
         categoria: {
           "Irregularidades no Asfalto": "via",
           "Irregularidades na Calçada": "calcada",
-          "Falta de Sinalização": "iluminacao",
+          "Falta de Sinalização": "sinalizacao",
           "Lixo na Via": "lixo",
           "Veículo Abandonado": "carro",
-          "Falta de Iluminação": "sinalizacao",
+          "Falta de Iluminação": "iluminacao",
           Outros: "outros",
         }[categoria],
-        data: new Date().toISOString().replace("T", " "),
+        data: new Date().toISOString().replace("T", " ").replace("Z", "000"),
         endereco: endereco,
         numero_endereco: numero,
         ponto_referencia: complemento,
@@ -141,6 +140,7 @@ export default function CriarDenuncia() {
       .then((data) => {
         if (data.status !== 201) {
           Alert.alert("Ops!", "Ocorreu um erro inesperado ao criar a denúncia.");
+          return;
         }
         router.push("screens/Feed?logado=true");
         Alert.alert("Sucesso", "Denúncia criada com sucesso.");
