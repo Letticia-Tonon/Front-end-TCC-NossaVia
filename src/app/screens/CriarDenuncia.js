@@ -270,6 +270,7 @@ export default function CriarDenuncia() {
                     icon={faCircle}
                     size={imageIndex === index ? 11 : 8}
                     color="#666666"
+                    key={index}
                   ></FontAwesomeIcon>
                 ))}
               </View>

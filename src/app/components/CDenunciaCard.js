@@ -68,20 +68,27 @@ const CDenunciaCard = ({ nome, foto, rua, descricao, imagens, categoria }) => {
               icon={faCircle}
               size={imageIndex === index ? 11 : 8}
               color="#666666"
+              key={index}
             ></FontAwesomeIcon>
           ))}
         </View>
       </View>
       <View style={styles.content}>
         <View style={styles.overlayIcons}>
-          <Image source={{ uri: foto }}
-          style={{ width: 65, height: 65, borderRadius: 40, borderColor: "#fff", borderWidth: 5.5 }}/>
+          <Image
+            source={{ uri: foto }}
+            style={{
+              width: 65,
+              height: 65,
+              borderRadius: 40,
+            }}
+          />
           {icon && (
             <LocalSvg
               asset={icon}
-              height={65}
-              width={65}
-              style={styles.categoriaIcon}
+              height={75}
+              width={75}
+              style={{ borderRadius: 32.5 }}
             />
           )}
         </View>
@@ -134,21 +141,11 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
   },
-  userIcon: {
-    backgroundColor: "#fff",
-    borderRadius: 40,
-  },
-  categoriaIcon: {
-    marginLeft: 100,
-    backgroundColor: "#fff",
-    borderRadius: 40,
-    padding: 5,
-  },
   overlayIcons: {
+    width: width,
+    paddingHorizontal: 10,
     position: "absolute",
-    top: -50, // é o que sobrepõem os icones sobre a imagem
-    left: 10,
-    right: 10,
+    top: -60,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

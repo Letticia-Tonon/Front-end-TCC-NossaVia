@@ -45,7 +45,7 @@ const Feed = observer(() => {
           showIcon={true}
         />
         <View style={styles.feed}>
-          {denuncias.map((denuncia) => (
+          {denuncias.map((denuncia, index) => (
             <CDenunciaCard
               nome={denuncia.nome_usuario}
               foto={denuncia.foto_usuario}
@@ -53,6 +53,7 @@ const Feed = observer(() => {
               descricao={denuncia.descricao}
               imagens={denuncia.fotos}
               categoria={denuncia.categoria}
+              key={index}
             />
           ))}
 
