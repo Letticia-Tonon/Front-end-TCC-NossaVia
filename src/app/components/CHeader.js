@@ -156,7 +156,7 @@ const CHeader = observer((props) => {
               </TouchableOpacity>
 
               {/* TODO: tela minhas denuncias programada para próximas sprints */}
-              {/* <TouchableOpacity
+              <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {
                   abrirMenu();
@@ -164,7 +164,7 @@ const CHeader = observer((props) => {
                 }}
               >
                 <Text style={styles.menuText}>Minhas denúncias</Text>
-              </TouchableOpacity> */}
+              </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.menuItem}
