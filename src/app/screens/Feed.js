@@ -5,6 +5,8 @@ import {
   Alert,
   BackHandler,
   ScrollView,
+  TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { router } from "expo-router";
 import CTextButton from "../components/CTextButton";
@@ -12,9 +14,14 @@ import { useLocalSearchParams } from "expo-router";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
 import CDenunciaCard from "../components/CDenunciaCard";
+import CCategoriaScroll from "../components/CCategoriaScroll";
 import { useEffect, useState } from "react";
 import { get } from "../utils/api";
 import locationContext from "../contexts/location";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+
+const { height, width } = Dimensions.get("window");
 
 const Feed = observer(() => {
   const { logado } = useLocalSearchParams();
@@ -39,7 +46,7 @@ const Feed = observer(() => {
       locationContext.location.coords.longitude
     ) {
       get(
-        `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.longitude}&page=0`
+        `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=0`
       ).then((data) => {
         data.json().then((json) => {
           setDenuncias(json);
@@ -51,30 +58,64 @@ const Feed = observer(() => {
   }, []);
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
-        <CHeader
-          titulo={"Feed"}
-          logado={logado === "true"}
-          showText={logado === "true"}
-          goBack={false}
-          showIcon={true}
-        />
-        <View style={styles.feed}>
-          {denuncias.map((denuncia, index) => (
-            <CDenunciaCard
-              nome={denuncia.nome_usuario}
-              foto={denuncia.foto_usuario}
-              rua={denuncia.endereco}
-              descricao={denuncia.descricao}
-              imagens={denuncia.fotos}
-              categoria={denuncia.categoria}
-              key={index}
-            />
-          ))}
+    <View>
+      {/* Botão Flutuante */}
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => {
+          if (logado === "false") {
+            Alert.alert(
+              "Atenção!",
+              "Para criar uma denúncia você precisa entrar na sua conta.",
+              [
+                {
+                  text: "Cancelar",
+                },
+                {
+                  text: "Entrar",
+                  onPress: () => {
+                    router.push("screens/Login");
+                  },
+                },
+              ],
+              {
+                cancelable: true,
+              }
+            );
+            return;
+          }
+          router.push("screens/CriarDenuncia");
+        }}
+      >
+        <FontAwesomeIcon icon={faPlus} size={24} color="#fff" />
+      </TouchableOpacity>
+      <ScrollView>
+        <View style={styles.container}>
+          <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
+          <CHeader
+            titulo={"Feed"}
+            logado={logado === "true"}
+            showText={logado === "true"}
+            goBack={false}
+            showIcon={true}
+          />
 
-          <CTextButton
+          <View style={styles.feed}>
+          <CCategoriaScroll></CCategoriaScroll>
+            {denuncias &&
+              denuncias.map((denuncia, index) => (
+                <CDenunciaCard
+                  nome={denuncia.nome_usuario}
+                  foto={denuncia.foto_usuario}
+                  rua={denuncia.endereco}
+                  descricao={denuncia.descricao}
+                  imagens={denuncia.fotos}
+                  categoria={denuncia.categoria}
+                  key={index}
+                />
+              ))}
+
+            {/* <CTextButton
             buttonStyle={{
               backgroundColor: "#FF7C33",
             }}
@@ -106,10 +147,11 @@ const Feed = observer(() => {
               }
               router.push("screens/CriarDenuncia");
             }}
-          ></CTextButton>
+          ></CTextButton> */}
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 });
 
@@ -126,6 +168,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "90%",
+  },
+  floatingButton: {
+    position: "absolute",
+    zIndex: 1000,
+    top: height - 70,
+    left: width - 77,
+    backgroundColor: "#FF7C33",
+    borderRadius: 50,
+    width: 60,
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    shadowOffset: { width: 2, height: 2 },
+    elevation: 8, // Sombra
   },
 });
 
