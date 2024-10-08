@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Dimensions,
   Text,
-  Pressable,
 } from "react-native";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
@@ -21,6 +20,9 @@ import locationContext from "../contexts/location";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { LocalSvg } from "react-native-svg/css";
+import { set } from "mobx";
+
+const DENUNCIAS_POR_PAGINA = 10;
 
 const { height, width } = Dimensions.get("window");
 
@@ -67,8 +69,10 @@ const Feed = observer(() => {
   const [denuncias, setDenuncias] = useState([]);
   const [page, setPage] = useState(0);
   const [categoria, setCategoria] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [paginaCheia, setPaginaCheia] = useState(false);
 
-  const getAll = async () => {
+  const getAll = async (localPage) => {
     if (
       locationContext &&
       locationContext.location &&
@@ -77,21 +81,30 @@ const Feed = observer(() => {
       locationContext.location.coords.longitude
     ) {
       get(
-        `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${page}`
-      ).then((data) => {
-        if (data.status !== 200) {
-          Alert.alert("Erro", "Não foi possível carregar as denúncias.");
-          return;
-        }
-        data.json().then((json) => {
-          setCategoria("")
-          setDenuncias(json);
-        });
-      });
+        `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}`
+      )
+        .then((data) => {
+          if (data.status !== 200) {
+            Alert.alert("Erro", "Não foi possível carregar as denúncias.");
+            return;
+          }
+          data.json().then((json) => {
+            setCategoria("");
+            if (json.length < DENUNCIAS_POR_PAGINA) {
+              setPaginaCheia(true);
+            }
+            if (localPage === 0) {
+              setDenuncias(json);
+              return;
+            }
+            setDenuncias([...denuncias, ...json]);
+          });
+        })
+        .finally(() => setLoading(false));
     }
   };
 
-  const getByCategoria = async (categoria) => {
+  const getByCategoria = async (categoria, localPage) => {
     if (
       locationContext &&
       locationContext.location &&
@@ -100,16 +113,28 @@ const Feed = observer(() => {
       locationContext.location.coords.longitude
     ) {
       return get(
-        `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${page}&categoria=${categoria.id}`
+        `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}&categoria=${categoria.id}`
       ).then((data) => {
         if (data.status !== 200) {
           Alert.alert("Erro", "Não foi possível carregar as denúncias.");
           return;
         }
-        data.json().then((json) => {
-          setCategoria(categoria.name)
-          setDenuncias(json);
-        });
+        data
+          .json()
+          .then((json) => {
+            setCategoria(categoria);
+            if (json.length < DENUNCIAS_POR_PAGINA) {
+              setPaginaCheia(true);
+            }
+            if (localPage === 0) {
+              setDenuncias(json);
+              return;
+            }
+            setDenuncias([...denuncias, ...json]);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
     }
   };
@@ -126,7 +151,7 @@ const Feed = observer(() => {
       }
     );
 
-    getAll();
+    getAll(0);
 
     return () => backHandler.remove();
   }, []);
@@ -163,7 +188,21 @@ const Feed = observer(() => {
       >
         <FontAwesomeIcon icon={faPlus} size={24} color="#fff" />
       </TouchableOpacity>
-      <ScrollView>
+      <ScrollView
+        onScroll={({ nativeEvent }) => {
+          const screenTop = nativeEvent.contentOffset.y;
+          const pageSize = nativeEvent.contentSize.height;
+          if (screenTop + height * 2 > pageSize && !loading && !paginaCheia) {
+            setPage(page + 1);
+            setLoading(true);
+            if (categoria) {
+              getByCategoria(categoria, page + 1);
+            } else {
+              getAll(page + 1);
+            }
+          }
+        }}
+      >
         <View style={styles.container}>
           <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
           <CHeader
@@ -190,12 +229,16 @@ const Feed = observer(() => {
                   fontWeight: "bold",
                 }}
               >
-                Filtrar Por: {categoria}
+                Filtrar Por: {categoria.name}
               </Text>
               {categoria && (
                 <TouchableOpacity
                   onPress={() => {
-                    getAll();
+                    if (loading) return;
+                    setLoading(true);
+                    setPaginaCheia(false);
+                    setPage(0);
+                    getAll(0);
                   }}
                 >
                   <Text
@@ -218,7 +261,11 @@ const Feed = observer(() => {
                   style={styles.iconContainer}
                   key={index}
                   onPress={() => {
-                    getByCategoria(categoria);
+                    if (loading) return;
+                    setLoading(true);
+                    setPaginaCheia(false);
+                    setPage(0);
+                    getByCategoria(categoria, 0);
                   }}
                 >
                   <LocalSvg
