@@ -4,39 +4,21 @@ import { LocalSvg } from "react-native-svg/css";
 import { View, Text, Dimensions, Image, StyleSheet } from "react-native";
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCircle, faCircleUser } from "@fortawesome/free-solid-svg-icons";
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
 
 const { width } = Dimensions.get("window");
 
+const ILUMINCAO_ICON = require("../../../assets/icons/falta_iluminacao.svg");
+const SINALIZACAO_ICON = require("../../../assets/icons/falta_sinalizacao.svg");
+const VIA_ICON = require("../../../assets/icons/irregularidades_asfalto.svg");
+const CALCADA_ICON = require("../../../assets/icons/irregularidades_calcada.svg");
+const LIXO_ICON = require("../../../assets/icons/lixo_via.svg");
+const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
+const OUTROS_ICON = require("../../../assets/icons/outros.svg");
+
 const CDenunciaCard = ({ nome, foto, rua, descricao, imagens, categoria }) => {
-  const [icon, setIcon] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
 
-  useEffect(() => {
-    switch (categoria) {
-      case "iluminacao":
-        setIcon(require("../../../assets/icons/falta_iluminacao.svg"));
-        break;
-      case "sinalizacao":
-        setIcon(require("../../../assets/icons/falta_sinalizacao.svg"));
-        break;
-      case "via":
-        setIcon(require("../../../assets/icons/irregularidades_asfalto.svg"));
-        break;
-      case "calcada":
-        setIcon(require("../../../assets/icons/irregularidades_calcada.svg"));
-        break;
-      case "lixo":
-        setIcon(require("../../../assets/icons/lixo_via.svg"));
-        break;
-      case "carro":
-        setIcon(require("../../../assets/icons/veiculo_abandonado.svg"));
-        break;
-      case "outros":
-        setIcon(require("../../../assets/icons/outros.svg"));
-        break;
-    }
-  }, []);
   return (
     <View style={styles.card}>
       <View style={styles.center}>
@@ -83,9 +65,19 @@ const CDenunciaCard = ({ nome, foto, rua, descricao, imagens, categoria }) => {
               borderRadius: 40,
             }}
           />
-          {icon && (
+          {categoria && (
             <LocalSvg
-              asset={icon}
+              asset={
+                {
+                  iluminacao: ILUMINCAO_ICON,
+                  sinalizacao: SINALIZACAO_ICON,
+                  via: VIA_ICON,
+                  calcada: CALCADA_ICON,
+                  lixo: LIXO_ICON,
+                  carro: CARRO_ICON,
+                  outros: OUTROS_ICON,
+                }[categoria]
+              }
               height={75}
               width={75}
               style={{ borderRadius: 32.5 }}

@@ -27,7 +27,7 @@ const App = observer(() => {
           "Para utilizar o aplicativo, precisamos da sua localização.",
           [
             {
-              text: "Cancelar",
+              text: "Fechar",
               onPress: () => {
                 BackHandler.exitApp();
               }
