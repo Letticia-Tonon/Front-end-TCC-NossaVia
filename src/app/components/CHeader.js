@@ -155,7 +155,6 @@ const CHeader = observer((props) => {
                 <Text style={styles.menuText}>Editar senha</Text>
               </TouchableOpacity>
 
-              {/* TODO: tela minhas denuncias programada para próximas sprints */}
               <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {

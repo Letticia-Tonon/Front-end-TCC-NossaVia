@@ -1,3 +1,5 @@
+import { router, useLocalSearchParams } from "expo-router"; // Importação do hook
+import { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -11,7 +13,6 @@ import {
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
 import CHeader from "../components/CHeader";
-import { useState, useEffect } from "react";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import PagerView from "react-native-pager-view";
@@ -20,68 +21,40 @@ import CTextBox from "../components/CTextBox";
 import { get, put } from "../utils/api";
 import { cepMask } from "../utils/masks";
 import { validarCep } from "../utils/validators";
-import locationContext from "../contexts/location";
-import { router, useLocalSearchParams } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 
 const { width } = Dimensions.get("window");
 
 export default function EditarDenuncia() {
-  const { denunciaId } = useLocalSearchParams(); // Busca o ID da denúncia
+  // Capturar todos os parâmetros que foram passados na navegação
+  const { id, nome, foto, rua, descricao, imagens, categoria } = useLocalSearchParams(); 
+  
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState(null);
   const [marker, setMarker] = useState(null);
-  const [descricao, setDescricao] = useState("");
+  const [descricaoState, setDescricaoState] = useState(descricao || ""); // Usar valor de descrição recebido
   const [cep, setCep] = useState("");
-  const [endereco, setEndereco] = useState("");
+  const [endereco, setEndereco] = useState(rua || ""); // Usar rua recebida
   const [numero, setNumero] = useState("");
   const [complemento, setComplemento] = useState("");
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-
   const [descricaoInvalida, setDescricaoInvalida] = useState(false);
   const [enderecoInvalido, setEnderecoInvalido] = useState(false);
   const [cepInvalido, setCepInvalido] = useState(false);
-  const [imageList, setImageList] = useState([]);
-  const [imageIndex, setImageIndex] = useState(0); 
+  const [imageList, setImageList] = useState(imagens || []); // Usar imagens recebidas
+  const [imageIndex, setImageIndex] = useState(0);
 
-  // Função para buscar os dados da denúncia existente, incluindo as imagens
-  const fetchDenuncia = async (denunciaId) => {
-    try {
-      const response = await get(`denuncia/${denunciaId}`);
-      const denuncia = response.data;
-
-      setDescricao(denuncia.descricao);
-      setCep(denuncia.cep);
-      setEndereco(denuncia.endereco);
-      setNumero(denuncia.numero_endereco);
-      setComplemento(denuncia.ponto_referencia);
-      setLatitude(parseFloat(denuncia.latitude));
-      setLongitude(parseFloat(denuncia.longitude));
-      setMarker({
-        latitude: parseFloat(denuncia.latitude),
-        longitude: parseFloat(denuncia.longitude),
-      });
-
-      if (denuncia.fotos) {
-        setImageList(
-          denuncia.fotos.map((fotoBase64) => ({
-            uri: `data:image/jpeg;base64,${fotoBase64}`,
-            base64: fotoBase64,
-          }))
-        );
-      }
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar a denúncia.");
-    }
-  };
+  // const fetchDenuncia = async (denunciaId) => {
+  //   // Implementação da função que pode buscar os dados de uma denúncia, se necessário
+  // };
 
   useEffect(() => {
-    if (denunciaId) {
-      fetchDenuncia(denunciaId); // Buscar dados ao carregar a tela
+    if (id) {
+      fetchDenuncia(id); // Carregar dados adicionais da denúncia se necessário
     }
-  }, [denunciaId]);
+  }, [id]);
 
   const handleSubmit = async () => {
     setDescricaoInvalida(false);
@@ -102,7 +75,7 @@ export default function EditarDenuncia() {
       setEnderecoInvalido(true);
     }
 
-    if (!descricao) {
+    if (!descricaoState) {
       descricaoTemp = true;
       setDescricaoInvalida(true);
     }
@@ -111,27 +84,32 @@ export default function EditarDenuncia() {
       return;
     }
 
-    await put(
-      `denuncia/${denunciaId}`,
-      {
-        descricao: descricao,
-        endereco: endereco,
-        numero_endereco: numero,
-        ponto_referencia: complemento,
-        cep: cep,
-        latitude: latitude.toString(),
-        longitude: longitude.toString(),
-      },
-      true
-    )
-      .then((data) => {
-        if (data.status !== 200) {
-          Alert.alert("Ops!", "Ocorreu um erro inesperado ao editar a denúncia.");
-        } else {
-          Alert.alert("Sucesso", "Denúncia editada com sucesso.");
-          router.push("screens/Feed?logado=true");
-        }
-      });
+    try {
+      const response = await put(
+        `denuncia/${id}`,
+        {
+          descricao: descricaoState,
+          endereco,
+          numero_endereco: numero,
+          ponto_referencia: complemento,
+          cep,
+          latitude: latitude?.toString(),
+          longitude: longitude?.toString(),
+        },
+        true
+      );
+
+      if (response.status === 200) {
+        Alert.alert("Sucesso", "Denúncia editada com sucesso.");
+        router.replace("screens/Feed?logado=true"); // Redireciona para o feed
+      } else {
+        Alert.alert("Ops!", "Ocorreu um erro inesperado ao editar a denúncia.");
+      }
+    } catch (error) {
+      Alert.alert("Ops!", "Erro ao editar a denúncia.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getLocation = async () => {
@@ -142,7 +120,6 @@ export default function EditarDenuncia() {
 
     let location = await Location.getCurrentPositionAsync({});
     setLocation(location);
-    locationContext.set(location);
   };
 
   useEffect(() => {
@@ -165,7 +142,7 @@ export default function EditarDenuncia() {
           >
             {imageList.map((image, index) => (
               <View style={styles.page} key={index}>
-                <Image source={{ uri: image.uri }} style={styles.denunciaImage} />
+                <Image source={{ uri: image }} style={styles.denunciaImage} />
               </View>
             ))}
           </PagerView>
@@ -191,8 +168,8 @@ export default function EditarDenuncia() {
 
           <CTextBox
             placeholder="Descreva aqui o seu problema"
-            state={descricao}
-            setState={setDescricao}
+            state={descricaoState}
+            setState={setDescricaoState}
             error={descricaoInvalida}
             errorMessage="Campo obrigatório"
             maxLength={500}

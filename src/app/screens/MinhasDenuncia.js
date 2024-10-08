@@ -11,11 +11,9 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
-import userContext from "../contexts/user";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
 import CDenunciaCard from "../components/CDenunciaCard";
-import CDenunciaSelf from "../components/CDenunciaSelf";
 import { useEffect, useState } from "react";
 import { get } from "../utils/api";
 import locationContext from "../contexts/location";
@@ -66,17 +64,15 @@ const categorias = [
   },
 ];
 
-const MinhasDenuncias = observer(() => {
+const MinhasDenuncia = observer(() => {
   const { logado } = useLocalSearchParams();
   const [denuncias, setDenuncias] = useState([]);
   const [page, setPage] = useState(0);
   const [categoria, setCategoria] = useState("");
   const [loading, setLoading] = useState(false);
   const [paginaCheia, setPaginaCheia] = useState(false);
-  const [status, setStatus] = useState("");
 
-
-  const getSelf = async (localPage) => {
+  const getAll = async (localPage) => {
     if (
       locationContext &&
       locationContext.location &&
@@ -84,7 +80,7 @@ const MinhasDenuncias = observer(() => {
       locationContext.location.coords.latitude &&
       locationContext.location.coords.longitude
     ) {
-      get( //alterar get
+      get(
         `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}`
       )
         .then((data) => {
@@ -155,7 +151,7 @@ const MinhasDenuncias = observer(() => {
       }
     );
 
-    getSelf(0);
+    getAll(0);
 
     return () => backHandler.remove();
   }, []);
@@ -202,7 +198,7 @@ const MinhasDenuncias = observer(() => {
             if (categoria) {
               getByCategoria(categoria, page + 1);
             } else {
-              getSelf(page + 1);
+              getAll(page + 1);
             }
           }
         }}
@@ -210,7 +206,7 @@ const MinhasDenuncias = observer(() => {
         <View style={styles.container}>
           <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
           <CHeader
-            titulo={"Minhas Denúncias"}
+            titulo={"Feed"}
             logado={logado === "true"}
             showText={logado === "true"}
             goBack={false}
@@ -242,7 +238,7 @@ const MinhasDenuncias = observer(() => {
                     setLoading(true);
                     setPaginaCheia(false);
                     setPage(0);
-                    getSelf(0);
+                    getAll(0);
                   }}
                 >
                   <Text
@@ -284,8 +280,7 @@ const MinhasDenuncias = observer(() => {
             </ScrollView>
             {denuncias &&
               denuncias.map((denuncia, index) => (
-                <CDenunciaSelf
-                  id={denuncia.id}
+                <CDenunciaCard
                   nome={denuncia.nome_usuario}
                   foto={denuncia.foto_usuario}
                   rua={denuncia.endereco}
@@ -293,7 +288,6 @@ const MinhasDenuncias = observer(() => {
                   imagens={denuncia.fotos}
                   categoria={denuncia.categoria}
                   key={index}
-                  status={denuncia.status}
                 />
               ))}
           </View>
@@ -341,4 +335,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MinhasDenuncias;
+export default MinhasDenuncia;

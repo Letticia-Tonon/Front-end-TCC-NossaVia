@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { Alert } from "react-native";
 import { LocalSvg } from "react-native-svg/css";
 import { View, Text, Dimensions, Image, StyleSheet, Pressable } from "react-native";
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCircle, faCheck, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import CActionSheet from "./CActionSheet"; 
+import { router } from "expo-router";
 import { del } from "../utils/api";
 
 const { width } = Dimensions.get("window");
@@ -13,6 +15,8 @@ const CDenunciaSelf = ({id, nome, foto, rua, descricao, imagens, categoria }) =>
   const [icon, setIcon] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
   const [status, setStatus] = useState("Em aberto");
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     switch (categoria) {
@@ -40,6 +44,20 @@ const CDenunciaSelf = ({id, nome, foto, rua, descricao, imagens, categoria }) =>
     }
   }, [categoria]);
 
+  const atualizarStatus = async (novoStatus) => {
+    try {
+      const response = await put(`denuncia/${id}/status`, { status: novoStatus }, true);
+      if (response.status === 200) {
+        setStatus(novoStatus);
+      } else {
+        Alert.alert("Erro", "Não foi possível atualizar o status.");
+      }
+    } catch (error) {
+      Alert.alert("Erro", "Ocorreu um problema ao tentar atualizar o status.");
+    }
+  };
+  
+
   const deletarDenuncia = async () => {
     Alert.alert(
       "Atenção!",
@@ -54,7 +72,7 @@ const CDenunciaSelf = ({id, nome, foto, rua, descricao, imagens, categoria }) =>
             if (loading) return;
             setLoading(true);
             try {
-              const response = await del("denuncia", true);
+              const response = await del(`denuncia/${id}`, true);
               if (response.status === 200) {
                 Alert.alert("Sucesso", "Denúncia excluída.");
                 router.push("screens/Feed?logado=true");
@@ -76,9 +94,8 @@ const CDenunciaSelf = ({id, nome, foto, rua, descricao, imagens, categoria }) =>
       }
     );
   };
-  
 
-  // Função para definir a cor com base no status
+
   const getButtonStyle = () => {
     return {
       flexDirection: "row",
@@ -86,7 +103,7 @@ const CDenunciaSelf = ({id, nome, foto, rua, descricao, imagens, categoria }) =>
       borderRadius: 25,
       paddingVertical: 10,
       paddingHorizontal: 20,
-      alignItems: "center",
+      alignItems: "right",
     };
   };
 
@@ -149,28 +166,43 @@ const CDenunciaSelf = ({id, nome, foto, rua, descricao, imagens, categoria }) =>
 
         <View style={styles.userInfo}>
           <Text style={styles.name}>{nome}</Text>
+          <Text>{id}</Text>
           <Text>{rua}</Text>
           <Text>{descricao}</Text>
 
           <View style={styles.buttonContainer}>
-            <Pressable style={styles.CheckIcon}onPress={router.push("screens/EditarDenuncia")}>
-             <FontAwesomeIcon icon={faCheck} size={16} color="#00C851" />
-            </Pressable>
+          <Pressable 
+  style={styles.CheckIcon} 
+  onPress={() => 
+    router.push({
+      screen: "screens/EditarDenuncia",
+      params: {
+        id,
+        nome,
+        foto,
+        rua,
+        descricao,
+        imagens,
+        categoria
+      }
+    })
+  }>
+  <FontAwesomeIcon icon={faPenToSquare} />
+</Pressable>
             <Pressable style={styles.trashIcon} onPress={deletarDenuncia}>
-             <FontAwesomeIcon icon={faTrash} size={30} color="#FF7C33" />
+             <FontAwesomeIcon icon={faTrash}  />
             </Pressable>
           </View>
 
-          <View style={getButtonStyle()}>
+          <CActionSheet
+            style={getButtonStyle()}
+            state={status}
+            setState={(novoStatus) => atualizarStatus(novoStatus)}
+            placeholder="Status"
+            itens={["Em aberto", "Resolvida"]}
+          >
             <Text style={{ color: "#FFFFFF", marginRight: 8 }}>{status}</Text>
-            <CActionSheet
-              style={styles.estado}
-              state={status}
-              setState={setStatus}
-              placeholder="Status"
-              itens={["Em aberto", "Resolvida"]}
-            />
-          </View>
+          </CActionSheet>
         </View>
       </View>
     </View>
@@ -233,7 +265,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    marginTop: 10,
+    marginTop: 20,
     justifyContent: "space-around",
   },
 });
