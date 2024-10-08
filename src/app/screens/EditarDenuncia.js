@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
-import CActionSheet from "../components/CActionSheet";
 import CHeader from "../components/CHeader";
 import { useState, useEffect } from "react";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
@@ -21,11 +20,15 @@ import CTextBox from "../components/CTextBox";
 import { get, put } from "../utils/api";
 import { cepMask } from "../utils/masks";
 import { validarCep } from "../utils/validators";
-import { router } from "expo-router";
+import locationContext from "../contexts/location";
+import { router, useLocalSearchParams } from "expo-router";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
 
 const { width } = Dimensions.get("window");
 
 export default function EditarDenuncia() {
+  const { denunciaId } = useLocalSearchParams(); // Busca o ID da denúncia
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState(null);
   const [marker, setMarker] = useState(null);
@@ -40,8 +43,8 @@ export default function EditarDenuncia() {
   const [descricaoInvalida, setDescricaoInvalida] = useState(false);
   const [enderecoInvalido, setEnderecoInvalido] = useState(false);
   const [cepInvalido, setCepInvalido] = useState(false);
-  const [imageList, setImageList] = useState([]); // Estado para armazenar as imagens
-  const [imageIndex, setImageIndex] = useState(0); // Índice da imagem atual exibida
+  const [imageList, setImageList] = useState([]);
+  const [imageIndex, setImageIndex] = useState(0); 
 
   // Função para buscar os dados da denúncia existente, incluindo as imagens
   const fetchDenuncia = async (denunciaId) => {
@@ -49,7 +52,6 @@ export default function EditarDenuncia() {
       const response = await get(`denuncia/${denunciaId}`);
       const denuncia = response.data;
 
-      // Preencher os campos com os dados da denúncia
       setDescricao(denuncia.descricao);
       setCep(denuncia.cep);
       setEndereco(denuncia.endereco);
@@ -62,7 +64,6 @@ export default function EditarDenuncia() {
         longitude: parseFloat(denuncia.longitude),
       });
 
-      // Carregar as imagens da denúncia
       if (denuncia.fotos) {
         setImageList(
           denuncia.fotos.map((fotoBase64) => ({
@@ -141,6 +142,7 @@ export default function EditarDenuncia() {
 
     let location = await Location.getCurrentPositionAsync({});
     setLocation(location);
+    locationContext.set(location);
   };
 
   useEffect(() => {
@@ -154,42 +156,38 @@ export default function EditarDenuncia() {
         <View style={{ ...styles.container, width: "100%" }}>
           <CHeader titulo={"Editar Denúncia"} logado={true} goBack={true} />
 
-          {/* Exibir as imagens carregadas */}
-          {imageList.length > 0 && (
-            <PagerView
-              style={styles.fotos}
-              initialPage={0}
-              onPageSelected={(e) => setImageIndex(e.nativeEvent.position)}
-            >
-              {imageList.map((image, index) => (
-                <View style={styles.page} key={index}>
-                  <Image source={{ uri: image.uri }} style={styles.image} />
-                </View>
-              ))}
-            </PagerView>
-          )}
+          <PagerView
+            style={styles.imagePlaceholder}
+            initialPage={0}
+            onPageSelected={(e) => {
+              setImageIndex(e.nativeEvent.position);
+            }}
+          >
+            {imageList.map((image, index) => (
+              <View style={styles.page} key={index}>
+                <Image source={{ uri: image.uri }} style={styles.denunciaImage} />
+              </View>
+            ))}
+          </PagerView>
 
-          {/* Navegação entre as imagens */}
-          {imageList.length > 0 && (
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 5,
-                margin: 8,
-                alignItems: "center",
-              }}
-            >
-              {imageList.map((image, index) => (
-                <FontAwesomeIcon
-                  key={index}
-                  icon={faCircle}
-                  size={imageIndex === index ? 11 : 8}
-                  color="#666666"
-                />
-              ))}
-            </View>
-          )}
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 5,
+              marginTop: 8,
+              alignItems: "center",
+            }}
+          >
+            {imageList.map((image, index) => (
+              <FontAwesomeIcon
+                icon={faCircle}
+                size={imageIndex === index ? 11 : 8}
+                color="#666666"
+                key={index}
+              />
+            ))}
+          </View>
 
           <CTextBox
             placeholder="Descreva aqui o seu problema"
@@ -204,9 +202,11 @@ export default function EditarDenuncia() {
             provider={PROVIDER_GOOGLE}
             style={styles.map}
             region={
-              latitude && longitude && {
-                latitude: latitude,
-                longitude: longitude,
+              location?.coords &&
+              location.coords.latitude &&
+              location.coords.longitude && {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
               }
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     width: width,
     height: width,
   },
-  fotos: {
+  imagePlaceholder: {
     width: "100%",
     height: 300,
   },
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  image: {
+  denunciaImage: {
     width: "100%",
     height: "100%",
     resizeMode: "cover",
