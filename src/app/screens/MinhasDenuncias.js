@@ -66,7 +66,10 @@ const MinhasDenuncias = observer(() => {
   const [categoria, setCategoria] = useState("");
   const [loading, setLoading] = useState(false);
   const [paginaCheia, setPaginaCheia] = useState(false);
-  const [status, setStatus] = useState("");
+
+  const deleteDenuncia = (id) => {
+    setDenuncias(denuncias.filter((denuncia) => denuncia.id !== id));
+  }
 
   const getSelf = async (localPage) => {
     if (
@@ -257,6 +260,7 @@ const MinhasDenuncias = observer(() => {
                     key={index}
                     status_denuncia={denuncia.status}
                     numero={denuncia.numero_endereco}
+                    deleteDenuncia={deleteDenuncia}
                   />
                 ))}
             </View>

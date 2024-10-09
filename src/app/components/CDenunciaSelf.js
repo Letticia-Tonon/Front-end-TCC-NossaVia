@@ -32,6 +32,7 @@ const CDenunciaSelf = ({
   numero,
   foto,
   status_denuncia,
+  deleteDenuncia
 }) => {
   const [icon, setIcon] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
@@ -84,15 +85,13 @@ const CDenunciaSelf = ({
             if (loading) return;
             setLoading(true);
             try {
-              const response = await del(`denuncia/${id}`, true);
-              if (response.status === 200) {
-                Alert.alert("Sucesso", "Denúncia excluída.");
-                router.push("screens/Feed?logado=true");
-              } else if (response.status === 404) {
-                Alert.alert("Ops!", "Denúncia não encontrada.");
-              } else {
-                Alert.alert("Ops!", "Ocorreu um erro inesperado.");
+              const response = await del(`denuncia?id=${id}`, true);
+              if (response.status !== 200) {
+                Alert.alert("Ops!", "Não foi possível deletar essa denúncia.");
+                return
               }
+              if (deleteDenuncia) deleteDenuncia(id);
+              Alert.alert("Sucesso", "Denúncia excluída com sucesso.");
             } catch (error) {
               Alert.alert("Ops!", "Ocorreu um erro inesperado.");
             } finally {
