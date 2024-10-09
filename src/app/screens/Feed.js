@@ -326,6 +326,7 @@ const Feed = observer(() => {
                     imagens={denuncia.fotos}
                     categoria={denuncia.categoria}
                     numero={denuncia.numero_endereco}
+                    status={denuncia.status}
                     key={index}
                   />
                 ))}

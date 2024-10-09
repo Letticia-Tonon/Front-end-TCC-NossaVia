@@ -16,7 +16,16 @@ const LIXO_ICON = require("../../../assets/icons/lixo_via.svg");
 const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 
-const CDenunciaCard = ({ nome, foto, rua, descricao, imagens, categoria, numero }) => {
+const CDenunciaCard = ({
+  nome,
+  foto,
+  rua,
+  descricao,
+  imagens,
+  categoria,
+  numero,
+  status,
+}) => {
   const [imageIndex, setImageIndex] = useState(0);
 
   return (
@@ -32,6 +41,13 @@ const CDenunciaCard = ({ nome, foto, rua, descricao, imagens, categoria, numero 
           {imagens.map((image, index) => (
             <View style={styles.page} key={index}>
               <Image source={{ uri: image }} style={styles.denunciaImage} />
+              {status === "resolvido" && (
+                <View style={styles.status}>
+                  <Text style={{ color: "#FFF", textAlign: "center", fontWeight: "bold", fontSize: 15 }}>
+                    Este problema foi resolvido!
+                  </Text>
+                </View>
+              )}
             </View>
           ))}
         </PagerView>
@@ -87,7 +103,10 @@ const CDenunciaCard = ({ nome, foto, rua, descricao, imagens, categoria, numero 
 
         <View style={styles.userInfo}>
           <Text style={styles.name}>{nome}</Text>
-          <Text>Endereço: {rua ? rua.trim() : ""}{numero ? `, ${numero}` : ""}</Text>
+          <Text>
+            Endereço: {rua ? rua.trim() : ""}
+            {numero ? `, ${numero}` : ""}
+          </Text>
           <Text>{descricao}</Text>
         </View>
       </View>
@@ -141,6 +160,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  status: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    backgroundColor: "#00BB00",
+    padding: 5,
+    borderBottomLeftRadius: 10,
+    zIndex: 1001,
   },
 });
 

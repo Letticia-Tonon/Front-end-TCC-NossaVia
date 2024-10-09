@@ -172,7 +172,7 @@ export default function EditarDenuncia() {
       .then((response) => {
         if (response.status === 200) {
           Alert.alert("Sucesso", "Denúncia editada com sucesso.");
-          router.push("screens/MinhasDenuncias");
+          router.navigate("screens/MinhasDenuncias");
         } else {
           Alert.alert(
             "Ops!",
