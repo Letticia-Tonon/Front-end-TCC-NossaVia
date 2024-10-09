@@ -139,6 +139,16 @@ const CHeader = observer((props) => {
               <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {
+                  abrirMenu();
+                  router.push("screens/MinhasDenuncias");
+                }}
+              >
+                <Text style={styles.menuText}>Minhas denúncias</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
                   router.push({ pathname: "screens/EditarUsuario" });
                 }}
               >
@@ -153,16 +163,6 @@ const CHeader = observer((props) => {
                 }}
               >
                 <Text style={styles.menuText}>Editar senha</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => {
-                  abrirMenu();
-                  router.push("screens/MinhasDenuncias");
-                }}
-              >
-                <Text style={styles.menuText}>Minhas denúncias</Text>
               </TouchableOpacity>
 
               <TouchableOpacity

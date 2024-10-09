@@ -9,20 +9,14 @@ import {
   Dimensions,
   Text,
 } from "react-native";
-import { router } from "expo-router";
-import { useLocalSearchParams } from "expo-router";
-import userContext from "../contexts/user";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
-import CDenunciaCard from "../components/CDenunciaCard";
 import CDenunciaSelf from "../components/CDenunciaSelf";
 import { useEffect, useState } from "react";
 import { get } from "../utils/api";
 import locationContext from "../contexts/location";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { LocalSvg } from "react-native-svg/css";
-import { set } from "mobx";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 const DENUNCIAS_POR_PAGINA = 10;
 
@@ -67,14 +61,12 @@ const categorias = [
 ];
 
 const MinhasDenuncias = observer(() => {
-  const { logado } = useLocalSearchParams();
   const [denuncias, setDenuncias] = useState([]);
   const [page, setPage] = useState(0);
   const [categoria, setCategoria] = useState("");
   const [loading, setLoading] = useState(false);
   const [paginaCheia, setPaginaCheia] = useState(false);
   const [status, setStatus] = useState("");
-
 
   const getSelf = async (localPage) => {
     if (
@@ -84,9 +76,7 @@ const MinhasDenuncias = observer(() => {
       locationContext.location.coords.latitude &&
       locationContext.location.coords.longitude
     ) {
-      get( //alterar get
-        `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}`
-      )
+      get(`minhas-denuncias?&page=${localPage}`, true)
         .then((data) => {
           if (data.status !== 200) {
             Alert.alert("Erro", "Não foi possível carregar as denúncias.");
@@ -117,7 +107,8 @@ const MinhasDenuncias = observer(() => {
       locationContext.location.coords.longitude
     ) {
       return get(
-        `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}&categoria=${categoria.id}`
+        `minhas-denuncias?&page=${localPage}&categoria=${categoria.id}`,
+        true
       ).then((data) => {
         if (data.status !== 200) {
           Alert.alert("Erro", "Não foi possível carregar as denúncias.");
@@ -161,145 +152,118 @@ const MinhasDenuncias = observer(() => {
   }, []);
 
   return (
-    <View>
-      {/* Botão Flutuante */}
-      <TouchableOpacity
-        style={styles.floatingButton}
-        onPress={() => {
-          if (logado === "false") {
-            Alert.alert(
-              "Atenção!",
-              "Para criar uma denúncia você precisa entrar na sua conta.",
-              [
-                {
-                  text: "Cancelar",
-                },
-                {
-                  text: "Entrar",
-                  onPress: () => {
-                    router.push("screens/Login");
-                  },
-                },
-              ],
-              {
-                cancelable: true,
+    <ActionSheetProvider>
+      <View>
+        <ScrollView
+          onScroll={({ nativeEvent }) => {
+            const screenTop = nativeEvent.contentOffset.y;
+            const pageSize = nativeEvent.contentSize.height;
+            if (screenTop + height * 2 > pageSize && !loading && !paginaCheia) {
+              setPage(page + 1);
+              setLoading(true);
+              if (categoria) {
+                getByCategoria(categoria, page + 1);
+              } else {
+                getSelf(page + 1);
               }
-            );
-            return;
-          }
-          router.push("screens/CriarDenuncia");
-        }}
-      >
-        <FontAwesomeIcon icon={faPlus} size={24} color="#fff" />
-      </TouchableOpacity>
-      <ScrollView
-        onScroll={({ nativeEvent }) => {
-          const screenTop = nativeEvent.contentOffset.y;
-          const pageSize = nativeEvent.contentSize.height;
-          if (screenTop + height * 2 > pageSize && !loading && !paginaCheia) {
-            setPage(page + 1);
-            setLoading(true);
-            if (categoria) {
-              getByCategoria(categoria, page + 1);
-            } else {
-              getSelf(page + 1);
             }
-          }
-        }}
-      >
-        <View style={styles.container}>
-          <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
-          <CHeader
-            titulo={"Minhas Denúncias"}
-            logado={logado === "true"}
-            showText={logado === "true"}
-            goBack={false}
-            showIcon={true}
-          />
+          }}
+        >
+          <View style={styles.container}>
+            <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
+            <CHeader
+              titulo={"Minhas Denúncias"}
+              logado={true}
+              showText={true}
+              goBack={true}
+              showIcon={true}
+            />
 
-          <View style={styles.feed}>
-            <View
-              style={{
-                width: "100%",
-                alignItems: "flex-start",
-                marginTop: 5,
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text
+            <View style={styles.feed}>
+              <View
                 style={{
-                  fontSize: 15,
-                  fontWeight: "bold",
+                  width: "100%",
+                  alignItems: "flex-start",
+                  marginTop: 5,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }}
               >
-                Filtrar Por: {categoria.name}
-              </Text>
-              {categoria && (
-                <TouchableOpacity
-                  onPress={() => {
-                    if (loading) return;
-                    setLoading(true);
-                    setPaginaCheia(false);
-                    setPage(0);
-                    getSelf(0);
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "bold",
                   }}
                 >
-                  <Text
-                    style={{
-                      fontSize: 15,
+                  Filtrar Por: {categoria.name}
+                </Text>
+                {categoria && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (loading) return;
+                      setLoading(true);
+                      setPaginaCheia(false);
+                      setPage(0);
+                      getSelf(0);
                     }}
                   >
-                    Limpar Filtro
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-            <ScrollView
-              horizontal={true}
-              style={{ width: width, paddingHorizontal: 5 }}
-              showsHorizontalScrollIndicator={false}
-            >
-              {categorias.map((categoria, index) => (
-                <TouchableOpacity
-                  style={styles.iconContainer}
-                  key={index}
-                  onPress={() => {
-                    if (loading) return;
-                    setLoading(true);
-                    setPaginaCheia(false);
-                    setPage(0);
-                    getByCategoria(categoria, 0);
-                  }}
-                >
-                  <LocalSvg
-                    asset={categoria.icon}
-                    height={75}
-                    width={75}
-                    style={{ marginHorizontal: 4 }}
+                    <Text
+                      style={{
+                        fontSize: 15,
+                      }}
+                    >
+                      Limpar Filtro
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <ScrollView
+                horizontal={true}
+                style={{ width: width, paddingHorizontal: 5 }}
+                showsHorizontalScrollIndicator={false}
+              >
+                {categorias.map((categoria, index) => (
+                  <TouchableOpacity
+                    style={styles.iconContainer}
+                    key={index}
+                    onPress={() => {
+                      if (loading) return;
+                      setLoading(true);
+                      setPaginaCheia(false);
+                      setPage(0);
+                      getByCategoria(categoria, 0);
+                    }}
+                  >
+                    <LocalSvg
+                      asset={categoria.icon}
+                      height={75}
+                      width={75}
+                      style={{ marginHorizontal: 4 }}
+                    />
+                    <Text>{categoria.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              {denuncias &&
+                denuncias.map((denuncia, index) => (
+                  <CDenunciaSelf
+                    id={denuncia.id}
+                    nome={denuncia.nome_usuario}
+                    foto={denuncia.foto_usuario}
+                    rua={denuncia.endereco}
+                    descricao={denuncia.descricao}
+                    imagens={denuncia.fotos}
+                    categoria={denuncia.categoria}
+                    key={index}
+                    status_denuncia={denuncia.status}
+                    numero={denuncia.numero_endereco}
                   />
-                  <Text>{categoria.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-            {denuncias &&
-              denuncias.map((denuncia, index) => (
-                <CDenunciaSelf
-                  id={denuncia.id}
-                  nome={denuncia.nome_usuario}
-                  foto={denuncia.foto_usuario}
-                  rua={denuncia.endereco}
-                  descricao={denuncia.descricao}
-                  imagens={denuncia.fotos}
-                  categoria={denuncia.categoria}
-                  key={index}
-                  status={denuncia.status}
-                />
-              ))}
+                ))}
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </ActionSheetProvider>
   );
 });
 

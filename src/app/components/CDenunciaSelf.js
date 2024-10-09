@@ -1,20 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Alert } from "react-native";
 import { LocalSvg } from "react-native-svg/css";
-import { View, Text, Dimensions, Image, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Dimensions,
+  Image,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCircle, faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
-import CActionSheet from "./CActionSheet"; 
+import {
+  faCircle,
+  faPenToSquare,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
+import CActionSheet from "./CActionSheet";
 import { router } from "expo-router";
-import { del } from "../utils/api";
+import { del, put } from "../utils/api";
 
 const { width } = Dimensions.get("window");
 
-const CDenunciaSelf = ({id, nome, foto, rua, descricao, imagens, categoria }) => {
+const CDenunciaSelf = ({
+  id,
+  nome,
+  rua,
+  descricao,
+  imagens,
+  categoria,
+  numero,
+  foto,
+  status_denuncia,
+}) => {
   const [icon, setIcon] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
-  const [status, setStatus] = useState("Em aberto");
+  const [status, setStatus] = useState(
+    {
+      nao_resolvido: "Não resolvida",
+      resolvido: "Resolvida",
+    }[status_denuncia]
+  );
 
   const [loading, setLoading] = useState(false);
 
@@ -43,20 +69,6 @@ const CDenunciaSelf = ({id, nome, foto, rua, descricao, imagens, categoria }) =>
         break;
     }
   }, [categoria]);
-
-  const atualizarStatus = async (novoStatus) => {
-    try {
-      const response = await put(`denuncia/${id}/status`, { status: novoStatus }, true);
-      if (response.status === 200) {
-        setStatus(novoStatus);
-      } else {
-        Alert.alert("Erro", "Não foi possível atualizar o status.");
-      }
-    } catch (error) {
-      Alert.alert("Erro", "Ocorreu um problema ao tentar atualizar o status.");
-    }
-  };
-  
 
   const deletarDenuncia = async () => {
     Alert.alert(
@@ -93,18 +105,6 @@ const CDenunciaSelf = ({id, nome, foto, rua, descricao, imagens, categoria }) =>
         cancelable: true,
       }
     );
-  };
-
-
-  const getButtonStyle = () => {
-    return {
-      flexDirection: "row",
-      backgroundColor: status === "Em aberto" ? "#FF4444" : "#00C851", 
-      borderRadius: 25,
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      alignItems: "right",
-    };
   };
 
   return (
@@ -146,14 +146,6 @@ const CDenunciaSelf = ({id, nome, foto, rua, descricao, imagens, categoria }) =>
 
       <View style={styles.content}>
         <View style={styles.overlayIcons}>
-          <Image
-            source={{ uri: foto }}
-            style={{
-              width: 65,
-              height: 65,
-              borderRadius: 40,
-            }}
-          />
           {icon && (
             <LocalSvg
               asset={icon}
@@ -165,44 +157,79 @@ const CDenunciaSelf = ({id, nome, foto, rua, descricao, imagens, categoria }) =>
         </View>
 
         <View style={styles.userInfo}>
-          <Text style={styles.name}>{nome}</Text>
-          <Text>{id}</Text>
-          <Text>{rua}</Text>
+          {/* <Text>{id}</Text> */}
+          <Text>
+            Endereço: {rua ? rua.trim() : ""}
+            {numero ? `, ${numero}` : ""}
+          </Text>
           <Text>{descricao}</Text>
 
           <View style={styles.buttonContainer}>
-          <Pressable 
-  style={styles.CheckIcon} 
-  onPress={() => 
-    router.push({
-      screen: "screens/EditarDenuncia",
-      params: {
-        id,
-        nome,
-        foto,
-        rua,
-        descricao,
-        imagens,
-        categoria
-      }
-    })
-  }>
-  <FontAwesomeIcon icon={faPenToSquare} />
-</Pressable>
-            <Pressable style={styles.trashIcon} onPress={deletarDenuncia}>
-             <FontAwesomeIcon icon={faTrash}  />
+            <Pressable style={styles.icon} onPress={deletarDenuncia}>
+              <FontAwesomeIcon size={23} icon={faTrash} />
             </Pressable>
-          </View>
 
-          <CActionSheet
-            style={getButtonStyle()}
-            state={status}
-            setState={(novoStatus) => atualizarStatus(novoStatus)}
-            placeholder="Status"
-            itens={["Em aberto", "Resolvida"]}
-          >
-            <Text style={{ color: "#FFFFFF", marginRight: 8 }}>{status}</Text>
-          </CActionSheet>
+            <Pressable
+              style={styles.icon}
+              onPress={() =>
+                router.push({
+                  screen: "screens/EditarDenuncia",
+                  params: {
+                    id,
+                    nome,
+                    foto,
+                    rua,
+                    descricao,
+                    imagens,
+                    categoria,
+                  },
+                })
+              }
+            >
+              <FontAwesomeIcon size={25} icon={faPenToSquare} />
+            </Pressable>
+
+            <View style={{ flex: 1 }}>
+              <CActionSheet
+                style={{
+                  backgroundColor:
+                    status === "Não resolvida" ? "#FF4444" : "#00C851",
+                  borderRadius: 25,
+                  paddingVertical: 10,
+                  paddingHorizontal: 20,
+                }}
+                state={status}
+                setState={(value) => {
+                  current = status;
+                  put(
+                    `denuncia?id=${id}`,
+                    {
+                      status: {
+                        "Não resolvida": "nao_resolvido",
+                        Resolvida: "resolvido",
+                      }[value],
+                    },
+                    true
+                  ).then((response) => {
+                    if (response.status !== 200) {
+                      setStatus(current);
+                      Alert.alert(
+                        "Ops!",
+                        "Não foi possível atualizar o status dessa denúncia."
+                      );
+                    }
+                  });
+                  setStatus(value);
+                }}
+                placeholder="Status"
+                itens={["Não resolvida", "Resolvida"]}
+              >
+                <Text style={{ color: "#FFFFFF", marginRight: 8 }}>
+                  {status}
+                </Text>
+              </CActionSheet>
+            </View>
+          </View>
         </View>
       </View>
     </View>
@@ -221,11 +248,11 @@ const styles = StyleSheet.create({
     width: width,
   },
   estado: {
-    flexDirection: "row", // Para alinhar o texto e o ícone em linha
-    borderRadius: 25, // Deixa as bordas arredondadas
-    paddingVertical: 10, // Padding vertical para aumentar a área clicável
-    paddingHorizontal: 20, // Padding horizontal para dar espaço ao texto
-    alignItems: "center", // Centraliza o texto e o ícone verticalmente
+    flexDirection: "row",
+    borderRadius: 25,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: "center",
   },
   center: {
     alignItems: "center",
@@ -249,7 +276,6 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     marginLeft: 5,
-    marginTop: 5,
   },
   name: {
     fontSize: 20,
@@ -260,13 +286,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -60,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     alignItems: "center",
   },
   buttonContainer: {
     flexDirection: "row",
-    marginTop: 20,
     justifyContent: "space-around",
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: 10,
+  },
+  icon: {
+    width: "15%",
   },
 });
 

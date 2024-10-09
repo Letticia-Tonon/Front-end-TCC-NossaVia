@@ -16,7 +16,7 @@ const LIXO_ICON = require("../../../assets/icons/lixo_via.svg");
 const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 
-const CDenunciaCard = ({ nome, foto, rua, descricao, imagens, categoria }) => {
+const CDenunciaCard = ({ nome, foto, rua, descricao, imagens, categoria, numero }) => {
   const [imageIndex, setImageIndex] = useState(0);
 
   return (
@@ -87,7 +87,7 @@ const CDenunciaCard = ({ nome, foto, rua, descricao, imagens, categoria }) => {
 
         <View style={styles.userInfo}>
           <Text style={styles.name}>{nome}</Text>
-          <Text>{rua}</Text>
+          <Text>Endereço: {rua ? rua.trim() : ""}{numero ? `, ${numero}` : ""}</Text>
           <Text>{descricao}</Text>
         </View>
       </View>
