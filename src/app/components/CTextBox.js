@@ -14,6 +14,7 @@ export default function CTextBox(props) {
             : styles.input
         }
         placeholder={props.placeholder}
+        value={props.state}
         multiline={true}
         placeholderTextColor="#555555"
         maxLength={props.maxLength}

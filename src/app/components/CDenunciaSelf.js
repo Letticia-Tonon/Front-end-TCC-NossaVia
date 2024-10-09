@@ -32,7 +32,7 @@ const CDenunciaSelf = ({
   numero,
   foto,
   status_denuncia,
-  deleteDenuncia
+  deleteDenuncia,
 }) => {
   const [icon, setIcon] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
@@ -88,7 +88,7 @@ const CDenunciaSelf = ({
               const response = await del(`denuncia?id=${id}`, true);
               if (response.status !== 200) {
                 Alert.alert("Ops!", "Não foi possível deletar essa denúncia.");
-                return
+                return;
               }
               if (deleteDenuncia) deleteDenuncia(id);
               Alert.alert("Sucesso", "Denúncia excluída com sucesso.");
@@ -170,20 +170,7 @@ const CDenunciaSelf = ({
 
             <Pressable
               style={styles.icon}
-              onPress={() =>
-                router.push({
-                  screen: "screens/EditarDenuncia",
-                  params: {
-                    id,
-                    nome,
-                    foto,
-                    rua,
-                    descricao,
-                    imagens,
-                    categoria,
-                  },
-                })
-              }
+              onPress={() => router.push(`screens/EditarDenuncia?id=${id}`)}
             >
               <FontAwesomeIcon size={25} icon={faPenToSquare} />
             </Pressable>

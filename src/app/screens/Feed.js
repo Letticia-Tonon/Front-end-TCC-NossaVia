@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Text,
+  ActivityIndicator
 } from "react-native";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
@@ -20,7 +21,6 @@ import locationContext from "../contexts/location";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { LocalSvg } from "react-native-svg/css";
-import { set } from "mobx";
 
 const DENUNCIAS_POR_PAGINA = 10;
 
@@ -71,6 +71,8 @@ const Feed = observer(() => {
   const [categoria, setCategoria] = useState("");
   const [loading, setLoading] = useState(false);
   const [paginaCheia, setPaginaCheia] = useState(false);
+  const [initLoading, setInitLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const getAll = async (localPage) => {
     if (
@@ -85,7 +87,11 @@ const Feed = observer(() => {
       )
         .then((data) => {
           if (data.status !== 200) {
-            Alert.alert("Erro", "Não foi possível carregar as denúncias.");
+            if (initLoading) {
+              setError(true);
+            } else {
+              Alert.alert("Erro", "Não foi possível carregar as denúncias.");
+            }
             return;
           }
           data.json().then((json) => {
@@ -100,7 +106,10 @@ const Feed = observer(() => {
             setDenuncias([...denuncias, ...json]);
           });
         })
-        .finally(() => setLoading(false));
+        .finally(() => {
+          if (initLoading) setInitLoading(false);
+          setLoading(false);
+        });
     }
   };
 
@@ -158,7 +167,6 @@ const Feed = observer(() => {
 
   return (
     <View>
-      {/* Botão Flutuante */}
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => {
@@ -213,85 +221,116 @@ const Feed = observer(() => {
             showIcon={true}
           />
 
-          <View style={styles.feed}>
+          {initLoading ? (
             <View
               style={{
-                width: "100%",
-                alignItems: "flex-start",
-                marginTop: 5,
-                flexDirection: "row",
-                justifyContent: "space-between",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: height / 2 - 100,
               }}
             >
-              <Text
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator size={60} color="#FF7C33" />
+              </View>
+            </View>
+          ) : error ? (
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: height / 2 - 100,
+              }}
+            >
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontSize: 20, textAlign: "center" }}>
+                  Não foi possível carregar o feed de denúncias nesse momento...
+                </Text>
+                <Text style={{ fontSize: 20, textAlign: "center" }}>
+                  Tente novamente em alguns instantes.
+                </Text>
+              </View>
+            </View>
+          ) : (
+            <View style={styles.feed}>
+              <View
                 style={{
-                  fontSize: 15,
-                  fontWeight: "bold",
+                  width: "100%",
+                  alignItems: "flex-start",
+                  marginTop: 5,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }}
               >
-                Filtrar Por: {categoria.name}
-              </Text>
-              {categoria && (
-                <TouchableOpacity
-                  onPress={() => {
-                    if (loading) return;
-                    setLoading(true);
-                    setPaginaCheia(false);
-                    setPage(0);
-                    getAll(0);
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "bold",
                   }}
                 >
-                  <Text
-                    style={{
-                      fontSize: 15,
+                  Filtrar Por: {categoria.name}
+                </Text>
+                {categoria && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (loading) return;
+                      setLoading(true);
+                      setPaginaCheia(false);
+                      setPage(0);
+                      getAll(0);
                     }}
                   >
-                    Limpar Filtro
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-            <ScrollView
-              horizontal={true}
-              style={{ width: width, paddingHorizontal: 5 }}
-              showsHorizontalScrollIndicator={false}
-            >
-              {categorias.map((categoria, index) => (
-                <TouchableOpacity
-                  style={styles.iconContainer}
-                  key={index}
-                  onPress={() => {
-                    if (loading) return;
-                    setLoading(true);
-                    setPaginaCheia(false);
-                    setPage(0);
-                    getByCategoria(categoria, 0);
-                  }}
-                >
-                  <LocalSvg
-                    asset={categoria.icon}
-                    height={75}
-                    width={75}
-                    style={{ marginHorizontal: 4 }}
+                    <Text
+                      style={{
+                        fontSize: 15,
+                      }}
+                    >
+                      Limpar Filtro
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <ScrollView
+                horizontal={true}
+                style={{ width: width, paddingHorizontal: 5 }}
+                showsHorizontalScrollIndicator={false}
+              >
+                {categorias.map((categoria, index) => (
+                  <TouchableOpacity
+                    style={styles.iconContainer}
+                    key={index}
+                    onPress={() => {
+                      if (loading) return;
+                      setLoading(true);
+                      setPaginaCheia(false);
+                      setPage(0);
+                      getByCategoria(categoria, 0);
+                    }}
+                  >
+                    <LocalSvg
+                      asset={categoria.icon}
+                      height={75}
+                      width={75}
+                      style={{ marginHorizontal: 4 }}
+                    />
+                    <Text>{categoria.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              {denuncias &&
+                denuncias.map((denuncia, index) => (
+                  <CDenunciaCard
+                    nome={denuncia.nome_usuario}
+                    foto={denuncia.foto_usuario}
+                    rua={denuncia.endereco}
+                    descricao={denuncia.descricao}
+                    imagens={denuncia.fotos}
+                    categoria={denuncia.categoria}
+                    numero={denuncia.numero_endereco}
+                    key={index}
                   />
-                  <Text>{categoria.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-            {denuncias &&
-              denuncias.map((denuncia, index) => (
-                <CDenunciaCard
-                  nome={denuncia.nome_usuario}
-                  foto={denuncia.foto_usuario}
-                  rua={denuncia.endereco}
-                  descricao={denuncia.descricao}
-                  imagens={denuncia.fotos}
-                  categoria={denuncia.categoria}
-                  numero={denuncia.numero_endereco}
-                  key={index}
-                />
-              ))}
-          </View>
+                ))}
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>
