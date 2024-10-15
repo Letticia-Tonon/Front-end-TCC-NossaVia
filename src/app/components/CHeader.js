@@ -143,7 +143,7 @@ const CHeader = observer((props) => {
                   router.push("screens/MinhasDenuncias");
                 }}
               >
-                <Text style={styles.menuText}>Minhas denúncias</Text>
+                <Text style={styles.menuText}>Minhas reclamações</Text>
               </TouchableOpacity>
 
               <TouchableOpacity

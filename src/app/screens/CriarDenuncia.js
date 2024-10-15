@@ -70,7 +70,7 @@ export default function CriarDenuncia() {
       imagemTemp = true;
       Alert.alert(
         "Atenção!",
-        "Adicione pelo menos uma imagem para prosseguir com a criação da sua denúncia."
+        "Adicione pelo menos uma imagem para prosseguir com a criação da sua reclamação."
       );
     }
 
@@ -98,7 +98,7 @@ export default function CriarDenuncia() {
       localTemp = true;
       Alert.alert(
         "Atenção!",
-        "Selecione um local no mapa para prosseguir com a criação da sua denúncia."
+        "Selecione um local no mapa para prosseguir com a criação da sua reclamação."
       );
     }
 
@@ -140,11 +140,11 @@ export default function CriarDenuncia() {
     )
       .then((data) => {
         if (data.status !== 201) {
-          Alert.alert("Ops!", "Ocorreu um erro inesperado ao criar a denúncia.");
+          Alert.alert("Ops!", "Ocorreu um erro inesperado ao criar a reclamação.");
           return;
         }
         router.push("screens/Feed?logado=true");
-        Alert.alert("Sucesso", "Denúncia criada com sucesso.");
+        Alert.alert("Sucesso", "Reclamação criada com sucesso.");
       });
   };
 
@@ -182,7 +182,7 @@ export default function CriarDenuncia() {
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
             <CHeader
-              titulo={"Criação de Denúncia"}
+              titulo={"Criação de Reclamação"}
               logado={true}
               showText={true}
               goBack={true}
@@ -377,7 +377,7 @@ export default function CriarDenuncia() {
               textStyle={{
                 color: "#FFFFFF",
               }}
-              text="Criar denúncia"
+              text="Criar reclamação"
               loading={loading}
               callback={() => {
                 if (loading) return;

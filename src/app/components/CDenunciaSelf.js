@@ -74,7 +74,7 @@ const CDenunciaSelf = ({
   const deletarDenuncia = async () => {
     Alert.alert(
       "Atenção!",
-      "Ao confirmar, a denúncia será permanentemente excluída.",
+      "Ao confirmar, a reclamação será permanentemente excluída.",
       [
         {
           text: "Cancelar",
@@ -87,11 +87,11 @@ const CDenunciaSelf = ({
             try {
               const response = await del(`denuncia?id=${id}`, true);
               if (response.status !== 200) {
-                Alert.alert("Ops!", "Não foi possível deletar essa denúncia.");
+                Alert.alert("Ops!", "Não foi possível deletar essa reclamação.");
                 return;
               }
               if (deleteDenuncia) deleteDenuncia(id);
-              Alert.alert("Sucesso", "Denúncia excluída com sucesso.");
+              Alert.alert("Sucesso", "Reclamação excluída com sucesso.");
             } catch (error) {
               Alert.alert("Ops!", "Ocorreu um erro inesperado.");
             } finally {
@@ -201,7 +201,7 @@ const CDenunciaSelf = ({
                       setStatus(current);
                       Alert.alert(
                         "Ops!",
-                        "Não foi possível atualizar o status dessa denúncia."
+                        "Não foi possível atualizar o status dessa reclamação."
                       );
                     }
                   });

@@ -90,7 +90,7 @@ const Feed = observer(() => {
             if (initLoading) {
               setError(true);
             } else {
-              Alert.alert("Erro", "Não foi possível carregar as denúncias.");
+              Alert.alert("Erro", "Não foi possível carregar as reclamações.");
             }
             return;
           }
@@ -125,7 +125,7 @@ const Feed = observer(() => {
         `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}&categoria=${categoria.id}`
       ).then((data) => {
         if (data.status !== 200) {
-          Alert.alert("Erro", "Não foi possível carregar as denúncias.");
+          Alert.alert("Erro", "Não foi possível carregar as reclamações.");
           return;
         }
         data
@@ -173,7 +173,7 @@ const Feed = observer(() => {
           if (logado === "false") {
             Alert.alert(
               "Atenção!",
-              "Para criar uma denúncia você precisa entrar na sua conta.",
+              "Para criar uma reclamação você precisa entrar na sua conta.",
               [
                 {
                   text: "Cancelar",
@@ -243,7 +243,7 @@ const Feed = observer(() => {
             >
               <View style={{ justifyContent: "center", alignItems: "center" }}>
                 <Text style={{ fontSize: 20, textAlign: "center" }}>
-                  Não foi possível carregar o feed de denúncias nesse momento...
+                  Não foi possível carregar o feed de reclamações nesse momento...
                 </Text>
                 <Text style={{ fontSize: 20, textAlign: "center" }}>
                   Tente novamente em alguns instantes.

@@ -89,7 +89,7 @@ const MinhasDenuncias = observer(() => {
             if (initLoading) {
               setError(true);
             } else {
-              Alert.alert("Erro", "Não foi possível carregar as denúncias.");
+              Alert.alert("Erro", "Não foi possível carregar as reclamações.");
             }
             return;
           }
@@ -125,7 +125,7 @@ const MinhasDenuncias = observer(() => {
         true
       ).then((data) => {
         if (data.status !== 200) {
-          Alert.alert("Erro", "Não foi possível carregar as denúncias.");
+          Alert.alert("Erro", "Não foi possível carregar as reclamações.");
           return;
         }
         data
@@ -186,7 +186,7 @@ const MinhasDenuncias = observer(() => {
           <View style={styles.container}>
             <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
             <CHeader
-              titulo={"Minhas Denúncias"}
+              titulo={"Minhas Reclamações"}
               logado={true}
               showText={true}
               goBack={true}
@@ -219,7 +219,7 @@ const MinhasDenuncias = observer(() => {
                   style={{ justifyContent: "center", alignItems: "center" }}
                 >
                   <Text style={{ fontSize: 20, textAlign: "center" }}>
-                    Não foi possível carregar as suas denúncias nesse momento...
+                    Não foi possível carregar as suas reclamações nesse momento...
                   </Text>
                   <Text style={{ fontSize: 20, textAlign: "center" }}>
                     Tente novamente em alguns instantes.

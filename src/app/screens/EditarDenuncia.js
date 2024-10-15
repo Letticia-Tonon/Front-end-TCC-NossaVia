@@ -81,7 +81,7 @@ export default function EditarDenuncia() {
         } else {
           Alert.alert(
             "Ops!",
-            "Ocorreu um erro inesperado ao buscar a denúncia"
+            "Ocorreu um erro inesperado ao buscar a reclamação"
           );
         }
       })
@@ -132,7 +132,7 @@ export default function EditarDenuncia() {
       localTemp = true;
       Alert.alert(
         "Atenção!",
-        "Selecione um local no mapa para prosseguir com a criação da sua denúncia."
+        "Selecione um local no mapa para prosseguir com a criação da sua reclamação."
       );
     }
 
@@ -171,12 +171,12 @@ export default function EditarDenuncia() {
     )
       .then((response) => {
         if (response.status === 200) {
-          Alert.alert("Sucesso", "Denúncia editada com sucesso.");
+          Alert.alert("Sucesso", "Reclamação editada com sucesso.");
           router.navigate("screens/MinhasDenuncias");
         } else {
           Alert.alert(
             "Ops!",
-            "Ocorreu um erro inesperado ao editar a denúncia."
+            "Ocorreu um erro inesperado ao editar a reclamação."
           );
         }
       })
@@ -190,7 +190,7 @@ export default function EditarDenuncia() {
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
             <CHeader
-              titulo={"Editar Denúncia"}
+              titulo={"Editar Reclamação"}
               logado={true}
               goBack={true}
               showText={true}
