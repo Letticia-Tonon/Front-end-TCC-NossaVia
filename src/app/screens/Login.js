@@ -61,14 +61,17 @@ const Login = observer(() => {
         ></CPassInput>
 
         {/* TODO: funcionalçidade reculperar senha programada para próximas sprints */}
-        {/* <View style={styles.viewLinks}>
+        <View style={styles.viewLinks}>
           <Text style={{ color: "#a9a9a9" }}>
             Esqueceu sua senha?{" "}
-            <Text style={{ color: "#a9a9a9", fontWeight: "bold" }}>
+            <Text
+              style={{ color: "#a9a9a9", fontWeight: "bold" }}
+              onPress={() => router.push("screens/RecuperarSenha")}
+            >
               Clique aqui
             </Text>
           </Text>
-        </View> */}
+        </View>
 
         <CTextButton
           buttonStyle={{
