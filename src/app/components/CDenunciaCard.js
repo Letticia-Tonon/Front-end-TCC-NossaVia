@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { LocalSvg } from "react-native-svg/css";
-import { View, Text, Dimensions, Image, StyleSheet } from "react-native";
+import { View, Text, Dimensions, Image, StyleSheet, Pressable, } from "react-native";
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faComment, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
 const { width } = Dimensions.get("window");
 
@@ -16,7 +16,7 @@ const LIXO_ICON = require("../../../assets/icons/lixo_via.svg");
 const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 
-const CDenunciaCard = ({
+const CReclamaçãoCard = ({
   nome,
   foto,
   rua,
@@ -40,7 +40,7 @@ const CDenunciaCard = ({
         >
           {imagens.map((image, index) => (
             <View style={styles.page} key={index}>
-              <Image source={{ uri: image }} style={styles.denunciaImage} />
+              <Image source={{ uri: image }} style={styles.ReclamaçãoImage} />
               {status === "resolvido" && (
                 <View style={styles.status}>
                   <Text style={{ color: "#FFF", textAlign: "center", fontWeight: "bold", fontSize: 15 }}>
@@ -108,7 +108,24 @@ const CDenunciaCard = ({
             {numero ? `, ${numero}` : ""}
           </Text>
           <Text>{descricao}</Text>
-        </View>
+          <View style={styles.buttonContainer}>
+          <Pressable //substituir por componente de curtir
+              style={styles.icon}
+              onPress={() => router.push(`screens/EditarReclamação?id=${id}`)}
+            >
+              <FontAwesomeIcon size={25} icon={faThumbsUp} />
+            </Pressable>
+            <Text>0</Text>
+            <View style={{ flex: 1 }}>
+            <Pressable //substituir por componente de comentar
+              style={styles.icon}
+              onPress={() => router.push(`screens/EditarReclamação?id=${id}`)}
+            >
+              <FontAwesomeIcon size={25} icon={faComment} />
+            </Pressable>
+            </View>
+          </View>
+        </View> 
       </View>
     </View>
   );
@@ -137,7 +154,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  denunciaImage: {
+  ReclamaçãoImage: {
     width: width,
     height: width,
     resizeMode: "cover",
@@ -161,6 +178,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: 10,
+  },
   status: {
     position: "absolute",
     right: 0,
@@ -170,6 +194,9 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     zIndex: 1001,
   },
+  icon: {
+    width: "15%",
+  },
 });
 
-export default CDenunciaCard;
+export default CReclamaçãoCard;

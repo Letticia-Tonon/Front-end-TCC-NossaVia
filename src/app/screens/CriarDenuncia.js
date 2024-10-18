@@ -33,7 +33,7 @@ import locationContext from "../contexts/location";
 
 const { width } = Dimensions.get("window");
 
-export default function CriarDenuncia() {
+export default function CriarReclamação() {
   const [loading, setLoading] = useState(false);
 
   const [categoria, setCategoria] = useState("");
@@ -115,7 +115,7 @@ export default function CriarDenuncia() {
 
     const imageListBase64 = imageList.map((image) => image.base64);
     await post(
-      "denuncia",
+      "reclamação",
       {
         descricao: descricao,
         categoria: {

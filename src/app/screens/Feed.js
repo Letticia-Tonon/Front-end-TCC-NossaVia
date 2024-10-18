@@ -14,7 +14,7 @@ import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
-import CDenunciaCard from "../components/CDenunciaCard";
+import CReclamaçãoCard from "../components/CReclamaçãoCard";
 import { useEffect, useState } from "react";
 import { get } from "../utils/api";
 import locationContext from "../contexts/location";
@@ -66,7 +66,7 @@ const categorias = [
 
 const Feed = observer(() => {
   const { logado } = useLocalSearchParams();
-  const [denuncias, setDenuncias] = useState([]);
+  const [reclamações, setReclamações] = useState([]);
   const [page, setPage] = useState(0);
   const [categoria, setCategoria] = useState("");
   const [loading, setLoading] = useState(false);
@@ -83,7 +83,7 @@ const Feed = observer(() => {
       locationContext.location.coords.longitude
     ) {
       get(
-        `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}`
+        `reclamação?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}`
       )
         .then((data) => {
           if (data.status !== 200) {
@@ -100,10 +100,10 @@ const Feed = observer(() => {
               setPaginaCheia(true);
             }
             if (localPage === 0) {
-              setDenuncias(json);
+              setReclamações(json);
               return;
             }
-            setDenuncias([...denuncias, ...json]);
+            setReclamações([...reclamações, ...json]);
           });
         })
         .finally(() => {
@@ -122,7 +122,7 @@ const Feed = observer(() => {
       locationContext.location.coords.longitude
     ) {
       return get(
-        `denuncia?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}&categoria=${categoria.id}`
+        `reclamação?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}&categoria=${categoria.id}`
       ).then((data) => {
         if (data.status !== 200) {
           Alert.alert("Erro", "Não foi possível carregar as reclamações.");
@@ -136,10 +136,10 @@ const Feed = observer(() => {
               setPaginaCheia(true);
             }
             if (localPage === 0) {
-              setDenuncias(json);
+              setReclamações(json);
               return;
             }
-            setDenuncias([...denuncias, ...json]);
+            setReclamações([...reclamações, ...json]);
           })
           .finally(() => {
             setLoading(false);
@@ -191,7 +191,7 @@ const Feed = observer(() => {
             );
             return;
           }
-          router.push("screens/CriarDenuncia");
+          router.push("screens/CriarReclamação");
         }}
       >
         <FontAwesomeIcon icon={faPlus} size={24} color="#fff" />
@@ -316,17 +316,17 @@ const Feed = observer(() => {
                   </TouchableOpacity>
                 ))}
               </ScrollView>
-              {denuncias &&
-                denuncias.map((denuncia, index) => (
-                  <CDenunciaCard
-                    nome={denuncia.nome_usuario}
-                    foto={denuncia.foto_usuario}
-                    rua={denuncia.endereco}
-                    descricao={denuncia.descricao}
-                    imagens={denuncia.fotos}
-                    categoria={denuncia.categoria}
-                    numero={denuncia.numero_endereco}
-                    status={denuncia.status}
+              {reclamações &&
+                reclamações.map((reclamação, index) => (
+                  <CReclamaçãoCard
+                    nome={reclamação.nome_usuario}
+                    foto={reclamação.foto_usuario}
+                    rua={reclamação.endereco}
+                    descricao={reclamação.descricao}
+                    imagens={reclamação.fotos}
+                    categoria={reclamação.categoria}
+                    numero={reclamação.numero_endereco}
+                    status={reclamação.status}
                     key={index}
                   />
                 ))}

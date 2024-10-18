@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
-import CDenunciaSelf from "../components/CDenunciaSelf";
+import CReclamaçãoSelf from "../components/CReclamaçãoSelf";
 import { useEffect, useState } from "react";
 import { get } from "../utils/api";
 import locationContext from "../contexts/location";
@@ -62,8 +62,8 @@ const categorias = [
   },
 ];
 
-const MinhasDenuncias = observer(() => {
-  const [denuncias, setDenuncias] = useState([]);
+const MinhasReclamações = observer(() => {
+  const [reclamações, setReclamações] = useState([]);
   const [page, setPage] = useState(0);
   const [categoria, setCategoria] = useState("");
   const [loading, setLoading] = useState(false);
@@ -71,8 +71,8 @@ const MinhasDenuncias = observer(() => {
   const [initLoading, setInitLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const deleteDenuncia = (id) => {
-    setDenuncias(denuncias.filter((denuncia) => denuncia.id !== id));
+  const deleteReclamação = (id) => {
+    setReclamações(reclamações.filter((reclamação) => reclamação.id !== id));
   };
 
   const getSelf = async (localPage) => {
@@ -83,7 +83,7 @@ const MinhasDenuncias = observer(() => {
       locationContext.location.coords.latitude &&
       locationContext.location.coords.longitude
     ) {
-      get(`minhas-denuncias?&page=${localPage}`, true)
+      get(`minhas-reclamações?&page=${localPage}`, true)
         .then((data) => {
           if (data.status !== 200) {
             if (initLoading) {
@@ -99,10 +99,10 @@ const MinhasDenuncias = observer(() => {
               setPaginaCheia(true);
             }
             if (localPage === 0) {
-              setDenuncias(json);
+              setReclamações(json);
               return;
             }
-            setDenuncias([...denuncias, ...json]);
+            setReclamações([...reclamações, ...json]);
           });
         })
         .finally(() => {
@@ -121,7 +121,7 @@ const MinhasDenuncias = observer(() => {
       locationContext.location.coords.longitude
     ) {
       return get(
-        `minhas-denuncias?&page=${localPage}&categoria=${categoria.id}`,
+        `minhas-reclamações?&page=${localPage}&categoria=${categoria.id}`,
         true
       ).then((data) => {
         if (data.status !== 200) {
@@ -136,10 +136,10 @@ const MinhasDenuncias = observer(() => {
               setPaginaCheia(true);
             }
             if (localPage === 0) {
-              setDenuncias(json);
+              setReclamações(json);
               return;
             }
-            setDenuncias([...denuncias, ...json]);
+            setReclamações([...reclamações, ...json]);
           })
           .finally(() => {
             setLoading(false);
@@ -292,20 +292,20 @@ const MinhasDenuncias = observer(() => {
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
-                {denuncias &&
-                  denuncias.map((denuncia, index) => (
-                    <CDenunciaSelf
-                      id={denuncia.id}
-                      nome={denuncia.nome_usuario}
-                      foto={denuncia.foto_usuario}
-                      rua={denuncia.endereco}
-                      descricao={denuncia.descricao}
-                      imagens={denuncia.fotos}
-                      categoria={denuncia.categoria}
+                {reclamações &&
+                  reclamações.map((reclamação, index) => (
+                    <CReclamaçãoSelf
+                      id={reclamação.id}
+                      nome={reclamação.nome_usuario}
+                      foto={reclamação.foto_usuario}
+                      rua={reclamação.endereco}
+                      descricao={reclamação.descricao}
+                      imagens={reclamação.fotos}
+                      categoria={reclamação.categoria}
                       key={index}
-                      status_denuncia={denuncia.status}
-                      numero={denuncia.numero_endereco}
-                      deleteDenuncia={deleteDenuncia}
+                      status_reclamação={reclamação.status}
+                      numero={reclamação.numero_endereco}
+                      deleteReclamação={deleteReclamação}
                     />
                   ))}
               </View>
@@ -355,4 +355,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MinhasDenuncias;
+export default MinhasReclamações;

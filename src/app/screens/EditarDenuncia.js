@@ -26,7 +26,7 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 
 const { height, width } = Dimensions.get("window");
 
-export default function EditarDenuncia() {
+export default function EditarReclamação() {
   const { id } = useLocalSearchParams();
 
   const [marker, setMarker] = useState(null);
@@ -49,19 +49,19 @@ export default function EditarDenuncia() {
   const [cepInvalido, setCepInvalido] = useState(false);
   const [categoriaInvalida, setCategoriaInvalida] = useState(false);
 
-  const fetchDenuncia = async () => {
-    get(`denuncia?id=${id}`, true)
+  const fetchReclamação = async () => {
+    get(`reclamação?id=${id}`, true)
       .then((response) => {
         if (response.status === 200) {
-          response.json().then((denuncia) => {
-            setDescricao(denuncia.descricao);
-            setCep(denuncia.cep);
-            setEndereco(denuncia.endereco);
-            setNumero(denuncia.numero_endereco);
-            setComplemento(denuncia.ponto_referencia);
-            setLatitude(denuncia.latitude);
-            setLongitude(denuncia.longitude);
-            setImageList(denuncia.fotos);
+          response.json().then((reclamação) => {
+            setDescricao(reclamação.descricao);
+            setCep(reclamação.cep);
+            setEndereco(reclamação.endereco);
+            setNumero(reclamação.numero_endereco);
+            setComplemento(reclamação.ponto_referencia);
+            setLatitude(reclamação.latitude);
+            setLongitude(reclamação.longitude);
+            setImageList(reclamação.fotos);
             setCategoria(
               {
                 via: "Irregularidades no Asfalto",
@@ -71,11 +71,11 @@ export default function EditarDenuncia() {
                 carro: "Veículo Abandonado",
                 iluminacao: "Falta de Iluminação",
                 outros: "Outros",
-              }[denuncia.categoria]
+              }[reclamação.categoria]
             );
             setMarker({
-              latitude: Number(denuncia.latitude),
-              longitude: Number(denuncia.longitude),
+              latitude: Number(reclamação.latitude),
+              longitude: Number(reclamação.longitude),
             });
           });
         } else {
@@ -90,7 +90,7 @@ export default function EditarDenuncia() {
 
   useEffect(() => {
     if (id) {
-      fetchDenuncia();
+      fetchReclamação();
     }
   }, []);
 
@@ -148,7 +148,7 @@ export default function EditarDenuncia() {
     }
 
     put(
-      `denuncia?id=${id}`,
+      `reclamação?id=${id}`,
       {
         descricao: descricao,
         endereco: endereco,
@@ -172,7 +172,7 @@ export default function EditarDenuncia() {
       .then((response) => {
         if (response.status === 200) {
           Alert.alert("Sucesso", "Reclamação editada com sucesso.");
-          router.navigate("screens/MinhasDenuncias");
+          router.navigate("screens/MinhasReclamações");
         } else {
           Alert.alert(
             "Ops!",
@@ -222,7 +222,7 @@ export default function EditarDenuncia() {
                     <View style={styles.page} key={index}>
                       <Image
                         source={{ uri: image }}
-                        style={styles.denunciaImage}
+                        style={styles.reclamaçãoImage}
                       />
                     </View>
                   ))}
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  denunciaImage: {
+  reclamaçãoImage: {
     width: "100%",
     height: "100%",
     resizeMode: "cover",

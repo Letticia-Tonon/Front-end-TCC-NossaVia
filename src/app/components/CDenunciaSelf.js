@@ -22,7 +22,7 @@ import { del, put } from "../utils/api";
 
 const { width } = Dimensions.get("window");
 
-const CDenunciaSelf = ({
+const CReclamaçãoSelf = ({
   id,
   nome,
   rua,
@@ -31,8 +31,8 @@ const CDenunciaSelf = ({
   categoria,
   numero,
   foto,
-  status_denuncia,
-  deleteDenuncia,
+  status_reclamação,
+  deleteReclamação,
 }) => {
   const [icon, setIcon] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
@@ -40,7 +40,7 @@ const CDenunciaSelf = ({
     {
       nao_resolvido: "Não resolvida",
       resolvido: "Resolvida",
-    }[status_denuncia]
+    }[status_reclamação]
   );
 
   const [loading, setLoading] = useState(false);
@@ -71,7 +71,7 @@ const CDenunciaSelf = ({
     }
   }, [categoria]);
 
-  const deletarDenuncia = async () => {
+  const deletarReclamação = async () => {
     Alert.alert(
       "Atenção!",
       "Ao confirmar, a reclamação será permanentemente excluída.",
@@ -85,12 +85,12 @@ const CDenunciaSelf = ({
             if (loading) return;
             setLoading(true);
             try {
-              const response = await del(`denuncia?id=${id}`, true);
+              const response = await del(`reclamação?id=${id}`, true);
               if (response.status !== 200) {
                 Alert.alert("Ops!", "Não foi possível deletar essa reclamação.");
                 return;
               }
-              if (deleteDenuncia) deleteDenuncia(id);
+              if (deleteReclamação) deleteReclamação(id);
               Alert.alert("Sucesso", "Reclamação excluída com sucesso.");
             } catch (error) {
               Alert.alert("Ops!", "Ocorreu um erro inesperado.");
@@ -118,7 +118,7 @@ const CDenunciaSelf = ({
         >
           {imagens.map((image, index) => (
             <View style={styles.page} key={index}>
-              <Image source={{ uri: image }} style={styles.denunciaImage} />
+              <Image source={{ uri: image }} style={styles.reclamaçãoImage} />
             </View>
           ))}
         </PagerView>
@@ -164,13 +164,13 @@ const CDenunciaSelf = ({
           <Text>{descricao}</Text>
 
           <View style={styles.buttonContainer}>
-            <Pressable style={styles.icon} onPress={deletarDenuncia}>
+            <Pressable style={styles.icon} onPress={deletarReclamação}>
               <FontAwesomeIcon size={23} icon={faTrash} />
             </Pressable>
 
             <Pressable
               style={styles.icon}
-              onPress={() => router.push(`screens/EditarDenuncia?id=${id}`)}
+              onPress={() => router.push(`screens/EditarReclamação?id=${id}`)}
             >
               <FontAwesomeIcon size={25} icon={faPenToSquare} />
             </Pressable>
@@ -188,7 +188,7 @@ const CDenunciaSelf = ({
                 setState={(value) => {
                   current = status;
                   put(
-                    `denuncia?id=${id}`,
+                    `reclamação?id=${id}`,
                     {
                       status: {
                         "Não resolvida": "nao_resolvido",
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  denunciaImage: {
+  reclamaçãoImage: {
     width: width,
     height: width,
     resizeMode: "cover",
@@ -287,4 +287,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CDenunciaSelf;
+export default CReclamaçãoSelf;

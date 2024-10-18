@@ -21,7 +21,7 @@ import userContext from "../contexts/user";
 
 const { width } = Dimensions.get("window");
 
-const CHeader = observer((props) => {
+const CComentario = observer((props) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(width)).current;
 
@@ -143,7 +143,7 @@ const CHeader = observer((props) => {
                   router.push("screens/MinhasReclamações");
                 }}
               >
-                <Text style={styles.menuText}>Minhas reclamações</Text>
+                <Text style={styles.menuText}>Minhas Reclamações</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -260,4 +260,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CHeader;
+export default CComentario;
