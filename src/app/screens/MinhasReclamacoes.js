@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
-import CReclamaçãoSelf from "../components/CReclamaçãoSelf";
+import CReclamacaoSelf from "../components/CReclamacaoSelf";
 import { useEffect, useState } from "react";
 import { get } from "../utils/api";
 import locationContext from "../contexts/location";
@@ -62,7 +62,7 @@ const categorias = [
   },
 ];
 
-const MinhasReclamações = observer(() => {
+const MinhasReclamacoes = observer(() => {
   const [reclamações, setReclamações] = useState([]);
   const [page, setPage] = useState(0);
   const [categoria, setCategoria] = useState("");
@@ -83,7 +83,7 @@ const MinhasReclamações = observer(() => {
       locationContext.location.coords.latitude &&
       locationContext.location.coords.longitude
     ) {
-      get(`minhas-reclamações?&page=${localPage}`, true)
+      get(`minhas-reclamacoes?&page=${localPage}`, true)
         .then((data) => {
           if (data.status !== 200) {
             if (initLoading) {
@@ -121,7 +121,7 @@ const MinhasReclamações = observer(() => {
       locationContext.location.coords.longitude
     ) {
       return get(
-        `minhas-reclamações?&page=${localPage}&categoria=${categoria.id}`,
+        `minhas-reclamacoes?&page=${localPage}&categoria=${categoria.id}`,
         true
       ).then((data) => {
         if (data.status !== 200) {
@@ -294,7 +294,7 @@ const MinhasReclamações = observer(() => {
                 </ScrollView>
                 {reclamações &&
                   reclamações.map((reclamação, index) => (
-                    <CReclamaçãoSelf
+                    <CReclamacaoSelf
                       id={reclamação.id}
                       nome={reclamação.nome_usuario}
                       foto={reclamação.foto_usuario}
@@ -355,4 +355,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MinhasReclamações;
+export default MinhasReclamacoes;

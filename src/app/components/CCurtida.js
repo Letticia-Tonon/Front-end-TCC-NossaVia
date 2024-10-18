@@ -69,7 +69,7 @@ const CCurtida = observer((props) => {
     <View>
       <Pressable //substituir por componente de curtir
               style={styles.icon}
-              onPress={() => router.push(`screens/EditarReclamação?id=${id}`)}
+              onPress={() => router.push(`screens/EditarReclamacao?id=${id}`)}
             >
               <FontAwesomeIcon size={25} icon={faThumbsUp} />
             </Pressable>

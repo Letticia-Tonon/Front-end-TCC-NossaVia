@@ -33,7 +33,7 @@ import locationContext from "../contexts/location";
 
 const { width } = Dimensions.get("window");
 
-export default function CriarReclamação() {
+export default function CriarReclamacao() {
   const [loading, setLoading] = useState(false);
 
   const [categoria, setCategoria] = useState("");
