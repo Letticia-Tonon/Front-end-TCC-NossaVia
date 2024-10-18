@@ -5,6 +5,7 @@ import { View, Text, Dimensions, Image, StyleSheet, Pressable, } from "react-nat
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCircle, faComment, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import CComentario from "./CComentario";
 
 const { width } = Dimensions.get("window");
 
@@ -115,14 +116,8 @@ const CReclamaçãoCard = ({
             >
               <FontAwesomeIcon size={25} icon={faThumbsUp} />
             </Pressable>
-            <Text>0</Text>
             <View style={{ flex: 1 }}>
-            <Pressable //substituir por componente de comentar
-              style={styles.icon}
-              onPress={() => router.push(`screens/EditarReclamação?id=${id}`)}
-            >
-              <FontAwesomeIcon size={25} icon={faComment} />
-            </Pressable>
+            <CComentario />
             </View>
           </View>
         </View> 

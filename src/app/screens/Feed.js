@@ -22,7 +22,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { LocalSvg } from "react-native-svg/css";
 
-const DENUNCIAS_POR_PAGINA = 10;
+const RECLAMAÇÕES_POR_PAGINA = 10;
 
 const { height, width } = Dimensions.get("window");
 
@@ -96,7 +96,7 @@ const Feed = observer(() => {
           }
           data.json().then((json) => {
             setCategoria("");
-            if (json.length < DENUNCIAS_POR_PAGINA) {
+            if (json.length < RECLAMAÇÕES_POR_PAGINA) {
               setPaginaCheia(true);
             }
             if (localPage === 0) {
@@ -132,7 +132,7 @@ const Feed = observer(() => {
           .json()
           .then((json) => {
             setCategoria(categoria);
-            if (json.length < DENUNCIAS_POR_PAGINA) {
+            if (json.length < RECLAMAÇÕES_POR_PAGINA) {
               setPaginaCheia(true);
             }
             if (localPage === 0) {
