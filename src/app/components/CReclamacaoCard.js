@@ -16,114 +16,111 @@ const CALCADA_ICON = require("../../../assets/icons/irregularidades_calcada.svg"
 const LIXO_ICON = require("../../../assets/icons/lixo_via.svg");
 const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
+import CCurtida from "./CCurtida";
 
-const CReclamacaoCard = ({
-  nome,
-  foto,
-  rua,
-  descricao,
-  imagens,
-  categoria,
-  numero,
-  status,
-}) => {
-  const [imageIndex, setImageIndex] = useState(0);
+  const CReclamacaoCard = ({
+    nome,
+    foto,
+    rua,
+    descricao,
+    imagens,
+    categoria,
+    numero,
+    status,
+    logado,
+  }) => {
+    const [imageIndex, setImageIndex] = useState(0);
 
-  return (
-    <View style={styles.card}>
-      <View style={styles.center}>
-        <PagerView
-          style={styles.imagePlaceholder}
-          initialPage={0}
-          onPageSelected={(e) => {
-            setImageIndex(e.nativeEvent.position);
-          }}
-        >
-          {imagens.map((image, index) => (
-            <View style={styles.page} key={index}>
-              <Image source={{ uri: image }} style={styles.ReclamaçãoImage} />
-              {status === "resolvido" && (
-                <View style={styles.status}>
-                  <Text style={{ color: "#FFF", textAlign: "center", fontWeight: "bold", fontSize: 15 }}>
-                    Este problema foi resolvido!
-                  </Text>
-                </View>
-              )}
-            </View>
-          ))}
-        </PagerView>
-
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 5,
-            marginTop: 8,
-            alignItems: "center",
-          }}
-        >
-          {imagens.map((image, index) => (
-            <FontAwesomeIcon
-              icon={faCircle}
-              size={imageIndex === index ? 11 : 8}
-              color="#666666"
-              key={index}
-            ></FontAwesomeIcon>
-          ))}
-        </View>
-      </View>
-      <View style={styles.content}>
-        <View style={styles.overlayIcons}>
-          <Image
-            source={{ uri: foto }}
-            style={{
-              width: 65,
-              height: 65,
-              borderRadius: 40,
+    return (
+      <View style={styles.card}>
+        <View style={styles.center}>
+          <PagerView
+            style={styles.imagePlaceholder}
+            initialPage={0}
+            onPageSelected={(e) => {
+              setImageIndex(e.nativeEvent.position);
             }}
-          />
-          {categoria && (
-            <LocalSvg
-              asset={
-                {
-                  iluminacao: ILUMINCAO_ICON,
-                  sinalizacao: SINALIZACAO_ICON,
-                  via: VIA_ICON,
-                  calcada: CALCADA_ICON,
-                  lixo: LIXO_ICON,
-                  carro: CARRO_ICON,
-                  outros: OUTROS_ICON,
-                }[categoria]
-              }
-              height={75}
-              width={75}
-              style={{ borderRadius: 32.5 }}
-            />
-          )}
-        </View>
+          >
+            {imagens.map((image, index) => (
+              <View style={styles.page} key={index}>
+                <Image source={{ uri: image }} style={styles.ReclamaçãoImage} />
+                {status === "resolvido" && (
+                  <View style={styles.status}>
+                    <Text style={{ color: "#FFF", textAlign: "center", fontWeight: "bold", fontSize: 15 }}>
+                      Este problema foi resolvido!
+                    </Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </PagerView>
 
-        <View style={styles.userInfo}>
-          <Text style={styles.name}>{nome}</Text>
-          <Text>
-            Endereço: {rua ? rua.trim() : ""}
-            {numero ? `, ${numero}` : ""}
-          </Text>
-          <Text>{descricao}</Text>
-          <View style={styles.buttonContainer}>
-          <Pressable //substituir por componente de curtir
-              style={styles.icon}
-              onPress={() => router.push(`screens/EditarReclamacao?id=${id}`)}
-            >
-              <FontAwesomeIcon size={25} icon={faThumbsUp} />
-            </Pressable>
-            <View style={{ flex: 1 }}>
-            <CComentario />
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 5,
+              marginTop: 8,
+              alignItems: "center",
+            }}
+          >
+            {imagens.map((image, index) => (
+              <FontAwesomeIcon
+                icon={faCircle}
+                size={imageIndex === index ? 11 : 8}
+                color="#666666"
+                key={index}
+              ></FontAwesomeIcon>
+            ))}
+          </View>
+        </View>
+        <View style={styles.content}>
+          <View style={styles.overlayIcons}>
+            <Image
+              source={{ uri: foto }}
+              style={{
+                width: 65,
+                height: 65,
+                borderRadius: 40,
+              }}
+            />
+            {categoria && (
+              <LocalSvg
+                asset={
+                  {
+                    iluminacao: ILUMINCAO_ICON,
+                    sinalizacao: SINALIZACAO_ICON,
+                    via: VIA_ICON,
+                    calcada: CALCADA_ICON,
+                    lixo: LIXO_ICON,
+                    carro: CARRO_ICON,
+                    outros: OUTROS_ICON,
+                  }[categoria]
+                }
+                height={75}
+                width={75}
+                style={{ borderRadius: 32.5 }}
+              />
+            )}
+          </View>
+
+          <View style={styles.userInfo}>
+            <Text style={styles.name}>{nome}</Text>
+            <Text>
+              Endereço: {rua ? rua.trim() : ""}
+              {numero ? `, ${numero}` : ""}
+            </Text>
+            <Text>{descricao}</Text>
+            <View style={styles.buttonContainer}>
+              <CCurtida logado={logado} />
+              <View style={{ flex: 1 }}>
+                <CComentario />
+              </View>
             </View>
           </View>
-        </View> 
+        </View>
       </View>
-    </View>
-  );
+    );
 };
 
 const styles = StyleSheet.create({
@@ -131,7 +128,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     marginVertical: 10,
-    elevation: 2, //sombra
+    elevation: 2, 
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -174,6 +171,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonContainer: {
+    paddingTop: 10,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
