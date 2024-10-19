@@ -14,7 +14,7 @@ import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
-import CReclamaçãoCard from "../components/CReclamaçãoCard";
+import CReclamacaoCard from "../components/CReclamacaoCard";
 import { useEffect, useState } from "react";
 import { get } from "../utils/api";
 import locationContext from "../contexts/location";
@@ -83,7 +83,7 @@ const Feed = observer(() => {
       locationContext.location.coords.longitude
     ) {
       get(
-        `reclamação?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}`
+        `reclamacao?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}`
       )
         .then((data) => {
           if (data.status !== 200) {
@@ -122,7 +122,7 @@ const Feed = observer(() => {
       locationContext.location.coords.longitude
     ) {
       return get(
-        `reclamação?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}&categoria=${categoria.id}`
+        `reclamacao?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}&categoria=${categoria.id}`
       ).then((data) => {
         if (data.status !== 200) {
           Alert.alert("Erro", "Não foi possível carregar as reclamações.");
@@ -318,7 +318,7 @@ const Feed = observer(() => {
               </ScrollView>
               {reclamações &&
                 reclamações.map((reclamação, index) => (
-                  <CReclamaçãoCard
+                  <CReclamacaoCard
                     nome={reclamação.nome_usuario}
                     foto={reclamação.foto_usuario}
                     rua={reclamação.endereco}

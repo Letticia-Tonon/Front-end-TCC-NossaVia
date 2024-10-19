@@ -17,7 +17,7 @@ const LIXO_ICON = require("../../../assets/icons/lixo_via.svg");
 const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 
-const CReclamaçãoCard = ({
+const CReclamacaoCard = ({
   nome,
   foto,
   rua,
@@ -112,7 +112,7 @@ const CReclamaçãoCard = ({
           <View style={styles.buttonContainer}>
           <Pressable //substituir por componente de curtir
               style={styles.icon}
-              onPress={() => router.push(`screens/EditarReclamação?id=${id}`)}
+              onPress={() => router.push(`screens/EditarReclamacao?id=${id}`)}
             >
               <FontAwesomeIcon size={25} icon={faThumbsUp} />
             </Pressable>
@@ -194,4 +194,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CReclamaçãoCard;
+export default CReclamacaoCard;

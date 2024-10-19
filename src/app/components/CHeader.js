@@ -140,7 +140,7 @@ const CHeader = observer((props) => {
                 style={styles.menuItem}
                 onPress={() => {
                   abrirMenu();
-                  router.push("screens/MinhasReclamações");
+                  router.push("screens/MinhasReclamacoes");
                 }}
               >
                 <Text style={styles.menuText}>Minhas reclamações</Text>

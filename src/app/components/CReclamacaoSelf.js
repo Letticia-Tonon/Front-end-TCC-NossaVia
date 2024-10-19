@@ -22,7 +22,7 @@ import { del, put } from "../utils/api";
 
 const { width } = Dimensions.get("window");
 
-const CReclamaçãoSelf = ({
+const CReclamacaoSelf = ({
   id,
   nome,
   rua,
@@ -85,7 +85,7 @@ const CReclamaçãoSelf = ({
             if (loading) return;
             setLoading(true);
             try {
-              const response = await del(`reclamação?id=${id}`, true);
+              const response = await del(`recalmacão?id=${id}`, true);
               if (response.status !== 200) {
                 Alert.alert("Ops!", "Não foi possível deletar essa reclamação.");
                 return;
@@ -170,7 +170,7 @@ const CReclamaçãoSelf = ({
 
             <Pressable
               style={styles.icon}
-              onPress={() => router.push(`screens/EditarReclamação?id=${id}`)}
+              onPress={() => router.push(`screens/EditarReclamacão?id=${id}`)}
             >
               <FontAwesomeIcon size={25} icon={faPenToSquare} />
             </Pressable>
@@ -188,7 +188,7 @@ const CReclamaçãoSelf = ({
                 setState={(value) => {
                   current = status;
                   put(
-                    `reclamação?id=${id}`,
+                    `reclamacão?id=${id}`,
                     {
                       status: {
                         "Não resolvida": "nao_resolvido",
@@ -287,4 +287,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CReclamaçãoSelf;
+export default CReclamacaoSelf;

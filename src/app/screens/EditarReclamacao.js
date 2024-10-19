@@ -26,7 +26,7 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 
 const { height, width } = Dimensions.get("window");
 
-export default function EditarReclamação() {
+export default function EditarReclamacao() {
   const { id } = useLocalSearchParams();
 
   const [marker, setMarker] = useState(null);
@@ -50,7 +50,7 @@ export default function EditarReclamação() {
   const [categoriaInvalida, setCategoriaInvalida] = useState(false);
 
   const fetchReclamação = async () => {
-    get(`reclamação?id=${id}`, true)
+    get(`reclamacão?id=${id}`, true)
       .then((response) => {
         if (response.status === 200) {
           response.json().then((reclamação) => {
@@ -148,7 +148,7 @@ export default function EditarReclamação() {
     }
 
     put(
-      `reclamação?id=${id}`,
+      `reclamacão?id=${id}`,
       {
         descricao: descricao,
         endereco: endereco,
@@ -172,7 +172,7 @@ export default function EditarReclamação() {
       .then((response) => {
         if (response.status === 200) {
           Alert.alert("Sucesso", "Reclamação editada com sucesso.");
-          router.navigate("screens/MinhasReclamações");
+          router.navigate("screens/MinhasReclamacoes");
         } else {
           Alert.alert(
             "Ops!",
