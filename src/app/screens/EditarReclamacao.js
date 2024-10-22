@@ -49,19 +49,19 @@ export default function EditarReclamacao() {
   const [cepInvalido, setCepInvalido] = useState(false);
   const [categoriaInvalida, setCategoriaInvalida] = useState(false);
 
-  const fetchReclamação = async () => {
-    get(`reclamacão?id=${id}`, true)
+  const fetchReclamacao = async () => {
+    get(`reclamacao?id=${id}`, true)
       .then((response) => {
         if (response.status === 200) {
-          response.json().then((reclamação) => {
-            setDescricao(reclamação.descricao);
-            setCep(reclamação.cep);
-            setEndereco(reclamação.endereco);
-            setNumero(reclamação.numero_endereco);
-            setComplemento(reclamação.ponto_referencia);
-            setLatitude(reclamação.latitude);
-            setLongitude(reclamação.longitude);
-            setImageList(reclamação.fotos);
+          response.json().then((reclamacao) => {
+            setDescricao(reclamacao.descricao);
+            setCep(reclamacao.cep);
+            setEndereco(reclamacao.endereco);
+            setNumero(reclamacao.numero_endereco);
+            setComplemento(reclamacao.ponto_referencia);
+            setLatitude(reclamacao.latitude);
+            setLongitude(reclamacao.longitude);
+            setImageList(reclamacao.fotos);
             setCategoria(
               {
                 via: "Irregularidades no Asfalto",
@@ -71,11 +71,11 @@ export default function EditarReclamacao() {
                 carro: "Veículo Abandonado",
                 iluminacao: "Falta de Iluminação",
                 outros: "Outros",
-              }[reclamação.categoria]
+              }[reclamacao.categoria]
             );
             setMarker({
-              latitude: Number(reclamação.latitude),
-              longitude: Number(reclamação.longitude),
+              latitude: Number(reclamacao.latitude),
+              longitude: Number(reclamacao.longitude),
             });
           });
         } else {
@@ -90,7 +90,7 @@ export default function EditarReclamacao() {
 
   useEffect(() => {
     if (id) {
-      fetchReclamação();
+      fetchReclamacao();
     }
   }, []);
 
@@ -148,7 +148,7 @@ export default function EditarReclamacao() {
     }
 
     put(
-      `reclamacão?id=${id}`,
+      `reclamacao?id=${id}`,
       {
         descricao: descricao,
         endereco: endereco,
@@ -222,7 +222,7 @@ export default function EditarReclamacao() {
                     <View style={styles.page} key={index}>
                       <Image
                         source={{ uri: image }}
-                        style={styles.reclamaçãoImage}
+                        style={styles.reclamacaoImage}
                       />
                     </View>
                   ))}
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  reclamaçãoImage: {
+  reclamacaoImage: {
     width: "100%",
     height: "100%",
     resizeMode: "cover",

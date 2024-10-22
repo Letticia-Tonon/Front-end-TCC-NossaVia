@@ -24,15 +24,13 @@ const { width } = Dimensions.get("window");
 
 const CReclamacaoSelf = ({
   id,
-  nome,
   rua,
   descricao,
   imagens,
   categoria,
   numero,
-  foto,
-  status_reclamação,
-  deleteReclamação,
+  status_reclamacao,
+  deleteReclamacao,
 }) => {
   const [icon, setIcon] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
@@ -40,7 +38,7 @@ const CReclamacaoSelf = ({
     {
       nao_resolvido: "Não resolvida",
       resolvido: "Resolvida",
-    }[status_reclamação]
+    }[status_reclamacao]
   );
 
   const [loading, setLoading] = useState(false);
@@ -71,7 +69,7 @@ const CReclamacaoSelf = ({
     }
   }, [categoria]);
 
-  const deletarReclamação = async () => {
+  const deletarReclamacao = async () => {
     Alert.alert(
       "Atenção!",
       "Ao confirmar, a reclamação será permanentemente excluída.",
@@ -85,12 +83,12 @@ const CReclamacaoSelf = ({
             if (loading) return;
             setLoading(true);
             try {
-              const response = await del(`recalmacão?id=${id}`, true);
+              const response = await del(`reclamacao?id=${id}`, true);
               if (response.status !== 200) {
                 Alert.alert("Ops!", "Não foi possível deletar essa reclamação.");
                 return;
               }
-              if (deleteReclamação) deleteReclamação(id);
+              if (deleteReclamacao) deleteReclamacao(id);
               Alert.alert("Sucesso", "Reclamação excluída com sucesso.");
             } catch (error) {
               Alert.alert("Ops!", "Ocorreu um erro inesperado.");
@@ -118,7 +116,7 @@ const CReclamacaoSelf = ({
         >
           {imagens.map((image, index) => (
             <View style={styles.page} key={index}>
-              <Image source={{ uri: image }} style={styles.reclamaçãoImage} />
+              <Image source={{ uri: image }} style={styles.reclamacaoImage} />
             </View>
           ))}
         </PagerView>
@@ -164,13 +162,13 @@ const CReclamacaoSelf = ({
           <Text>{descricao}</Text>
 
           <View style={styles.buttonContainer}>
-            <Pressable style={styles.icon} onPress={deletarReclamação}>
+            <Pressable style={styles.icon} onPress={deletarReclamacao}>
               <FontAwesomeIcon size={23} icon={faTrash} />
             </Pressable>
 
             <Pressable
               style={styles.icon}
-              onPress={() => router.push(`screens/EditarReclamacão?id=${id}`)}
+              onPress={() => router.push(`screens/EditarReclamacao?id=${id}`)}
             >
               <FontAwesomeIcon size={25} icon={faPenToSquare} />
             </Pressable>
@@ -252,7 +250,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  reclamaçãoImage: {
+  reclamacaoImage: {
     width: width,
     height: width,
     resizeMode: "cover",

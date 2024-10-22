@@ -5,10 +5,12 @@ import {
   Image,
   StatusBar,
   TextInput,
+  Alert,
 } from "react-native";
 import logo from "../../../assets/logo.png";
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
+import { post } from "../utils/api";
 import { useState, useRef } from "react";
 import { validarEmail } from "../utils/validators";
 
@@ -34,7 +36,24 @@ export default function RecuperarSenha() {
     if (emailTemp) {
       return;
     }
-    setIsEmailSent(true);
+
+    await post("recuperar-senha", { email: email }).then((data) => {
+      if (data.status === 200) {
+        setIsEmailSent(true);
+        return;
+      }
+      if (data.status === 409) {
+        Alert.alert(
+          "Ops!",
+          "Seu e-mail não foi encontrado na nossa base de dados, por favor verifique se digitou corretamente."
+        );
+        return;
+      }
+      Alert.alert(
+        "Ops!",
+        "Ocorreu um erro inesperado ao enviar o código, tente novamente em alguns instantes."
+      );
+    });
   };
 
   const handleCodigoSubmit = async () => {
@@ -49,27 +68,26 @@ export default function RecuperarSenha() {
 
   const handleCodigoChange = (text, index) => {
     let newCodigo = [...codigo];
-    
+
     // Atualiza o valor do campo atual
     newCodigo[index] = text;
     setCodigo(newCodigo);
-  
+
     // Verifica se o usuário está apagando um caractere (o campo ficou vazio)
     if (text === "" && index > 0) {
       inputRefs.current[index - 1].focus(); // Move o foco para o campo anterior
     }
-  
+
     // Move o foco para o próximo campo, caso não esteja vazio e não seja o último campo
     if (text !== "" && index < inputRefs.current.length - 1) {
       inputRefs.current[index + 1].focus();
     }
-  
+
     // Verifica se todos os campos foram preenchidos
     if (newCodigo.every((char) => char !== "")) {
       setCodigoInvalido(false);
     }
   };
-  
 
   return (
     <View style={{ ...styles.container, width: "100%" }}>
@@ -181,7 +199,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 20,
-    width: "90%", 
+    width: "90%",
   },
   codeInput: {
     width: 45,
