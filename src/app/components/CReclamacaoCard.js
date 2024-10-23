@@ -111,11 +111,12 @@ import CCurtida from "./CCurtida";
               {numero ? `, ${numero}` : ""}
             </Text>
             <Text>{descricao}</Text>
+              <View style={{ borderBottomColor: '#D9D9D9', borderBottomWidth: 1, marginTop: 10, marginRight: 5 }} />
             <View style={styles.buttonContainer}>
               <CCurtida logado={logado} />
-              <View style={{ flex: 1 }}>
+              <View style={{ flex: 1, marginLeft: 10 }}>
                 <CComentario />
-              </View>
+              </View> 
             </View>
           </View>
         </View>
@@ -171,12 +172,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonContainer: {
-    paddingTop: 10,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 10,
+    width: "100%",  
   },
   status: {
     position: "absolute",

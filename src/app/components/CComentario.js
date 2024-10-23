@@ -13,7 +13,7 @@ import {
     TextInput,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faArrowLeft, faCircleUser, faComment } from "@fortawesome/free-solid-svg-icons";
+import {  faComment } from "@fortawesome/free-regular-svg-icons";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import packageJson from "../../../package.json";
@@ -52,7 +52,7 @@ const CComentario = observer((props) => {
                 style={styles.icon}
                 onPress={() => setCommentModalVisible(true)}
             >
-                <FontAwesomeIcon size={25} icon={faComment} />
+                <FontAwesomeIcon size={30} icon={faComment} />
             </Pressable>
 
             <Modal
@@ -83,7 +83,6 @@ const CComentario = observer((props) => {
                 </View>
             </Modal>
 
-            {/* Rest of your component code */}
         </View>
     );
 });
@@ -127,7 +126,6 @@ const styles = StyleSheet.create({
         color: "white",
         fontWeight: "bold",
     },
-    // Other styles...
 });
 
 export default CComentario;

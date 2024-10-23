@@ -11,11 +11,10 @@ import {
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCircle,faTrash, } from "@fortawesome/free-solid-svg-icons";
 import {
-  faCircle,
   faPenToSquare,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+} from "@fortawesome/free-regular-svg-icons";
 import CActionSheet from "./CActionSheet";
 import { router } from "expo-router";
 import { del, put } from "../utils/api";

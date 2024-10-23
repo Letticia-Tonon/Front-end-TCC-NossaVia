@@ -72,7 +72,7 @@ const MinhasReclamacoes = observer(() => {
   const [error, setError] = useState(false);
 
   const deleteReclamação = (id) => {
-    setReclamações(reclamações.filter((reclamação) => reclamação.id !== id));
+    setReclamações(reclamações.filter((reclamacao) => reclamacao.id !== id));
   };
 
   const getSelf = async (localPage) => {
@@ -293,18 +293,18 @@ const MinhasReclamacoes = observer(() => {
                   ))}
                 </ScrollView>
                 {reclamações &&
-                  reclamações.map((reclamação, index) => (
+                  reclamações.map((reclamacao, index) => (
                     <CReclamacaoSelf
-                      id={reclamação.id}
-                      nome={reclamação.nome_usuario}
-                      foto={reclamação.foto_usuario}
-                      rua={reclamação.endereco}
-                      descricao={reclamação.descricao}
-                      imagens={reclamação.fotos}
-                      categoria={reclamação.categoria}
+                      id={reclamacao.id}
+                      nome={reclamacao.nome_usuario}
+                      foto={reclamacao.foto_usuario}
+                      rua={reclamacao.endereco}
+                      descricao={reclamacao.descricao}
+                      imagens={reclamacao.fotos}
+                      categoria={reclamacao.categoria}
                       key={index}
-                      status_reclamação={reclamação.status}
-                      numero={reclamação.numero_endereco}
+                      status_reclamacao={reclamacao.status}
+                      numero={reclamacao.numero_endereco}
                       deleteReclamação={deleteReclamação}
                     />
                   ))}
