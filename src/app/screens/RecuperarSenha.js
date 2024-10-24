@@ -17,11 +17,9 @@ import { validarEmail } from "../utils/validators";
 export default function RecuperarSenha() {
   const [email, setEmail] = useState("");
   const [emailInvalido, setEmailInvalido] = useState(false);
-  const [isEmailSent, setIsEmailSent] = useState(false); // Novo estado para exibir o campo de código
-  const [codigo, setCodigo] = useState(Array(6).fill("")); // Estado para os 6 dígitos do código
-  const [codigoInvalido, setCodigoInvalido] = useState(false); // Estado para o erro de código
-
-  // Criação das referências para os campos de código
+  const [isEmailSent, setIsEmailSent] = useState(false); 
+  const [codigo, setCodigo] = useState(Array(6).fill(""));   
+  const [codigoInvalido, setCodigoInvalido] = useState(false); 
   const inputRefs = useRef([]);
 
   const handleSubmit = async () => {
@@ -68,22 +66,17 @@ export default function RecuperarSenha() {
 
   const handleCodigoChange = (text, index) => {
     let newCodigo = [...codigo];
-
-    // Atualiza o valor do campo atual
-    newCodigo[index] = text;
+        newCodigo[index] = text;
     setCodigo(newCodigo);
 
-    // Verifica se o usuário está apagando um caractere (o campo ficou vazio)
     if (text === "" && index > 0) {
-      inputRefs.current[index - 1].focus(); // Move o foco para o campo anterior
+      inputRefs.current[index - 1].focus(); 
     }
 
-    // Move o foco para o próximo campo, caso não esteja vazio e não seja o último campo
     if (text !== "" && index < inputRefs.current.length - 1) {
       inputRefs.current[index + 1].focus();
     }
 
-    // Verifica se todos os campos foram preenchidos
     if (newCodigo.every((char) => char !== "")) {
       setCodigoInvalido(false);
     }
@@ -116,7 +109,7 @@ export default function RecuperarSenha() {
                     keyboardType="number-pad"
                     value={codigo[index]}
                     onChangeText={(text) => handleCodigoChange(text, index)}
-                    ref={(el) => (inputRefs.current[index] = el)} // referência por campo
+                    ref={(el) => (inputRefs.current[index] = el)} 
                   />
                 ))}
             </View>

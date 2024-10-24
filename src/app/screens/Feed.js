@@ -329,7 +329,7 @@
                       numero={reclamação.numero_endereco}
                       status={reclamação.status}
                       key={index}
-                      logado={logado===true}
+                      logado={logado==="true"}
                     />
                   ))}
               </View>

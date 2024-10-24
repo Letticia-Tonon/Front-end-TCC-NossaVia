@@ -25,25 +25,25 @@ const CCurtida = observer(({ logado }) => {
       <Pressable 
         style={styles.icon}
         onPress={() => {
-          // if (!logado) {
-          //   Alert.alert(
-          //     "Atenção!",
-          //     "Para interagir com uma reclamação você precisa entrar na sua conta.",
-          //     [
-          //       {
-          //         text: "Cancelar",
-          //       },
-          //       {
-          //         text: "Entrar",
-          //         onPress: () => {
-          //           router.push("screens/Login");
-          //         },
-          //       },
-          //     ],
-          //     { cancelable: true }
-          //   );
-          //   return;
-          // }
+          if (!logado) {
+             Alert.alert(
+               "Atenção!",
+               "Para interagir com uma reclamação você precisa entrar na sua conta.",
+               [
+                 {
+                   text: "Cancelar",
+                 },
+                 {
+                   text: "Entrar",
+                   onPress: () => {
+                     router.push("screensLogin");
+                   },
+                 },
+               ],
+               { cancelable: true }
+             );
+             return;
+           }
           setLiked(!liked);
           console.log("curtir");
         }}

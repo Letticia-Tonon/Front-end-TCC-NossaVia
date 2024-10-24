@@ -73,7 +73,6 @@ const CComentario = observer((props) => {
                         <TouchableOpacity
                             style={styles.button}
                             onPress={() => {
-                                // Handle comment submission
                                 setCommentModalVisible(false);
                             }}
                         >

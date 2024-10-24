@@ -60,7 +60,6 @@ const Login = observer(() => {
           error={senhaIncorreta}
         ></CPassInput>
 
-        {/* TODO: funcionalçidade reculperar senha programada para próximas sprints */}
         <View style={styles.viewLinks}>
           <Text style={{ color: "#a9a9a9" }}>
             Esqueceu sua senha?{" "}

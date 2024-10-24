@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from "expo-router"; // Importação do hook
+import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect } from "react";
 import {
   StyleSheet,
