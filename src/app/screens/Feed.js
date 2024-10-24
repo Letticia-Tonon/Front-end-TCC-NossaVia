@@ -319,6 +319,7 @@
                 {reclamações &&
                   reclamações.map((reclamação, index) => (
                     <CReclamacaoCard
+                      id={reclamação.id}
                       nome={reclamação.nome_usuario}
                       foto={reclamação.foto_usuario}
                       rua={reclamação.endereco}

@@ -1,10 +1,17 @@
 import React, { useState } from "react";
-import { useEffect } from "react";
+import { router } from "expo-router";
 import { LocalSvg } from "react-native-svg/css";
-import { View, Text, Dimensions, Image, StyleSheet, Pressable, } from "react-native";
+import {
+  View,
+  Text,
+  Dimensions,
+  Image,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCircle, faComment, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import CComentario from "./CComentario";
 
 const { width } = Dimensions.get("window");
@@ -18,20 +25,24 @@ const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 import CCurtida from "./CCurtida";
 
-  const CReclamacaoCard = ({
-    nome,
-    foto,
-    rua,
-    descricao,
-    imagens,
-    categoria,
-    numero,
-    status,
-    logado,
-  }) => {
-    const [imageIndex, setImageIndex] = useState(0);
+const CReclamacaoCard = ({
+  id,
+  nome,
+  foto,
+  rua,
+  descricao,
+  imagens,
+  categoria,
+  numero,
+  status,
+  logado,
+}) => {
+  const [imageIndex, setImageIndex] = useState(0);
 
-    return (
+  return (
+    <Pressable
+      onPress={() => router.push(`screens/DetalheReclamacao?id=${id}`)}
+    >
       <View style={styles.card}>
         <View style={styles.center}>
           <PagerView
@@ -46,7 +57,14 @@ import CCurtida from "./CCurtida";
                 <Image source={{ uri: image }} style={styles.ReclamaçãoImage} />
                 {status === "resolvido" && (
                   <View style={styles.status}>
-                    <Text style={{ color: "#FFF", textAlign: "center", fontWeight: "bold", fontSize: 15 }}>
+                    <Text
+                      style={{
+                        color: "#FFF",
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        fontSize: 15,
+                      }}
+                    >
                       Este problema foi resolvido!
                     </Text>
                   </View>
@@ -111,17 +129,25 @@ import CCurtida from "./CCurtida";
               {numero ? `, ${numero}` : ""}
             </Text>
             <Text>{descricao}</Text>
-              <View style={{ borderBottomColor: '#D9D9D9', borderBottomWidth: 1, marginTop: 10, marginRight: 5 }} />
+            <View
+              style={{
+                borderBottomColor: "#D9D9D9",
+                borderBottomWidth: 1,
+                marginTop: 10,
+                marginRight: 5,
+              }}
+            />
             <View style={styles.buttonContainer}>
               <CCurtida logado={logado} />
               <View style={{ flex: 1, marginLeft: 10 }}>
                 <CComentario />
-              </View> 
+              </View>
             </View>
           </View>
         </View>
       </View>
-    );
+    </Pressable>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -129,7 +155,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     marginVertical: 10,
-    elevation: 2, 
+    elevation: 2,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -175,7 +201,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    width: "100%",  
+    width: "100%",
   },
   status: {
     position: "absolute",
