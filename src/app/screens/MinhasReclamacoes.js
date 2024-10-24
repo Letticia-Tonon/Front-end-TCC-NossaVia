@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     shadowOffset: { width: 2, height: 2 },
-    elevation: 8, // Sombra
+    elevation: 8, 
   },
   iconContainer: {
     display: "flex",

@@ -153,7 +153,6 @@ const CReclamacaoSelf = ({
         </View>
 
         <View style={styles.userInfo}>
-          {/* <Text>{id}</Text> */}
           <Text>
             Endereço: {rua ? rua.trim() : ""}
             {numero ? `, ${numero}` : ""}
