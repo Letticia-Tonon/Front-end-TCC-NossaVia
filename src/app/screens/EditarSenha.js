@@ -11,7 +11,7 @@ import CTextButton from "../components/CTextButton";
 import { useState } from "react";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { validarSenha } from "../utils/validators";
-import { post } from "../utils/api";
+import { put } from "../utils/api";
 import { router } from "expo-router";
 import CHeader from "../components/CHeader";
 
@@ -70,7 +70,7 @@ export default function EditarSenha() {
             if (loading) return;
             setLoading(true);
             const payload = { senhaAtual: senhaAtual, senhaNova: senhaNova };
-            await post("alterar-senha", payload, true).then((data) => {
+            await put("alterar-senha", payload, true).then((data) => {
               setLoading(false);
               if (data.status === 400) {
                 Alert.alert("Atenção!", "Senha atual incorreta, corrija para poder criar uma senha nova.");

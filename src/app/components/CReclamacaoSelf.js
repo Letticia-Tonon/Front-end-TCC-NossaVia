@@ -11,28 +11,25 @@ import {
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCircle,faTrash, } from "@fortawesome/free-solid-svg-icons";
 import {
-  faCircle,
   faPenToSquare,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+} from "@fortawesome/free-regular-svg-icons";
 import CActionSheet from "./CActionSheet";
 import { router } from "expo-router";
 import { del, put } from "../utils/api";
 
 const { width } = Dimensions.get("window");
 
-const CDenunciaSelf = ({
+const CReclamacaoSelf = ({
   id,
-  nome,
   rua,
   descricao,
   imagens,
   categoria,
   numero,
-  foto,
-  status_denuncia,
-  deleteDenuncia,
+  status_reclamacao,
+  deleteReclamacao,
 }) => {
   const [icon, setIcon] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
@@ -40,7 +37,7 @@ const CDenunciaSelf = ({
     {
       nao_resolvido: "Não resolvida",
       resolvido: "Resolvida",
-    }[status_denuncia]
+    }[status_reclamacao]
   );
 
   const [loading, setLoading] = useState(false);
@@ -71,10 +68,10 @@ const CDenunciaSelf = ({
     }
   }, [categoria]);
 
-  const deletarDenuncia = async () => {
+  const deletarReclamacao = async () => {
     Alert.alert(
       "Atenção!",
-      "Ao confirmar, a denúncia será permanentemente excluída.",
+      "Ao confirmar, a reclamação será permanentemente excluída.",
       [
         {
           text: "Cancelar",
@@ -85,13 +82,13 @@ const CDenunciaSelf = ({
             if (loading) return;
             setLoading(true);
             try {
-              const response = await del(`denuncia?id=${id}`, true);
+              const response = await del(`reclamacao?id=${id}`, true);
               if (response.status !== 200) {
-                Alert.alert("Ops!", "Não foi possível deletar essa denúncia.");
+                Alert.alert("Ops!", "Não foi possível deletar essa reclamação.");
                 return;
               }
-              if (deleteDenuncia) deleteDenuncia(id);
-              Alert.alert("Sucesso", "Denúncia excluída com sucesso.");
+              if (deleteReclamacao) deleteReclamacao(id);
+              Alert.alert("Sucesso", "Reclamação excluída com sucesso.");
             } catch (error) {
               Alert.alert("Ops!", "Ocorreu um erro inesperado.");
             } finally {
@@ -118,7 +115,7 @@ const CDenunciaSelf = ({
         >
           {imagens.map((image, index) => (
             <View style={styles.page} key={index}>
-              <Image source={{ uri: image }} style={styles.denunciaImage} />
+              <Image source={{ uri: image }} style={styles.reclamacaoImage} />
             </View>
           ))}
         </PagerView>
@@ -156,7 +153,6 @@ const CDenunciaSelf = ({
         </View>
 
         <View style={styles.userInfo}>
-          {/* <Text>{id}</Text> */}
           <Text>
             Endereço: {rua ? rua.trim() : ""}
             {numero ? `, ${numero}` : ""}
@@ -164,13 +160,13 @@ const CDenunciaSelf = ({
           <Text>{descricao}</Text>
 
           <View style={styles.buttonContainer}>
-            <Pressable style={styles.icon} onPress={deletarDenuncia}>
+            <Pressable style={styles.icon} onPress={deletarReclamacao}>
               <FontAwesomeIcon size={23} icon={faTrash} />
             </Pressable>
 
             <Pressable
               style={styles.icon}
-              onPress={() => router.push(`screens/EditarDenuncia?id=${id}`)}
+              onPress={() => router.push(`screens/EditarReclamacao?id=${id}`)}
             >
               <FontAwesomeIcon size={25} icon={faPenToSquare} />
             </Pressable>
@@ -188,7 +184,7 @@ const CDenunciaSelf = ({
                 setState={(value) => {
                   current = status;
                   put(
-                    `denuncia?id=${id}`,
+                    `reclamacão?id=${id}`,
                     {
                       status: {
                         "Não resolvida": "nao_resolvido",
@@ -201,7 +197,7 @@ const CDenunciaSelf = ({
                       setStatus(current);
                       Alert.alert(
                         "Ops!",
-                        "Não foi possível atualizar o status dessa denúncia."
+                        "Não foi possível atualizar o status dessa reclamação."
                       );
                     }
                   });
@@ -227,7 +223,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     marginVertical: 10,
-    elevation: 2, // sombra
+    elevation: 2,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -252,7 +248,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  denunciaImage: {
+  reclamacaoImage: {
     width: width,
     height: width,
     resizeMode: "cover",
@@ -287,4 +283,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CDenunciaSelf;
+export default CReclamacaoSelf;

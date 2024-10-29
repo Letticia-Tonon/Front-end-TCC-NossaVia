@@ -26,5 +26,26 @@ export const validarCep = (cep) => {
 
 export const validarData = (date) => {
   const re = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
-  return re.test(date);
+  if (!re.test(date)) {
+    return false;
+  }
+
+  const [day, month, year] = date.split('/').map(Number);
+  const birthDate = new Date(year, month - 1, day);
+  const today = new Date();
+  const age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  const dayDiff = today.getDate() - birthDate.getDate();
+
+  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+    age--;
+  }
+
+  return age >= 16;
 };
+
+export const validarCpf = (cpf) => {
+  const re = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/;
+  return re.test(cpf);
+};
+

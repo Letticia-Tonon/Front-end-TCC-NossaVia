@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { observer } from "mobx-react-lite";
 import CHeader from "../components/CHeader";
-import CDenunciaSelf from "../components/CDenunciaSelf";
+import CReclamacaoSelf from "../components/CReclamacaoSelf";
 import { useEffect, useState } from "react";
 import { get } from "../utils/api";
 import locationContext from "../contexts/location";
@@ -20,7 +20,7 @@ import { LocalSvg } from "react-native-svg/css";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { router } from "expo-router";
 
-const DENUNCIAS_POR_PAGINA = 10;
+const RECLAMAÇÕES_POR_PAGINA = 10;
 
 const { height, width } = Dimensions.get("window");
 
@@ -62,8 +62,8 @@ const categorias = [
   },
 ];
 
-const MinhasDenuncias = observer(() => {
-  const [denuncias, setDenuncias] = useState([]);
+const MinhasReclamacoes = observer(() => {
+  const [reclamações, setReclamações] = useState([]);
   const [page, setPage] = useState(0);
   const [categoria, setCategoria] = useState("");
   const [loading, setLoading] = useState(false);
@@ -71,8 +71,8 @@ const MinhasDenuncias = observer(() => {
   const [initLoading, setInitLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const deleteDenuncia = (id) => {
-    setDenuncias(denuncias.filter((denuncia) => denuncia.id !== id));
+  const deleteReclamação = (id) => {
+    setReclamações(reclamações.filter((reclamacao) => reclamacao.id !== id));
   };
 
   const getSelf = async (localPage) => {
@@ -83,26 +83,26 @@ const MinhasDenuncias = observer(() => {
       locationContext.location.coords.latitude &&
       locationContext.location.coords.longitude
     ) {
-      get(`minhas-denuncias?&page=${localPage}`, true)
+      get(`minhas-reclamacoes?&page=${localPage}`, true)
         .then((data) => {
           if (data.status !== 200) {
             if (initLoading) {
               setError(true);
             } else {
-              Alert.alert("Erro", "Não foi possível carregar as denúncias.");
+              Alert.alert("Erro", "Não foi possível carregar as reclamações.");
             }
             return;
           }
           data.json().then((json) => {
             setCategoria("");
-            if (json.length < DENUNCIAS_POR_PAGINA) {
+            if (json.length < RECLAMAÇÕES_POR_PAGINA) {
               setPaginaCheia(true);
             }
             if (localPage === 0) {
-              setDenuncias(json);
+              setReclamações(json);
               return;
             }
-            setDenuncias([...denuncias, ...json]);
+            setReclamações([...reclamações, ...json]);
           });
         })
         .finally(() => {
@@ -121,25 +121,25 @@ const MinhasDenuncias = observer(() => {
       locationContext.location.coords.longitude
     ) {
       return get(
-        `minhas-denuncias?&page=${localPage}&categoria=${categoria.id}`,
+        `minhas-reclamacoes?&page=${localPage}&categoria=${categoria.id}`,
         true
       ).then((data) => {
         if (data.status !== 200) {
-          Alert.alert("Erro", "Não foi possível carregar as denúncias.");
+          Alert.alert("Erro", "Não foi possível carregar as reclamações.");
           return;
         }
         data
           .json()
           .then((json) => {
             setCategoria(categoria);
-            if (json.length < DENUNCIAS_POR_PAGINA) {
+            if (json.length < RECLAMAÇÕES_POR_PAGINA) {
               setPaginaCheia(true);
             }
             if (localPage === 0) {
-              setDenuncias(json);
+              setReclamações(json);
               return;
             }
-            setDenuncias([...denuncias, ...json]);
+            setReclamações([...reclamações, ...json]);
           })
           .finally(() => {
             setLoading(false);
@@ -186,7 +186,7 @@ const MinhasDenuncias = observer(() => {
           <View style={styles.container}>
             <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
             <CHeader
-              titulo={"Minhas Denúncias"}
+              titulo={"Minhas Reclamações"}
               logado={true}
               showText={true}
               goBack={true}
@@ -219,7 +219,7 @@ const MinhasDenuncias = observer(() => {
                   style={{ justifyContent: "center", alignItems: "center" }}
                 >
                   <Text style={{ fontSize: 20, textAlign: "center" }}>
-                    Não foi possível carregar as suas denúncias nesse momento...
+                    Não foi possível carregar as suas reclamações nesse momento...
                   </Text>
                   <Text style={{ fontSize: 20, textAlign: "center" }}>
                     Tente novamente em alguns instantes.
@@ -292,20 +292,20 @@ const MinhasDenuncias = observer(() => {
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
-                {denuncias &&
-                  denuncias.map((denuncia, index) => (
-                    <CDenunciaSelf
-                      id={denuncia.id}
-                      nome={denuncia.nome_usuario}
-                      foto={denuncia.foto_usuario}
-                      rua={denuncia.endereco}
-                      descricao={denuncia.descricao}
-                      imagens={denuncia.fotos}
-                      categoria={denuncia.categoria}
+                {reclamações &&
+                  reclamações.map((reclamacao, index) => (
+                    <CReclamacaoSelf
+                      id={reclamacao.id}
+                      nome={reclamacao.nome_usuario}
+                      foto={reclamacao.foto_usuario}
+                      rua={reclamacao.endereco}
+                      descricao={reclamacao.descricao}
+                      imagens={reclamacao.fotos}
+                      categoria={reclamacao.categoria}
                       key={index}
-                      status_denuncia={denuncia.status}
-                      numero={denuncia.numero_endereco}
-                      deleteDenuncia={deleteDenuncia}
+                      status_reclamacao={reclamacao.status}
+                      numero={reclamacao.numero_endereco}
+                      deleteReclamação={deleteReclamação}
                     />
                   ))}
               </View>
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     shadowOffset: { width: 2, height: 2 },
-    elevation: 8, // Sombra
+    elevation: 8, 
   },
   iconContainer: {
     display: "flex",
@@ -355,4 +355,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MinhasDenuncias;
+export default MinhasReclamacoes;

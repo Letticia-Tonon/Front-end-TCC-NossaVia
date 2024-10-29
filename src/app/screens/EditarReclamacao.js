@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from "expo-router"; // Importação do hook
+import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -26,7 +26,7 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 
 const { height, width } = Dimensions.get("window");
 
-export default function EditarDenuncia() {
+export default function EditarReclamacao() {
   const { id } = useLocalSearchParams();
 
   const [marker, setMarker] = useState(null);
@@ -49,19 +49,19 @@ export default function EditarDenuncia() {
   const [cepInvalido, setCepInvalido] = useState(false);
   const [categoriaInvalida, setCategoriaInvalida] = useState(false);
 
-  const fetchDenuncia = async () => {
-    get(`denuncia?id=${id}`, true)
+  const fetchReclamacao = async () => {
+    get(`reclamacao?id=${id}`, true)
       .then((response) => {
         if (response.status === 200) {
-          response.json().then((denuncia) => {
-            setDescricao(denuncia.descricao);
-            setCep(denuncia.cep);
-            setEndereco(denuncia.endereco);
-            setNumero(denuncia.numero_endereco);
-            setComplemento(denuncia.ponto_referencia);
-            setLatitude(denuncia.latitude);
-            setLongitude(denuncia.longitude);
-            setImageList(denuncia.fotos);
+          response.json().then((reclamacao) => {
+            setDescricao(reclamacao.descricao);
+            setCep(reclamacao.cep);
+            setEndereco(reclamacao.endereco);
+            setNumero(reclamacao.numero_endereco);
+            setComplemento(reclamacao.ponto_referencia);
+            setLatitude(reclamacao.latitude);
+            setLongitude(reclamacao.longitude);
+            setImageList(reclamacao.fotos);
             setCategoria(
               {
                 via: "Irregularidades no Asfalto",
@@ -71,17 +71,17 @@ export default function EditarDenuncia() {
                 carro: "Veículo Abandonado",
                 iluminacao: "Falta de Iluminação",
                 outros: "Outros",
-              }[denuncia.categoria]
+              }[reclamacao.categoria]
             );
             setMarker({
-              latitude: Number(denuncia.latitude),
-              longitude: Number(denuncia.longitude),
+              latitude: Number(reclamacao.latitude),
+              longitude: Number(reclamacao.longitude),
             });
           });
         } else {
           Alert.alert(
             "Ops!",
-            "Ocorreu um erro inesperado ao buscar a denúncia"
+            "Ocorreu um erro inesperado ao buscar a reclamação"
           );
         }
       })
@@ -90,7 +90,7 @@ export default function EditarDenuncia() {
 
   useEffect(() => {
     if (id) {
-      fetchDenuncia();
+      fetchReclamacao();
     }
   }, []);
 
@@ -132,7 +132,7 @@ export default function EditarDenuncia() {
       localTemp = true;
       Alert.alert(
         "Atenção!",
-        "Selecione um local no mapa para prosseguir com a criação da sua denúncia."
+        "Selecione um local no mapa para prosseguir com a criação da sua reclamação."
       );
     }
 
@@ -148,7 +148,7 @@ export default function EditarDenuncia() {
     }
 
     put(
-      `denuncia?id=${id}`,
+      `reclamacao?id=${id}`,
       {
         descricao: descricao,
         endereco: endereco,
@@ -171,12 +171,12 @@ export default function EditarDenuncia() {
     )
       .then((response) => {
         if (response.status === 200) {
-          Alert.alert("Sucesso", "Denúncia editada com sucesso.");
-          router.navigate("screens/MinhasDenuncias");
+          Alert.alert("Sucesso", "Reclamação editada com sucesso.");
+          router.navigate("screens/MinhasReclamacoes");
         } else {
           Alert.alert(
             "Ops!",
-            "Ocorreu um erro inesperado ao editar a denúncia."
+            "Ocorreu um erro inesperado ao editar a reclamação."
           );
         }
       })
@@ -190,7 +190,7 @@ export default function EditarDenuncia() {
         <View style={{ ...styles.container, width: "100%" }}>
           <View style={styles.container}>
             <CHeader
-              titulo={"Editar Denúncia"}
+              titulo={"Editar Reclamação"}
               logado={true}
               goBack={true}
               showText={true}
@@ -222,7 +222,7 @@ export default function EditarDenuncia() {
                     <View style={styles.page} key={index}>
                       <Image
                         source={{ uri: image }}
-                        style={styles.denunciaImage}
+                        style={styles.reclamacaoImage}
                       />
                     </View>
                   ))}
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  denunciaImage: {
+  reclamacaoImage: {
     width: "100%",
     height: "100%",
     resizeMode: "cover",

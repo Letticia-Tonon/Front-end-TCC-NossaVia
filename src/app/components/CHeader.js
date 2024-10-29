@@ -140,10 +140,10 @@ const CHeader = observer((props) => {
                 style={styles.menuItem}
                 onPress={() => {
                   abrirMenu();
-                  router.push("screens/MinhasDenuncias");
+                  router.push("screens/MinhasReclamacoes");
                 }}
               >
-                <Text style={styles.menuText}>Minhas denúncias</Text>
+                <Text style={styles.menuText}>Minhas reclamações</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
