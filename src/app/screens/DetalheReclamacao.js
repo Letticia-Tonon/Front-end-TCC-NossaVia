@@ -9,8 +9,10 @@ import {
   ScrollView,
   Alert,
   Dimensions,
+  StatusBar,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
+import CHeader from "../components/CHeader";
 import { get } from "../utils/api";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import PagerView from "react-native-pager-view";
@@ -32,6 +34,7 @@ const DetalheReclamacao = () => {
 
   const [marker, setMarker] = useState(null);
   const [foto, setFoto] = useState("");
+  const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [categoria, setCategoria] = useState("");
   const [cep, setCep] = useState("");
@@ -50,6 +53,7 @@ const DetalheReclamacao = () => {
         const response = await get(`reclamacao?id=${id}`);
         if (response.ok) {
           const reclamacao = await response.json();
+          setNome(reclamacao.nome_usuario);
           setFoto(reclamacao.foto_usuario);
           setDescricao(reclamacao.descricao);
           setCep(reclamacao.cep);
@@ -105,7 +109,14 @@ const DetalheReclamacao = () => {
   return (
     <ScrollView>
       <View style={{ ...styles.container, width: "100%" }}>
-        <View></View>
+        <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
+        <CHeader
+          titulo={"Detalhes"}
+          logado={true}
+          showText={true}
+          goBack={true}
+          showIcon={true}
+        />
         <PagerView
           style={styles.imagePlaceholder}
           initialPage={0}
@@ -138,45 +149,49 @@ const DetalheReclamacao = () => {
             />
           ))}
         </View>
-      </View>
-      <View style={styles.overlayIcons}>
-      <Image
-          source={{ uri: foto }}
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: 40,
-          }}
-        />
 
-        {categoria && (
-          <LocalSvg
-            asset={
-              {
-                iluminacao: ILUMINCAO_ICON,
-                sinalizacao: SINALIZACAO_ICON,
-                via: VIA_ICON,
-                calcada: CALCADA_ICON,
-                lixo: LIXO_ICON,
-                carro: CARRO_ICON,
-                outros: OUTROS_ICON,
-              }[categoria]
-            }
-            height={75}
-            width={75}
-            style={{ borderRadius: 32.5 }}
+      <View style={{ padding: 10 }}>
+        <View style={styles.overlayIcons}>
+          <Image
+            source={{ uri: foto }}
+            style={{
+              width: 65,
+              height: 65,
+              borderRadius: 40,
+            }}
           />
-        )}
+
+          {categoria && (
+            <LocalSvg
+              asset={
+                {
+                  iluminacao: ILUMINCAO_ICON,
+                  sinalizacao: SINALIZACAO_ICON,
+                  via: VIA_ICON,
+                  calcada: CALCADA_ICON,
+                  lixo: LIXO_ICON,
+                  carro: CARRO_ICON,
+                  outros: OUTROS_ICON,
+                }[categoria]
+              }
+              height={75}
+              width={75}
+              style={{ borderRadius: 32.5 }}
+            />
+          )}
+        </View>
+        <View style={styles.userInfo}>
+          <Text style={{ fontSize: 20 }}>{nome}</Text>
+
+          <Text>
+            {endereco}, {numero} - Vila Graciosa - São Paulo - SP. {cep}
+          </Text>
+
+          {complemento && <Text>Ponto de referência: {complemento}</Text>}
+
+          <Text style={{ fontStyle: "italic" }}>{descricao}</Text>
+        </View>
       </View>
-
-      <Text>Descrição: {descricao}</Text>
-      <Text>Categoria: {categoria}</Text>
-      <Text>CEP: {cep}</Text>
-      <Text>
-        Endereço: {endereco}, {numero}
-      </Text>
-      <Text> Complemento: {complemento}</Text>
-
       <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
@@ -192,6 +207,7 @@ const DetalheReclamacao = () => {
       >
         {marker && <Marker coordinate={marker} />}
       </MapView>
+      </View>
     </ScrollView>
   );
 };
@@ -204,11 +220,15 @@ const styles = StyleSheet.create({
     width: "90%",
     paddingBottom: 5,
   },
+  userInfo: {
+    marginLeft: 5,
+    marginTop: 5,
+  },
   overlayIcons: {
     width: width,
     paddingHorizontal: 10,
     position: "absolute",
-    top: 340,
+    top: -60,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

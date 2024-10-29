@@ -128,7 +128,7 @@ const CReclamacaoCard = ({
               Endereço: {rua ? rua.trim() : ""}
               {numero ? `, ${numero}` : ""}
             </Text>
-            <Text>{descricao}</Text>
+            <Text style={{fontStyle: "italic"}}>{descricao}</Text>
             <View
               style={{
                 borderBottomColor: "#D9D9D9",
