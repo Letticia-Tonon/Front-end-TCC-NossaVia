@@ -39,6 +39,10 @@ export default function Cadastro() {
   const [endereco, setEndereco] = useState("");
   const [numero, setNumero] = useState("");
   const [complemento, setComplemento] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
+  const [cpf, setCpf] = useState("");
 
   const [nomeInvalido, setNomeInvalido] = useState(false);
   const [emailInvalido, setEmailInvalido] = useState(false);
@@ -49,6 +53,10 @@ export default function Cadastro() {
   const [telefoneInvalido, setTelefoneInvalido] = useState(false);
   const [enderecoInvalido, setEnderecoInvalido] = useState(false);
   const [confirmarSenhaInvalida, setConfirmarSenhaInvalida] = useState(false);
+  const [bairroInvalido, setBairroInvalido] = useState(false);
+  const [cidadeInvalido, setCidadeInvalido] = useState(false);
+  const [estadoInvalido, setEstadoInvalido] = useState(false);
+  const [cpfInvalido, setCpfInvalido] = useState(false);
 
   const handleSubmit = async () => {
     setNomeInvalido(false);
@@ -60,6 +68,10 @@ export default function Cadastro() {
     setTelefoneInvalido(false);
     setEnderecoInvalido(false);
     setConfirmarSenhaInvalida(false);
+    setBairro(false);
+    setCidade(false);
+    setEstado(false);
+    setCpf(false);
     let nomeTemp = false;
     let emailTemp = false;
     let senhaTemp = false;
@@ -69,6 +81,10 @@ export default function Cadastro() {
     let telefoneTemp = false;
     let enderecoTemp = false;
     let confirmarSenhaTemp = false;
+    let bairroTemp = false;
+    let cidadeTemp = false;
+    let estadoTemp = false;
+    let cpfTemp = false;
 
     if (!nome) {
       nomeTemp = true;
@@ -115,6 +131,26 @@ export default function Cadastro() {
       setConfirmarSenhaInvalida(true);
     }
 
+    if (!bairro) {
+      bairroTemp = true;
+      setBairroInvalido(true);
+    }
+
+    if (!cidade) {
+      cidadeTemp = true;
+      setCidadeInvalido(true);
+    }
+
+    if (!estado) {
+      estadoTemp = true;
+      setEstadoInvalido(true);
+    }
+
+    if (!cpf) {
+      cpfTemp = true;
+      setCpfInvalido(true);
+    }
+
     if (
       nomeTemp ||
       emailTemp ||
@@ -124,7 +160,11 @@ export default function Cadastro() {
       sexoTemp ||
       telefoneTemp ||
       enderecoTemp ||
-      confirmarSenhaTemp
+      confirmarSenhaTemp ||
+      bairroTemp ||
+      cidadeTemp ||
+      estadoTemp ||
+      cpfTemp
     ) {
       return;
     }
@@ -146,6 +186,38 @@ export default function Cadastro() {
         "Prefiro não informar": "n",
       }[sexo],
       telefone: telefone,
+      bairro: bairro,
+      cidade: cidade,
+      estado: {
+        AC: "AC",
+        AL: "AL",
+        AP: "AP",
+        AM: "AM",
+        BA: "BA",
+        CE: "CE",
+        DF: "DF",
+        ES: "ES",
+        GO: "GO",
+        MA: "MA",
+        MT: "MT",
+        MS: "MS",
+        MG: "MG",
+        PA: "PA",
+        PB: "PB",
+        PR: "PR",
+        PE: "PE",
+        PI: "PI",
+        RR: "RR",
+        RO: "RO",
+        RJ: "RJ",
+        RN: "RN",
+        RS: "RS",
+        SC: "SC",
+        SP: "SP",
+        SE: "SE",
+        TO: "TO",
+      }[estado],
+      cpf: cpf,
     })
       .then((data) => {
         if (data.status !== 201) {
@@ -185,11 +257,48 @@ export default function Cadastro() {
             ></CTextInput>
 
             <CTextInput
+              placeholder="CPF"
+              state={cpf}
+              setState={setCpf}
+              error={cpfInvalido}
+              keyboardType="numeric"
+              errorMessage="CPF não pode ser vazio"
+            ></CTextInput>
+
+            <CDatePicker
+              placeholder="Data de nascimento"
+              state={nascimento}
+              setState={setNascimento}
+              error={dataInvalida}
+              errorMessage="Data inválida"
+            ></CDatePicker>
+
+            <CActionSheet
+              state={sexo}
+              setState={setSexo}
+              placeholder="Sexo"
+              itens={["Feminino", "Masculino", "Prefiro não informar"]}
+              error={sexoInvalido}
+              errorMessage="Selecione uma opção"
+            />
+
+            <CTextInput
               placeholder="E-mail"
               state={email}
               setState={setEmail}
               error={emailInvalido}
               errorMessage="E-mail inválido"
+            />
+
+            <CTextInput
+              placeholder="Telefone Ex.: (00) 00000-0000"
+              state={telefone}
+              setState={setTelefone}
+              error={telefoneInvalido}
+              errorMessage="Telefone inválido"
+              mask={phoneMask}
+              keyboardType="numeric"
+              maxLength={15}
             />
 
             <CPassInput
@@ -214,34 +323,6 @@ export default function Cadastro() {
               error={senha !== confirmarSenha || confirmarSenhaInvalida}
               errorMessage="As senhas devem ser iguais"
             />
-
-            <CTextInput
-              placeholder="Telefone Ex.: (00) 00000-0000"
-              state={telefone}
-              setState={setTelefone}
-              error={telefoneInvalido}
-              errorMessage="Telefone inválido"
-              mask={phoneMask}
-              keyboardType="numeric"
-              maxLength={15}
-            />
-
-            <CActionSheet
-              state={sexo}
-              setState={setSexo}
-              placeholder="Sexo"
-              itens={["Feminino", "Masculino", "Prefiro não informar"]}
-              error={sexoInvalido}
-              errorMessage="Selecione uma opção"
-            />
-
-            <CDatePicker
-              placeholder="Data de nascimento"
-              state={nascimento}
-              setState={setNascimento}
-              error={dataInvalida}
-              errorMessage="Data inválida"
-            ></CDatePicker>
 
             <CTextInput
               placeholder="CEP"
@@ -273,6 +354,59 @@ export default function Cadastro() {
               state={complemento}
               setState={setComplemento}
             ></CTextInput>
+
+            <CTextInput
+              placeholder="Bairro"
+              state={bairro}
+              setState={setBairro}
+              error={bairroInvalido}
+              errorMessage="Bairro não pode ser vazio"
+            ></CTextInput>
+
+            <CTextInput
+              placeholder="Cidade"
+              state={cidade}
+              setState={setCidade}
+              error={cidadeInvalido}
+              errorMessage="Cidade não pode ser vazio"
+            ></CTextInput>
+
+            <CActionSheet
+              state={estado}
+              setState={setEstado}
+              placeholder="Estado"
+              itens={[
+                "AC",
+                "AL",
+                "AP",
+                "AM",
+                "BA",
+                "CE",
+                "DF",
+                "ES",
+                "GO",
+                "MA",
+                "MT",
+                "MS",
+                "MG",
+                "PA",
+                "PB",
+                "PR",
+                "PE",
+                "PI",
+                "RR",
+                "RO",
+                "RJ",
+                "RN",
+                "RS",
+                "SC",
+                "SP",
+                "SE",
+                "TO",
+              ]}
+              error={estadoInvalido}
+              errorMessage="Selecione uma opção"
+            />
 
             <CTextButton
               buttonStyle={{
