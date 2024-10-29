@@ -41,10 +41,10 @@ const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
         "Para interagir com uma reclamação você precisa entrar na sua conta.",
         [
           { text: "Cancelar" },
-          { text: "Entrar", onPress: () => router.push("screensLogin") },
+          { text: "Entrar", onPress: () => router.push("screens/Login") },
         ],
         { cancelable: true }
-      );
+      ); 
       return;
     }
 

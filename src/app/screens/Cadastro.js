@@ -21,9 +21,10 @@ import {
   validarTelefone,
   validarCep,
   validarData,
+  validarCpf,
 } from "../utils/validators";
 import { post } from "../utils/api";
-import { cepMask, phoneMask } from "../utils/masks";
+import { cepMask, phoneMask,cpfMask } from "../utils/masks";
 
 export default function Cadastro() {
   const [loading, setLoading] = useState(false);
@@ -89,6 +90,11 @@ export default function Cadastro() {
     if (!nome) {
       nomeTemp = true;
       setNomeInvalido(true);
+    }
+
+    if (!validarCpf(cpf)) {
+      cpfTemp = true;
+      setCpfInvalido(true); 
     }
 
     if (!validarEmail(email)) {
@@ -262,6 +268,7 @@ export default function Cadastro() {
               setState={setCpf}
               error={cpfInvalido}
               keyboardType="numeric"
+              mask={cpfMask}
               errorMessage="CPF não pode ser vazio"
             ></CTextInput>
 
