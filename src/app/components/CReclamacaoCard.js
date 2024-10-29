@@ -35,6 +35,7 @@ const CReclamacaoCard = ({
   categoria,
   numero,
   status,
+  Curtidas,
   logado,
 }) => {
   const [imageIndex, setImageIndex] = useState(0);
@@ -138,7 +139,7 @@ const CReclamacaoCard = ({
               }}
             />
             <View style={styles.buttonContainer}>
-              <CCurtida logado={logado} />
+              <CCurtida logado={logado} quantidade={Curtidas} idReclamacao={id} />
               <View style={{ flex: 1, marginLeft: 10 }}>
                 <CComentario />
               </View>

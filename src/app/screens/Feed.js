@@ -328,6 +328,7 @@
                       categoria={reclamação.categoria}
                       numero={reclamação.numero_endereco}
                       status={reclamação.status}
+                      Curtidas={reclamação.qtd_curtidas}
                       key={index}
                       logado={logado==="true"}
                     />
