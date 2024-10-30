@@ -7,8 +7,8 @@ export default function CTextBox(props) {
         style={
           props.inputStyle
             ? props.error
-              ? { ...styles.input, ...props.inputStyle }
-              : { ...styles.input, ...props.inputStyle, borderColor: "#ff0022" }
+              ? { ...styles.input, ...props.inputStyle, borderColor: "#ff0022" }
+              : { ...styles.input, ...props.inputStyle }
             : props.error
             ? { ...styles.input, borderColor: "#ff0022" }
             : styles.input

@@ -11,6 +11,7 @@ import {
   Dimensions,
   StatusBar,
   TextInput,
+  Pressable,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import CHeader from "../components/CHeader";
@@ -21,8 +22,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import CCurtida from "../components/CCurtida";
-import CComentario from "../components/CComentario";
+import CTextBox from "../components/CTextBox";
 import { set } from "mobx";
+
+const RECLAMACOES_POR_PAGINA = 10;
 
 const { height, width } = Dimensions.get("window");
 const ILUMINCAO_ICON = require("../../../assets/icons/falta_iluminacao.svg");
@@ -34,13 +37,14 @@ const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 
 const DetalheReclamacao = () => {
-  const { id } = useLocalSearchParams();
+  const { reclamacaoId } = useLocalSearchParams();
   const [logado] = useState(false);
   const [Curtidas] = useState(0);
   const [novoComentario, setNovoComentario] = useState("");
   const [comentarios, setComentarios] = useState([]);
-  const [page] = useState(10);
+  const [page, setPage] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [paginaCheia, setPaginaCheia] = useState(false);
 
   const [marker, setMarker] = useState(null);
   const [foto, setFoto] = useState("");
@@ -58,12 +62,13 @@ const DetalheReclamacao = () => {
   const [longitude, setLongitude] = useState(null);
   const [imageList, setImageList] = useState([]);
   const [imageIndex, setImageIndex] = useState(0);
+  const [initLoading, setInitLoading] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchReclamacao = async () => {
       try {
-        const response = await get(`reclamacao?id=${id}`);
+        const response = await get(`reclamacao?id=${reclamacaoId}`);
         if (response.ok) {
           const reclamacao = await response.json();
           setNome(reclamacao.nome_usuario);
@@ -95,62 +100,64 @@ const DetalheReclamacao = () => {
             longitude: Number(reclamacao.longitude),
           });
         } else {
-          console.log("Erro na resposta:", response.status);
           Alert.alert(
             "Ops!",
             "Ocorreu um erro inesperado ao buscar os detalhes da reclamação"
           );
         }
       } catch (error) {
-        console.error("Erro ao buscar reclamação:", error);
         Alert.alert(
           "Erro",
           "Não foi possível buscar os detalhes da reclamação. Tente novamente."
         );
       } finally {
+        setInitLoading(false);
         setLoading(false);
       }
     };
 
     fetchReclamacao();
-  }, [id]);
+    buscarComentarios(0);
+  }, []);
 
-  useEffect(() => {
-    buscarComentarios();
-  }, [page]);
-
-  const buscarComentarios = async () => {
-    try {
-      const response = await get(
-        `comentario?reclamacao=${reclamacaoId}&page=${page}`
-      );
-      if (response.ok) {
-        const comentariosData = await response.json();
-        setComentarios([...comentarios, ...comentariosData]);
-      } else {
-        Alert.alert("Erro ao buscar comentários");
-      }
-    } catch (error) {
-      console.error("Erro ao buscar comentários:", error);
-    }
+  const buscarComentarios = async (localPage) => {
+    get(`comentario?reclamacao=${reclamacaoId}&page=${localPage}`)
+      .then((data) => {
+        if (data.ok) {
+          data.json().then((json) => {
+            if (json.length < RECLAMACOES_POR_PAGINA) {
+              setPaginaCheia(true);
+            }
+            if (localPage === 0) {
+              setComentarios(json);
+              return;
+            }
+            setComentarios([...comentarios, ...json]);
+          });
+        } else {
+          Alert.alert("Erro ao buscar comentários");
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const enviarComentario = async () => {
-    try {
-      const payload = { texto: novoComentario, reclamacao: reclamacaoId };
-      const response = await post("comentario", payload);
-      if (response.ok) {
+    const payload = { texto: novoComentario, reclamacao: reclamacaoId };
+    post("comentario", payload, true).then((data) => {
+      if (data.ok) {
         setNovoComentario("");
-        buscarComentarios(); // Atualiza a lista após enviar
+        data.json().then((json) => {
+          setComentarios([...json, ...comentarios]);
+        });
       } else {
         Alert.alert("Erro ao enviar comentário");
       }
-    } catch (error) {
-      console.error("Erro ao enviar comentário:", error);
-    }
+    });
   };
 
-  if (loading) {
+  if (initLoading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color="#FF7C33" />
@@ -158,7 +165,17 @@ const DetalheReclamacao = () => {
     );
   }
   return (
-    <ScrollView>
+    <ScrollView
+      onScroll={({ nativeEvent }) => {
+        const screenTop = nativeEvent.contentOffset.y;
+        const pageSize = nativeEvent.contentSize.height;
+        if (screenTop + height + 50 > pageSize && !loading && !paginaCheia) {
+          setPage(page + 1);
+          setLoading(true);
+          buscarComentarios(page + 1);
+        }
+      }}
+    >
       <View style={{ ...styles.container, width: "100%" }}>
         <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
         <CHeader
@@ -201,7 +218,7 @@ const DetalheReclamacao = () => {
           ))}
         </View>
 
-        <View style={{ padding: 10 }}>
+        <View style={{ padding: 10, width: "100%" }}>
           <View style={styles.overlayIcons}>
             <Image
               source={{ uri: foto }}
@@ -241,6 +258,14 @@ const DetalheReclamacao = () => {
             {complemento && <Text>Ponto de referência: {complemento}</Text>}
 
             <Text style={{ fontStyle: "italic" }}>{descricao}</Text>
+            <View style={styles.buttonContainer}>
+              <CCurtida
+                logado={logado}
+                quantidade={Curtidas}
+                idReclamacao={reclamacaoId}
+                liked={liked}
+              />
+            </View>
           </View>
         </View>
         <MapView
@@ -260,68 +285,99 @@ const DetalheReclamacao = () => {
         </MapView>
       </View>
       <View>
-        <View style={styles.buttonContainer}>
-          <CCurtida
-            logado={logado}
-            quantidade={Curtidas}
-            idReclamacao={id}
-            liked={liked}
-          />
-          <View style={{ flex: 1, marginLeft: 10 }}>
-            <CComentario
-              logado={logado}
-              quantidade={Curtidas}
-              idReclamacao={id}
-              liked={liked}
-            />
-          </View>
-        </View>
-        <View style={styles.commentsSection}>
+        <View
+          style={{
+            width: "100%",
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <View
             style={{
-              flexDirection: "row",
+              width: "85%",
+              flex: 1,
               alignItems: "center",
-              marginTop: 10,
+              justifyContent: "center",
+              flexDirection: "row",
             }}
           >
-            <TextInput
-              placeholder="Adicione um comentário..."
-              placeholderTextColor="#555555"
-              multiline={true}
-              numberOfLines={2}
-              style={{
-                borderColor: "#ccc",
-                borderWidth: 1,
-                borderRadius: 5,
-                flex: 4,
-                marginRight: 10,
+            <CTextBox
+              inputStyle={{
+                height: 80,
               }}
-              value={novoComentario}
-              onChangeText={setNovoComentario}
+              placeholder="Adicione um comentário..."
+              maxLength={500}
+              state={novoComentario}
+              setState={setNovoComentario}
             />
-            <FontAwesomeIcon
-              icon={faPaperPlane}
-              size={20}
-              color="#FF7C33"
-              onPress={enviarComentario}
-              style={{ flex: 1 }}
-            />
+            <Pressable onPress={enviarComentario}>
+              <FontAwesomeIcon
+                icon={faPaperPlane}
+                size={20}
+                color="#FF7C33"
+                style={{ flex: 1 }}
+              />
+            </Pressable>
           </View>
         </View>
-        <View style={styles.commentsSection}>
+        <View
+          style={{
+            width: "85%",
+          }}
+        >
           {comentarios.map((comentario, index) => (
-            <View key={index} style={styles.comment}>
-              <Text style={styles.commentAuthor}>{comentario.nome}</Text>
-              <Text style={styles.commentDate}>{comentario.data}</Text>
-              <Image
-              source={{ uri: comentario.foto_usuario }}
+            <View
+              key={index}
               style={{
-                width: 20,
-                height: 20,
-                borderRadius: 10,
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                margin: 5,
+                paddingBottom: 5,
               }}
-            />
-              <Text>{comentario.texto}</Text>
+            >
+              <View
+                style={{
+                  display: "flex",
+                  alignItems: "start",
+                  height: "100%",
+                  paddingTop: 2,
+                }}
+              >
+                <Image
+                  source={{ uri: comentario.foto }}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 35,
+                  }}
+                />
+              </View>
+              <View
+                style={{
+                  marginLeft: 10,
+                }}
+              >
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: 5,
+                  }}
+                >
+                  <Text style={{ fontSize: 20 }}>{comentario.nome}</Text>
+                  <Text style={{ fontSize: 12, marginLeft: 10 }}>{`${
+                    comentario.criacao.split("-")[2].split(" ")[0]
+                  }/${comentario.criacao.split("-")[1]}/${
+                    comentario.criacao.split("-")[0]
+                  }   ${comentario.criacao.split(" ")[1].split(":")[0]}:${
+                    comentario.criacao.split(" ")[1].split(":")[1]
+                  }`}</Text>
+                </View>
+                <Text>{comentario.texto}</Text>
+              </View>
             </View>
           ))}
         </View>
@@ -364,9 +420,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    width: "100%",
+    paddingTop: 10,
   },
   title: {
     fontSize: 24,

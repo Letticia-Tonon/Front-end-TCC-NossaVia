@@ -48,7 +48,7 @@ const CReclamacaoCard = ({
       onPress={() => {
         if (showDetalhes) {
           router.push(
-            `screens/DetalheReclamacao?id=${id}&logado=${logado}&Curtidas=${Curtidas}&liked=${liked}`
+            `screens/DetalheReclamacao?reclamacaoId=${id}&logado=${logado}&Curtidas=${Curtidas}&liked=${liked}`
           );
         }
       }}
