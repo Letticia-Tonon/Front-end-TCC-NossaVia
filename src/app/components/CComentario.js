@@ -87,9 +87,6 @@ const CComentario = observer((props) => {
 });
 
 const styles = StyleSheet.create({
-    icon: {
-        padding: 10,
-    },
     modalOverlay: {
         flex: 1,
         justifyContent: "center",

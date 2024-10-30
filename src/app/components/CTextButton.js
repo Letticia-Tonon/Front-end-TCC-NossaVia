@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   text: {
+    textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",
   },

@@ -37,12 +37,18 @@ const CReclamacaoCard = ({
   status,
   Curtidas,
   logado,
+  showComentario = true,
+  showDetalhes = true,
 }) => {
   const [imageIndex, setImageIndex] = useState(0);
 
   return (
     <Pressable
-      onPress={() => router.push(`screens/DetalheReclamacao?id=${id}`)}
+      onPress={() => {
+        if (showDetalhes) {
+          router.push(`screens/DetalheReclamacao?id=${id}`)
+        }
+      }}
     >
       <View style={styles.card}>
         <View style={styles.center}>
@@ -129,7 +135,7 @@ const CReclamacaoCard = ({
               Endereço: {rua ? rua.trim() : ""}
               {numero ? `, ${numero}` : ""}
             </Text>
-            <Text style={{fontStyle: "italic"}}>{descricao}</Text>
+            <Text style={{ fontStyle: "italic" }}>{descricao}</Text>
             <View
               style={{
                 borderBottomColor: "#D9D9D9",
@@ -139,9 +145,13 @@ const CReclamacaoCard = ({
               }}
             />
             <View style={styles.buttonContainer}>
-              <CCurtida logado={logado} quantidade={Curtidas} idReclamacao={id} />
-              <View style={{ flex: 1, marginLeft: 10 }}>
-                <CComentario />
+              <CCurtida
+                logado={logado}
+                quantidade={Curtidas}
+                idReclamacao={id}
+              />
+              <View style={{ flex: 1, marginLeft: 20 }}>
+                {showComentario && <CComentario />}
               </View>
             </View>
           </View>
@@ -203,6 +213,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     width: "100%",
+    paddingVertical: 10,
   },
   status: {
     position: "absolute",

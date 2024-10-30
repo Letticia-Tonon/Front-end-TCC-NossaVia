@@ -25,7 +25,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
 import * as ImagePicker from "expo-image-picker";
 import CTextBox from "../components/CTextBox";
-import { post } from "../utils/api";
+import { post, get } from "../utils/api";
 import { cepMask } from "../utils/masks";
 import { validarCep } from "../utils/validators";
 import { router } from "expo-router";
@@ -113,39 +113,84 @@ export default function CriarReclamacao() {
       return;
     }
 
+    const id_categoria = {
+      "Irregularidades no Asfalto": "via",
+      "Irregularidades na Calçada": "calcada",
+      "Falta de Sinalização": "sinalizacao",
+      "Lixo na Via": "lixo",
+      "Veículo Abandonado": "carro",
+      "Falta de Iluminação": "iluminacao",
+      Outros: "outros",
+    }[categoria];
+
+    let continuar = true;
+
     const imageListBase64 = imageList.map((image) => image.base64);
-    await post(
-      "reclamação",
-      {
-        descricao: descricao,
-        categoria: {
-          "Irregularidades no Asfalto": "via",
-          "Irregularidades na Calçada": "calcada",
-          "Falta de Sinalização": "sinalizacao",
-          "Lixo na Via": "lixo",
-          "Veículo Abandonado": "carro",
-          "Falta de Iluminação": "iluminacao",
-          Outros: "outros",
-        }[categoria],
-        data: new Date().toISOString().replace("T", " ").replace("Z", "000"),
-        endereco: endereco,
-        numero_endereco: numero,
-        ponto_referencia: complemento,
-        cep: cep,
-        latitude: latitude.toString(),
-        longitude: longitude.toString(),
-        fotos: imageListBase64,
-      },
+
+    const payload = {
+      descricao: descricao,
+      categoria: id_categoria,
+      data: new Date().toISOString().replace("T", " ").replace("Z", "000"),
+      endereco: endereco,
+      numero_endereco: numero,
+      ponto_referencia: complemento,
+      cep: cep,
+      latitude: latitude.toString(),
+      longitude: longitude.toString(),
+      fotos: imageListBase64,
+    };
+
+    await get(
+      `reclamacoes-proximas?latitude=${latitude.toString()}&longitude=${longitude.toString()}&page=0&categoria=${id_categoria}`,
       true
-    )
-      .then((data) => {
-        if (data.status !== 201) {
-          Alert.alert("Ops!", "Ocorreu um erro inesperado ao criar a reclamação.");
-          return;
-        }
-        router.push("screens/Feed?logado=true");
-        Alert.alert("Sucesso", "Reclamação criada com sucesso.");
-      });
+    ).then(async (data) => {
+      if (data.status === 200) {
+        await data.json().then((json) => {
+          if (Array.isArray(json) && json.length > 0) {
+            continuar = false;
+            Alert.alert(
+              "Atenção!",
+              "Foram encontradas algumas reclamações similares a sua na sua região.\nPor favor verifique se o seu problema já foi reportado em alguma delas, se sim sinta-se a vontade para curti-la.",
+              [
+                {
+                  text: "OK",
+                  onPress: () =>
+                    router.push({
+                      pathname: "screens/ReclamacoesProximas",
+                      params: {
+                        data: JSON.stringify({
+                          latitude: latitude,
+                          longitude: longitude,
+                          categoria: id_categoria,
+                          reclamacoes: json,
+                          payload: payload,
+                        }),
+                      },
+                    }),
+                },
+              ],
+              { cancelable: true }
+            );
+          }
+        });
+      }
+    });
+
+    if (!continuar) {
+      return;
+    }
+
+    await post("reclamacao", payload, true).then((data) => {
+      if (data.status !== 201) {
+        Alert.alert(
+          "Ops!",
+          "Ocorreu um erro inesperado ao criar a reclamação."
+        );
+        return;
+      }
+      router.push("screens/Feed?logado=true");
+      Alert.alert("Sucesso", "Reclamação criada com sucesso.");
+    });
   };
 
   const pickImage = async () => {
