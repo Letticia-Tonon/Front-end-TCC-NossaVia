@@ -21,18 +21,8 @@ const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
   const [quantidadeState, setQuantidadeState] = useState(Number(quantidade) || 0);
 
   useEffect(() => {
-    const fetchCurtidas = async () => {
-      try {
-        const response = await get(`/curtidas/${idReclamacao}`);
-        setQuantidadeState(Number(response.quantidade) || 0);
-        setLiked(response.liked);
-      } catch (error) {
-        console.error("Erro ao buscar curtidas:", error);
-        setQuantidadeState(0); // Define quantidade como 0 em caso de erro
-      }
-    };
-    fetchCurtidas();
-  }, [idReclamacao]);
+    setQuantidadeState(Number(quantidade) || 0);
+  }, [quantidade]);
 
   const handleSubmit = async () => {
     if (!logado) {
@@ -50,12 +40,11 @@ const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
 
     const payload = {
       reclamacao: idReclamacao,
-      usuario_id: logado.id,
     };
 
     try {
       if (liked) {
-        await del(`/curtidas`, { data: payload });
+        await del(`/curtidas`,  payload );
         setQuantidadeState((prev) => Math.max(prev - 1, 0));
       } else {
         await post(`/curtidas`, payload);

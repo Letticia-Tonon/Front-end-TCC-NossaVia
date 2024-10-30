@@ -42,7 +42,7 @@ const CReclamacaoCard = ({
 
   return (
     <Pressable
-      onPress={() => router.push(`screens/DetalheReclamacao?id=${id}`)}
+      onPress={() => router.push(`screens/DetalheReclamacao?id=${id}&logado=${logado}&Curtidas=${Curtidas}`)}
     >
       <View style={styles.card}>
         <View style={styles.center}>
@@ -141,7 +141,7 @@ const CReclamacaoCard = ({
             <View style={styles.buttonContainer}>
               <CCurtida logado={logado} quantidade={Curtidas} idReclamacao={id} />
               <View style={{ flex: 1, marginLeft: 10 }}>
-                <CComentario />
+                <CComentario logado={logado} quantidade={Curtidas} idReclamacao={id} />
               </View>
             </View>
           </View>

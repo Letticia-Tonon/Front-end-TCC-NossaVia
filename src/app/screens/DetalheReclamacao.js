@@ -10,14 +10,18 @@ import {
   Alert,
   Dimensions,
   StatusBar,
+  Button,
 } from "react-native";
+import CTextInput from "../components/CTextInput";
 import { useLocalSearchParams } from "expo-router";
 import CHeader from "../components/CHeader";
-import { get } from "../utils/api";
+import { get, post } from "../utils/api";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import CCurtida from "../components/CCurtida";
+import CComentario from "../components/CComentario";
 
 const { height, width } = Dimensions.get("window");
 
@@ -31,6 +35,12 @@ const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 
 const DetalheReclamacao = () => {
   const { id } = useLocalSearchParams();
+  const [logado, setLogado] = useState(false);
+  const [Curtidas, setCurtidas] = useState(0);
+  const [comentarios, setComentarios] = useState([]);
+  const [novoComentario, setNovoComentario] = useState("");
+  const [page, setPage] = useState(5);
+  const reclamacaoId = 1;
 
   const [marker, setMarker] = useState(null);
   const [foto, setFoto] = useState("");
@@ -97,7 +107,40 @@ const DetalheReclamacao = () => {
     };
 
     fetchReclamacao();
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    buscarComentarios();
+  }, [page]);
+
+  const buscarComentarios = async () => {
+    try {
+      const response = await get(`comentarios?reclamacao=${reclamacaoId}&page=${page}`);
+      if (response.ok) {
+        const comentariosData = await response.json();
+        setComentarios([...comentarios, ...comentariosData]);
+      } else {
+        Alert.alert("Erro ao buscar comentários");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar comentários:", error);
+    }
+  };
+
+  const enviarComentario = async () => {
+    try {
+      const payload = { texto: novoComentario, reclamacao: reclamacaoId };
+      const response = await post("comentarios", payload);
+      if (response.ok) {
+        setNovoComentario("");
+        buscarComentarios(); // Atualiza a lista após enviar
+      } else {
+        Alert.alert("Erro ao enviar comentário");
+      }
+    } catch (error) {
+      console.error("Erro ao enviar comentário:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -115,7 +158,7 @@ const DetalheReclamacao = () => {
           logado={true}
           showText={true}
           goBack={true}
-          showIcon={true}
+          showIcon={false}
         />
         <PagerView
           style={styles.imagePlaceholder}
@@ -208,6 +251,36 @@ const DetalheReclamacao = () => {
         {marker && <Marker coordinate={marker} />}
       </MapView>
       </View>
+        <View>
+        <View style={styles.buttonContainer}>
+              <CCurtida logado={logado} quantidade={Curtidas} idReclamacao={id} />
+              <View style={{ flex: 1, marginLeft: 10 }}>
+                <CComentario />
+              </View>
+            </View>            
+            <CTextInput
+              placeholder="Adicione um comentário..."
+              multiline={true}
+              numberOfLines={4}
+              style={{
+                borderColor: "#ccc",
+                borderWidth: 1,
+                borderRadius: 5,
+                padding: 10,
+                marginTop: 10,
+              }}
+            />
+            <View style={styles.commentsSection}>
+              {comentarios.map((comentario, index) => (
+                <View key={index} style={styles.comment}>
+                  <Text style={styles.commentAuthor}>{comentario.nome}</Text>
+                  <Text>{comentario.texto}</Text>
+                </View>
+              ))}
+            </View>
+
+            <Button title="Enviar" onPress={enviarComentario} />
+        </View>
     </ScrollView>
   );
 };
@@ -243,6 +316,11 @@ const styles = StyleSheet.create({
     height: 300,
     resizeMode: "cover",
     marginBottom: 16,
+  },buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "100%",
   },
   title: {
     fontSize: 24,
