@@ -48,23 +48,35 @@ export default function CriarReclamacao() {
   const [complemento, setComplemento] = useState("");
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
 
   const [categoriaInvalida, setCategoriaInvalida] = useState(false);
   const [descricaoInvalida, setDescricaoInvalida] = useState(false);
   const [enderecoInvalido, setEnderecoInvalido] = useState(false);
   const [cepInvalido, setCepInvalido] = useState(false);
+  const [bairroInvalido, setBairroInvalido] = useState(false);
+  const [cidadeInvalido, setCidadeInvalido] = useState(false);
+  const [estadoInvalido, setEstadoInvalido] = useState(false);
 
   const handleSubmit = async () => {
     setCategoriaInvalida(false);
     setDescricaoInvalida(false);
     setEnderecoInvalido(false);
     setCepInvalido(false);
+    setBairro(false);
+    setCidade(false);
+    setEstado(false);
     let imagemTemp = false;
     let categoriaTemp = false;
     let descricaoTemp = false;
     let localTemp = false;
     let enderecoTemp = false;
     let cepTemp = false;
+    let bairroTemp = false;
+    let cidadeTemp = false;
+    let estadoTemp = false;
 
     if (imageList.length === 0) {
       imagemTemp = true;
@@ -102,20 +114,38 @@ export default function CriarReclamacao() {
       );
     }
 
+    if (!bairro) {
+      bairroTemp = true;
+      setBairroInvalido(true);
+    }
+
+    if (!cidade) {
+      cidadeTemp = true;
+      setCidadeInvalido(true);
+    }
+
+    if (!estado) {
+      estadoTemp = true;
+      setEstadoInvalido(true);
+    }
+
     if (
       imagemTemp ||
       categoriaTemp ||
       descricaoTemp ||
       localTemp ||
       enderecoTemp ||
-      cepTemp
+      cepTemp ||
+      bairroTemp ||
+      cidadeTemp ||
+      estadoTemp
     ) {
       return;
     }
 
     const imageListBase64 = imageList.map((image) => image.base64);
     await post(
-      "reclamação",
+      "reclamacao",
       {
         descricao: descricao,
         categoria: {
@@ -135,17 +165,50 @@ export default function CriarReclamacao() {
         latitude: latitude.toString(),
         longitude: longitude.toString(),
         fotos: imageListBase64,
+        bairro: bairro,
+        cidade: cidade,
+        estado: {
+          AC: "AC",
+          AL: "AL",
+          AP: "AP",
+          AM: "AM",
+          BA: "BA",
+          CE: "CE",
+          DF: "DF",
+          ES: "ES",
+          GO: "GO",
+          MA: "MA",
+          MT: "MT",
+          MS: "MS",
+          MG: "MG",
+          PA: "PA",
+          PB: "PB",
+          PR: "PR",
+          PE: "PE",
+          PI: "PI",
+          RR: "RR",
+          RO: "RO",
+          RJ: "RJ",
+          RN: "RN",
+          RS: "RS",
+          SC: "SC",
+          SP: "SP",
+          SE: "SE",
+          TO: "TO",
+        }[estado],
       },
       true
-    )
-      .then((data) => {
-        if (data.status !== 201) {
-          Alert.alert("Ops!", "Ocorreu um erro inesperado ao criar a reclamação.");
-          return;
-        }
-        router.push("screens/Feed?logado=true");
-        Alert.alert("Sucesso", "Reclamação criada com sucesso.");
-      });
+    ).then((data) => {
+      if (data.status !== 201) {
+        Alert.alert(
+          "Ops!",
+          "Ocorreu um erro inesperado ao criar a reclamação."
+        );
+        return;
+      }
+      router.push("screens/Feed?logado=true");
+      Alert.alert("Sucesso", "Reclamação criada com sucesso.");
+    });
   };
 
   const pickImage = async () => {
@@ -369,6 +432,59 @@ export default function CriarReclamacao() {
               state={complemento}
               setState={setComplemento}
             ></CTextInput>
+
+            <CTextInput
+              placeholder="Bairro"
+              state={bairro}
+              setState={setBairro}
+              error={bairroInvalido}
+              errorMessage="Bairro não pode ser vazio"
+            ></CTextInput>
+
+            <CTextInput
+              placeholder="Cidade"
+              state={cidade}
+              setState={setCidade}
+              error={cidadeInvalido}
+              errorMessage="Cidade não pode ser vazio"
+            ></CTextInput>
+
+            <CActionSheet
+              state={estado}
+              setState={setEstado}
+              placeholder="Estado"
+              itens={[
+                "AC",
+                "AL",
+                "AP",
+                "AM",
+                "BA",
+                "CE",
+                "DF",
+                "ES",
+                "GO",
+                "MA",
+                "MT",
+                "MS",
+                "MG",
+                "PA",
+                "PB",
+                "PR",
+                "PE",
+                "PI",
+                "RR",
+                "RO",
+                "RJ",
+                "RN",
+                "RS",
+                "SC",
+                "SP",
+                "SE",
+                "TO",
+              ]}
+              error={estadoInvalido}
+              errorMessage="Selecione uma opção"
+            />
 
             <CTextButton
               buttonStyle={{

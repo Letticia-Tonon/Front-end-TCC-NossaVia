@@ -20,7 +20,7 @@ import { LocalSvg } from "react-native-svg/css";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { router } from "expo-router";
 
-const RECLAMAÇÕES_POR_PAGINA = 10;
+const RECLAMACOES_POR_PAGINA = 10;
 
 const { height, width } = Dimensions.get("window");
 
@@ -63,7 +63,7 @@ const categorias = [
 ];
 
 const MinhasReclamacoes = observer(() => {
-  const [reclamações, setReclamações] = useState([]);
+  const [reclamacoes, setReclamacoes] = useState([]);
   const [page, setPage] = useState(0);
   const [categoria, setCategoria] = useState("");
   const [loading, setLoading] = useState(false);
@@ -71,8 +71,8 @@ const MinhasReclamacoes = observer(() => {
   const [initLoading, setInitLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const deleteReclamação = (id) => {
-    setReclamações(reclamações.filter((reclamacao) => reclamacao.id !== id));
+  const deleteReclamacao = (id) => {
+    setReclamacoes(reclamacoes.filter((reclamacao) => reclamacao.id !== id));
   };
 
   const getSelf = async (localPage) => {
@@ -95,14 +95,14 @@ const MinhasReclamacoes = observer(() => {
           }
           data.json().then((json) => {
             setCategoria("");
-            if (json.length < RECLAMAÇÕES_POR_PAGINA) {
+            if (json.length < RECLAMACOES_POR_PAGINA) {
               setPaginaCheia(true);
             }
             if (localPage === 0) {
-              setReclamações(json);
+              setReclamacoes(json);
               return;
             }
-            setReclamações([...reclamações, ...json]);
+            setReclamacoes([...reclamacoes, ...json]);
           });
         })
         .finally(() => {
@@ -132,14 +132,14 @@ const MinhasReclamacoes = observer(() => {
           .json()
           .then((json) => {
             setCategoria(categoria);
-            if (json.length < RECLAMAÇÕES_POR_PAGINA) {
+            if (json.length < RECLAMACOES_POR_PAGINA) {
               setPaginaCheia(true);
             }
             if (localPage === 0) {
-              setReclamações(json);
+              setReclamacoes(json);
               return;
             }
-            setReclamações([...reclamações, ...json]);
+            setReclamacoes([...reclamacoes, ...json]);
           })
           .finally(() => {
             setLoading(false);
@@ -292,8 +292,8 @@ const MinhasReclamacoes = observer(() => {
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
-                {reclamações &&
-                  reclamações.map((reclamacao, index) => (
+                {reclamacoes &&
+                  reclamacoes.map((reclamacao, index) => (
                     <CReclamacaoSelf
                       id={reclamacao.id}
                       nome={reclamacao.nome_usuario}
@@ -305,7 +305,7 @@ const MinhasReclamacoes = observer(() => {
                       key={index}
                       status_reclamacao={reclamacao.status}
                       numero={reclamacao.numero_endereco}
-                      deleteReclamação={deleteReclamação}
+                      deleteReclamacao={deleteReclamacao}
                     />
                   ))}
               </View>

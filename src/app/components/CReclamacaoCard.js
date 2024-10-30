@@ -55,7 +55,7 @@ const CReclamacaoCard = ({
           >
             {imagens.map((image, index) => (
               <View style={styles.page} key={index}>
-                <Image source={{ uri: image }} style={styles.ReclamaçãoImage} />
+                <Image source={{ uri: image }} style={styles.ReclamacaoImage} />
                 {status === "resolvido" && (
                   <View style={styles.status}>
                     <Text
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  ReclamaçãoImage: {
+  ReclamacaoImage: {
     width: width,
     height: width,
     resizeMode: "cover",
