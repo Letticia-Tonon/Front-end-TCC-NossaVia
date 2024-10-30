@@ -16,10 +16,11 @@ import { observer } from "mobx-react-lite";
 
 const { width } = Dimensions.get("window");
 
-const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
-  const [liked, setLiked] = useState(false);
+const CCurtida = observer(({ logado, idReclamacao, quantidade, liked }) => {
+  const [likedState, setLikedState] = useState(liked || false);
   const [quantidadeState, setQuantidadeState] = useState(
     Number(quantidade) || 0
+
   );
 
   useEffect(() => {
@@ -45,14 +46,14 @@ const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
     };
 
     try {
-      if (liked) {
+      if (likedState) {
         await del(`/curtida?reclamacao=${idReclamacao}`, true);
         setQuantidadeState((prev) => Math.max(prev - 1, 0));
       } else {
         await post(`/curtida`, payload, true);
         setQuantidadeState((prev) => prev + 1);
       }
-      setLiked(!liked);
+      setLikedState(!likedState);
     } catch (error) {
       console.error("Erro ao curtir/descurtir:", error);
       Alert.alert("Erro", "Ocorreu um problema ao curtir a reclamação.");
@@ -73,8 +74,8 @@ const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
       <Pressable style={styles.icon} onPress={handleSubmit}>
         <FontAwesomeIcon
           size={30}
-          icon={liked ? solidThumbsUp : regularThumbsUp}
-          color={liked ? "#FF7C33" : "black"}
+          icon={likedState ? solidThumbsUp : regularThumbsUp}
+          color={likedState ? "#FF7C33" : "black"}
         />
       </Pressable>
       <Text style={{ fontSize: 20, marginLeft: 10 }}>{quantidadeState}</Text>

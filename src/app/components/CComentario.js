@@ -13,7 +13,7 @@ import { observer } from "mobx-react-lite";
 const CComentario = observer((props) => {
    
     const textInputRef = useRef(null);
-    const { id, logado, Curtidas } = props;
+    const { id, logado, Curtidas, liked } = props;
 
     const handleSubmit = async () => {
         if (!logado) {
@@ -31,7 +31,7 @@ const CComentario = observer((props) => {
             ); 
             return;
           }
-            router.push(`screens/DetalheReclamacao?id=${id}&logado=${logado}&Curtidas=${Curtidas}`);
+            router.push(`screens/DetalheReclamacao?id=${id}&logado=${logado}&Curtidas=${Curtidas}&liked=${liked}`);
                 // if (textInputRef.current) {
                 //     textInputRef.current.focus();
                 // } 

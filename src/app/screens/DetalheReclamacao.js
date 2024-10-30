@@ -22,6 +22,7 @@ import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import CCurtida from "../components/CCurtida";
 import CComentario from "../components/CComentario";
+import { set } from "mobx";
 
 const { height, width } = Dimensions.get("window");
 const ILUMINCAO_ICON = require("../../../assets/icons/falta_iluminacao.svg");
@@ -39,6 +40,7 @@ const DetalheReclamacao = () => {
   const [novoComentario, setNovoComentario] = useState("");
   const [comentarios, setComentarios] = useState([]);
   const [page] = useState(10);
+  const [liked, setLiked] = useState(false);
 
   const [marker, setMarker] = useState(null);
   const [foto, setFoto] = useState("");
@@ -48,6 +50,9 @@ const DetalheReclamacao = () => {
   const [cep, setCep] = useState("");
   const [endereco, setEndereco] = useState("");
   const [numero, setNumero] = useState("");
+  const [bairo, setBairo] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
   const [complemento, setComplemento] = useState("");
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
@@ -67,6 +72,9 @@ const DetalheReclamacao = () => {
           setCep(reclamacao.cep);
           setEndereco(reclamacao.endereco);
           setNumero(reclamacao.numero_endereco);
+          setBairo(reclamacao.bairro);
+          setCidade(reclamacao.cidade);
+          setEstado(reclamacao.estado);
           setComplemento(reclamacao.ponto_referencia);
           setLatitude(reclamacao.latitude);
           setLongitude(reclamacao.longitude);
@@ -227,7 +235,7 @@ const DetalheReclamacao = () => {
             <Text style={{ fontSize: 20 }}>{nome}</Text>
 
             <Text>
-              {endereco}, {numero} - Vila Graciosa - São Paulo - SP. {cep}
+              {endereco}, {numero} - {bairo} - {cidade} - {estado}. {cep}
             </Text>
 
             {complemento && <Text>Ponto de referência: {complemento}</Text>}
@@ -253,9 +261,19 @@ const DetalheReclamacao = () => {
       </View>
       <View>
         <View style={styles.buttonContainer}>
-          <CCurtida logado={logado} quantidade={Curtidas} idReclamacao={id} />
+          <CCurtida
+            logado={logado}
+            quantidade={Curtidas}
+            idReclamacao={id}
+            liked={liked}
+          />
           <View style={{ flex: 1, marginLeft: 10 }}>
-            <CComentario />
+            <CComentario
+              logado={logado}
+              quantidade={Curtidas}
+              idReclamacao={id}
+              liked={liked}
+            />
           </View>
         </View>
         <View style={styles.commentsSection}>

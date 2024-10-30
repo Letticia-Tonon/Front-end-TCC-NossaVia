@@ -329,8 +329,9 @@
                       numero={reclamacao.numero_endereco}
                       status={reclamacao.status}
                       Curtidas={reclamacao.qtd_curtidas}
+                      Liked={reclamacao.curtido}
                       key={index}
-                      logado={logado==="true"}
+                      logado={logado === "true"}
                     />
                   ))}
               </View>

@@ -13,6 +13,7 @@ import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import CComentario from "./CComentario";
+import CCurtida from "./CCurtida";
 
 const { width } = Dimensions.get("window");
 
@@ -23,7 +24,6 @@ const CALCADA_ICON = require("../../../assets/icons/irregularidades_calcada.svg"
 const LIXO_ICON = require("../../../assets/icons/lixo_via.svg");
 const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
-import CCurtida from "./CCurtida";
 
 const CReclamacaoCard = ({
   id,
@@ -36,6 +36,7 @@ const CReclamacaoCard = ({
   numero,
   status,
   Curtidas,
+  liked,
   logado,
   showComentario = true,
   showDetalhes = true,
@@ -47,7 +48,7 @@ const CReclamacaoCard = ({
       onPress={() => {
         if (showDetalhes) {
           router.push(
-            `screens/DetalheReclamacao?id=${id}&logado=${logado}&Curtidas=${Curtidas}`
+            `screens/DetalheReclamacao?id=${id}&logado=${logado}&Curtidas=${Curtidas}&liked=${liked}`
           );
         }
       }}
@@ -151,6 +152,7 @@ const CReclamacaoCard = ({
                 logado={logado}
                 quantidade={Curtidas}
                 idReclamacao={id}
+                liked={liked}
               />
               <View style={{ flex: 1, marginLeft: 20 }}>
                 {showComentario && (
@@ -158,6 +160,7 @@ const CReclamacaoCard = ({
                     logado={logado}
                     quantidade={Curtidas}
                     idReclamacao={id}
+                    liked={liked}
                   />
                 )}
               </View>
