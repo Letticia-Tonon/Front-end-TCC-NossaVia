@@ -10,7 +10,6 @@ import {
   Alert,
   Dimensions,
   StatusBar,
-  TextInput,
   Pressable,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
@@ -23,7 +22,6 @@ import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import CCurtida from "../components/CCurtida";
 import CTextBox from "../components/CTextBox";
-import { set } from "mobx";
 
 const RECLAMACOES_POR_PAGINA = 10;
 
@@ -39,9 +37,9 @@ const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 const DetalheReclamacao = () => {
   const { reclamacaoId } = useLocalSearchParams();
   const [logado] = useState(false);
-  const [Curtidas] = useState(0);
   const [novoComentario, setNovoComentario] = useState("");
   const [comentarios, setComentarios] = useState([]);
+
   const [page, setPage] = useState(0);
   const [liked, setLiked] = useState(false);
   const [paginaCheia, setPaginaCheia] = useState(false);
@@ -64,6 +62,7 @@ const DetalheReclamacao = () => {
   const [imageIndex, setImageIndex] = useState(0);
   const [initLoading, setInitLoading] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [Curtidas, setCurtidas] = useState(0);
 
   useEffect(() => {
     const fetchReclamacao = async () => {
@@ -81,6 +80,8 @@ const DetalheReclamacao = () => {
           setCidade(reclamacao.cidade);
           setEstado(reclamacao.estado);
           setComplemento(reclamacao.ponto_referencia);
+          setCurtidas(reclamacao.qnt_curtidas);
+          setLiked(reclamacao.curtido);
           setLatitude(reclamacao.latitude);
           setLongitude(reclamacao.longitude);
           setImageList(reclamacao.fotos);

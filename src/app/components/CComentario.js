@@ -7,7 +7,7 @@ import { observer } from "mobx-react-lite";
 
 const CComentario = observer((props) => {
   const textInputRef = useRef(null);
-  const { id, logado, Curtidas, liked } = props;
+  const { id, logado } = props;
 
   const handleSubmit = async () => {
     if (!logado) {
@@ -24,9 +24,7 @@ const CComentario = observer((props) => {
       );
       return;
     }
-    router.push(
-      `screens/DetalheReclamacao?reclamacaoId=${id}&logado=${logado}&Curtidas=${Curtidas}&liked=${liked}`
-    );
+    router.push(`screens/DetalheReclamacao?reclamacaoId=${id}&logado=${logado}`);
   };
 
   return (
