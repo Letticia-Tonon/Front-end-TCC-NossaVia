@@ -18,7 +18,9 @@ const { width } = Dimensions.get("window");
 
 const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
   const [liked, setLiked] = useState(false);
-  const [quantidadeState, setQuantidadeState] = useState(Number(quantidade) || 0);
+  const [quantidadeState, setQuantidadeState] = useState(
+    Number(quantidade) || 0
+  );
 
   useEffect(() => {
     setQuantidadeState(Number(quantidade) || 0);
@@ -34,20 +36,20 @@ const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
           { text: "Entrar", onPress: () => router.push("screens/Login") },
         ],
         { cancelable: true }
-      ); 
+      );
       return;
     }
 
     const payload = {
-      reclamacao: idReclamacao,
+      reclamacao: String(idReclamacao),
     };
 
     try {
       if (liked) {
-        await del(`/curtidas`,  payload );
+        await del(`/curtida?reclamacao=${idReclamacao}`, true);
         setQuantidadeState((prev) => Math.max(prev - 1, 0));
       } else {
-        await post(`/curtidas`, payload);
+        await post(`/curtida`, payload, true);
         setQuantidadeState((prev) => prev + 1);
       }
       setLiked(!liked);
@@ -58,11 +60,17 @@ const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
   };
 
   return (
-    <View style={[styles.flex, { flexDirection: "row", alignItems: "center", justifyContent: "center" }]}>
-      <Pressable
-        style={styles.icon}
-        onPress={handleSubmit}
-      >
+    <View
+      style={[
+        styles.flex,
+        {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        },
+      ]}
+    >
+      <Pressable style={styles.icon} onPress={handleSubmit}>
         <FontAwesomeIcon
           size={30}
           icon={liked ? solidThumbsUp : regularThumbsUp}
