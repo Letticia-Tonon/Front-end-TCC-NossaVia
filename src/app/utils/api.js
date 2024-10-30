@@ -22,12 +22,14 @@ export const get = async (endpoint, authorization = false) => {
   if (authorization) {
     token = await AsyncStorage.getItem("token");
   }
-  const response = await fetch(`${URL}/${endpoint}`, {
+  const conf = {
     method: "GET",
-    headers: {
-      Authorization: authorization ? `Bearer ${token}` : "",
-    },
-  });
+  };
+  if (authorization && token) {
+    conf.headers = {}
+    conf.headers.Authorization = `Bearer ${token}`;
+  }
+  const response = await fetch(`${URL}/${endpoint}`, conf);
   return response;
 };
 

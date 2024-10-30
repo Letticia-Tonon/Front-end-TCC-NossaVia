@@ -1,31 +1,15 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Pressable,
-  Alert,
-  StyleSheet,
-  Dimensions,
-  Text,
-} from "react-native";
-import { post, del, get } from "../utils/api";
+import React, { useState } from "react";
+import { Pressable, Alert, StyleSheet, Text } from "react-native";
+import { post, del } from "../utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faThumbsUp as regularThumbsUp } from "@fortawesome/free-regular-svg-icons";
 import { faThumbsUp as solidThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import { router } from "expo-router";
 import { observer } from "mobx-react-lite";
 
-const { width } = Dimensions.get("window");
-
 const CCurtida = observer(({ logado, idReclamacao, quantidade, liked }) => {
-  const [likedState, setLikedState] = useState(liked || false);
-  const [quantidadeState, setQuantidadeState] = useState(
-    Number(quantidade) || 0
-
-  );
-
-  useEffect(() => {
-    setQuantidadeState(Number(quantidade) || 0);
-  }, [quantidade]);
+  const [likedState, setLikedState] = useState(liked);
+  const [quantidadeState, setQuantidadeState] = useState(quantidade);
 
   const handleSubmit = async () => {
     if (!logado) {
@@ -45,48 +29,51 @@ const CCurtida = observer(({ logado, idReclamacao, quantidade, liked }) => {
       reclamacao: String(idReclamacao),
     };
 
-    try {
-      if (likedState) {
-        await del(`/curtida?reclamacao=${idReclamacao}`, true);
-        setQuantidadeState((prev) => Math.max(prev - 1, 0));
-      } else {
-        await post(`/curtida`, payload, true);
-        setQuantidadeState((prev) => prev + 1);
-      }
-      setLikedState(!likedState);
-    } catch (error) {
-      console.error("Erro ao curtir/descurtir:", error);
-      Alert.alert("Erro", "Ocorreu um problema ao curtir a reclamação.");
+    const likes = quantidadeState;
+    const liked = likedState;
+    setLikedState(!liked);
+    if (likedState) {
+      setQuantidadeState(likes - 1);
+      del(`/curtida?reclamacao=${idReclamacao}`, true).then((data) => {
+        if (data.status === 409) {
+          return;
+        }
+        if (data.status !== 200) {
+          setLikedState(liked);
+          setQuantidadeState(likes);
+        }
+      });
+    } else {
+      setQuantidadeState(likes + 1);
+      post(`/curtida`, payload, true).then((data) => {
+        if (data.status === 409) {
+          return;
+        }
+        if (data.status !== 200 && data.status !== 201) {
+          setLikedState(liked);
+          setQuantidadeState(likes);
+        }
+      });
     }
   };
 
   return (
-    <View
-      style={[
-        styles.flex,
-        {
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-        },
-      ]}
-    >
-      <Pressable style={styles.icon} onPress={handleSubmit}>
-        <FontAwesomeIcon
-          size={30}
-          icon={likedState ? solidThumbsUp : regularThumbsUp}
-          color={likedState ? "#FF7C33" : "black"}
-        />
-      </Pressable>
+    <Pressable style={styles.icon} onPress={handleSubmit}>
+      <FontAwesomeIcon
+        size={30}
+        icon={likedState ? solidThumbsUp : regularThumbsUp}
+        color={likedState ? "#FF7C33" : "#000"}
+      />
       <Text style={{ fontSize: 20, marginLeft: 10 }}>{quantidadeState}</Text>
-    </View>
+    </Pressable>
   );
 });
 
 const styles = StyleSheet.create({
   icon: {
-    justifyContent: "center",
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
 });
 
