@@ -312,6 +312,15 @@ const DetalheReclamacao = () => {
           {comentarios.map((comentario, index) => (
             <View key={index} style={styles.comment}>
               <Text style={styles.commentAuthor}>{comentario.nome}</Text>
+              <Text style={styles.commentDate}>{comentario.data}</Text>
+              <Image
+              source={{ uri: comentario.foto_usuario }}
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: 10,
+              }}
+            />
               <Text>{comentario.texto}</Text>
             </View>
           ))}
