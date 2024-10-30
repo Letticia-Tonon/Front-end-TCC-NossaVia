@@ -46,7 +46,9 @@ const CReclamacaoCard = ({
     <Pressable
       onPress={() => {
         if (showDetalhes) {
-          router.push(`screens/DetalheReclamacao?id=${id}`)
+          router.push(
+            `screens/DetalheReclamacao?id=${id}&logado=${logado}&Curtidas=${Curtidas}`
+          );
         }
       }}
     >
@@ -61,7 +63,7 @@ const CReclamacaoCard = ({
           >
             {imagens.map((image, index) => (
               <View style={styles.page} key={index}>
-                <Image source={{ uri: image }} style={styles.ReclamaçãoImage} />
+                <Image source={{ uri: image }} style={styles.ReclamacaoImage} />
                 {status === "resolvido" && (
                   <View style={styles.status}>
                     <Text
@@ -151,7 +153,13 @@ const CReclamacaoCard = ({
                 idReclamacao={id}
               />
               <View style={{ flex: 1, marginLeft: 20 }}>
-                {showComentario && <CComentario />}
+                {showComentario && (
+                  <CComentario
+                    logado={logado}
+                    quantidade={Curtidas}
+                    idReclamacao={id}
+                  />
+                )}
               </View>
             </View>
           </View>
@@ -184,7 +192,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  ReclamaçãoImage: {
+  ReclamacaoImage: {
     width: width,
     height: width,
     resizeMode: "cover",

@@ -18,21 +18,13 @@ const { width } = Dimensions.get("window");
 
 const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
   const [liked, setLiked] = useState(false);
-  const [quantidadeState, setQuantidadeState] = useState(Number(quantidade) || 0);
+  const [quantidadeState, setQuantidadeState] = useState(
+    Number(quantidade) || 0
+  );
 
   useEffect(() => {
-    const fetchCurtidas = async () => {
-      try {
-        const response = await get(`/curtidas/${idReclamacao}`);
-        setQuantidadeState(Number(response.quantidade) || 0);
-        setLiked(response.liked);
-      } catch (error) {
-        console.error("Erro ao buscar curtidas:", error);
-        setQuantidadeState(0); // Define quantidade como 0 em caso de erro
-      }
-    };
-    fetchCurtidas();
-  }, [idReclamacao]);
+    setQuantidadeState(Number(quantidade) || 0);
+  }, [quantidade]);
 
   const handleSubmit = async () => {
     if (!logado) {
@@ -44,21 +36,20 @@ const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
           { text: "Entrar", onPress: () => router.push("screens/Login") },
         ],
         { cancelable: true }
-      ); 
+      );
       return;
     }
 
     const payload = {
-      reclamacao: idReclamacao,
-      usuario_id: logado.id,
+      reclamacao: String(idReclamacao),
     };
 
     try {
       if (liked) {
-        await del(`/curtidas`, { data: payload });
+        await del(`/curtida?reclamacao=${idReclamacao}`, true);
         setQuantidadeState((prev) => Math.max(prev - 1, 0));
       } else {
-        await post(`/curtidas`, payload);
+        await post(`/curtida`, payload, true);
         setQuantidadeState((prev) => prev + 1);
       }
       setLiked(!liked);
@@ -69,11 +60,17 @@ const CCurtida = observer(({ logado, idReclamacao, quantidade }) => {
   };
 
   return (
-    <View style={[styles.flex, { flexDirection: "row", alignItems: "center", justifyContent: "center" }]}>
-      <Pressable
-        style={styles.icon}
-        onPress={handleSubmit}
-      >
+    <View
+      style={[
+        styles.flex,
+        {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        },
+      ]}
+    >
+      <Pressable style={styles.icon} onPress={handleSubmit}>
         <FontAwesomeIcon
           size={30}
           icon={liked ? solidThumbsUp : regularThumbsUp}

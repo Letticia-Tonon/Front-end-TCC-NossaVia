@@ -52,6 +52,9 @@ const EditarUsuario = observer(() => {
   const [complemento, setComplemento] = useState(
     userContext.user.complemento_endereco
   );
+  const [bairro, setBairro] = useState(userContext.user.bairro);
+  const [cidade, setCidade] = useState(userContext.user.cidade);
+  const [estado, setEstado] = useState(userContext.user.estado);
   const [image, setImage] = useState(userContext.user.foto);
 
   const [nomeInvalido, setNomeInvalido] = useState(false);
@@ -60,6 +63,9 @@ const EditarUsuario = observer(() => {
   const [dataInvalida, setDataInvalida] = useState(false);
   const [sexoInvalido, setSexoInvalido] = useState(false);
   const [enderecoInvalido, setEnderecoInvalido] = useState(false);
+  const [bairroInvalido, setBairroInvalido] = useState(false);
+  const [cidadeInvalida, setCidadeInvalida] = useState(false);
+  const [estadoInvalido, setEstadoInvalido] = useState(false);
 
   const deletar = async () => {
     Alert.alert(
@@ -107,12 +113,18 @@ const EditarUsuario = observer(() => {
     setDataInvalida(false);
     setSexoInvalido(false);
     setEnderecoInvalido(false);
+    setBairroInvalido(false);
+    setCidadeInvalida(false);
+    setEstadoInvalido(false);
     let nomeTemp = !nome;
     let telefoneTemp = !validarTelefone(telefone);
     let cepTemp = !validarCep(cep);
     let dataTemp = !validarData(nascimento);
     let sexoTemp = !sexo;
     let enderecoTemp = !endereco;
+    let bairroTemp = !bairro;
+    let cidadeTemp = !cidade;
+    let estadoTemp = !estado;
 
     if (
       nomeTemp ||
@@ -120,7 +132,10 @@ const EditarUsuario = observer(() => {
       cepTemp ||
       dataTemp ||
       sexoTemp ||
-      enderecoTemp
+      enderecoTemp ||
+      bairroTemp ||
+      cidadeTemp ||
+      estadoTemp
     ) {
       setNomeInvalido(nomeTemp);
       setTelefoneInvalido(telefoneTemp);
@@ -128,6 +143,9 @@ const EditarUsuario = observer(() => {
       setDataInvalida(dataTemp);
       setSexoInvalido(sexoTemp);
       setEnderecoInvalido(enderecoTemp);
+      setBairroInvalido(bairroTemp);
+      setCidadeInvalida(cidadeTemp);
+      setEstadoInvalido(estadoTemp);
       return;
     }
 
@@ -146,8 +164,38 @@ const EditarUsuario = observer(() => {
         "Prefiro não informar": "n",
       }[sexo],
       telefone: telefone,
+      bairro: bairro,
+      cidade: cidade,
+      estado: {
+        AC: "AC",
+        AL: "AL",
+        AP: "AP",
+        AM: "AM",
+        BA: "BA",
+        CE: "CE",
+        DF: "DF",
+        ES: "ES",
+        GO: "GO",
+        MA: "MA",
+        MT: "MT",
+        MS: "MS",
+        MG: "MG",
+        PA: "PA",
+        PB: "PB",
+        PR: "PR",
+        PE: "PE",
+        PI: "PI",
+        RR: "RR",
+        RO: "RO",
+        RJ: "RJ",
+        RN: "RN",
+        RS: "RS",
+        SC: "SC",
+        SP: "SP",
+        SE: "SE",
+        TO: "TO",
+      }[estado],
     };
-
     if (image && image.base64) {
       payload.foto = image.base64;
     }
@@ -244,6 +292,28 @@ const EditarUsuario = observer(() => {
             />
 
             <CTextInput
+              placeholder="CPF"
+              state={userContext.user.cpf}
+              disabled={true}
+            />
+
+            <CDatePicker
+              placeholder="Data de nascimento"
+              state={nascimento}
+              setState={setNascimento}
+              error={dataInvalida}
+              errorMessage="Data inválida: O usuário precisa ser maior que 16 anos"
+            />
+            <CActionSheet
+              state={sexo}
+              setState={setSexo}
+              placeholder="Sexo"
+              itens={["Feminino", "Masculino", "Prefiro não informar"]}
+              error={sexoInvalido}
+              errorMessage="Selecione uma opção"
+            />
+
+            <CTextInput
               placeholder="email"
               state={userContext.user.email}
               disabled={true}
@@ -258,23 +328,6 @@ const EditarUsuario = observer(() => {
               mask={phoneMask}
               keyboardType="numeric"
               maxLength={15}
-            />
-
-            <CActionSheet
-              state={sexo}
-              setState={setSexo}
-              placeholder="Sexo"
-              itens={["Feminino", "Masculino", "Prefiro não informar"]}
-              error={sexoInvalido}
-              errorMessage="Selecione uma opção"
-            />
-
-            <CDatePicker
-              placeholder="Data de nascimento"
-              state={nascimento}
-              setState={setNascimento}
-              error={dataInvalida}
-              errorMessage="Data inválida"
             />
 
             <CTextInput
@@ -306,6 +359,59 @@ const EditarUsuario = observer(() => {
               placeholder="Complemento"
               state={complemento}
               setState={setComplemento}
+            />
+
+            <CTextInput
+              placeholder="Bairro"
+              state={bairro}
+              setState={setBairro}
+              error={bairroInvalido}
+              errorMessage="Bairro não pode ser vazio"
+            ></CTextInput>
+
+            <CTextInput
+              placeholder="Cidade"
+              state={cidade}
+              setState={setCidade}
+              error={cidadeInvalida}
+              errorMessage="Cidade não pode ser vazio"
+            ></CTextInput>
+
+            <CActionSheet
+              state={estado}
+              setState={setEstado}
+              placeholder="Estado"
+              itens={[
+                "AC",
+                "AL",
+                "AP",
+                "AM",
+                "BA",
+                "CE",
+                "DF",
+                "ES",
+                "GO",
+                "MA",
+                "MT",
+                "MS",
+                "MG",
+                "PA",
+                "PB",
+                "PR",
+                "PE",
+                "PI",
+                "RR",
+                "RO",
+                "RJ",
+                "RN",
+                "RS",
+                "SC",
+                "SP",
+                "SE",
+                "TO",
+              ]}
+              error={estadoInvalido}
+              errorMessage="Selecione uma opção"
             />
 
             <CTextButton

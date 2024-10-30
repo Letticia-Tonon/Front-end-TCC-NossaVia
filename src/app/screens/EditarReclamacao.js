@@ -43,11 +43,17 @@ export default function EditarReclamacao() {
   const [longitude, setLongitude] = useState(null);
   const [imageList, setImageList] = useState([]);
   const [imageIndex, setImageIndex] = useState(0);
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
 
   const [descricaoInvalida, setDescricaoInvalida] = useState(false);
   const [enderecoInvalido, setEnderecoInvalido] = useState(false);
   const [cepInvalido, setCepInvalido] = useState(false);
   const [categoriaInvalida, setCategoriaInvalida] = useState(false);
+  const [bairroInvalido, setBairroInvalido] = useState(false);
+  const [cidadeInvalida, setCidadeInvalida] = useState(false);
+  const [estadoInvalido, setEstadoInvalido] = useState(false);
 
   const fetchReclamacao = async () => {
     get(`reclamacao?id=${id}`, true)
@@ -62,6 +68,9 @@ export default function EditarReclamacao() {
             setLatitude(reclamacao.latitude);
             setLongitude(reclamacao.longitude);
             setImageList(reclamacao.fotos);
+            setBairro(reclamacao.bairro);
+            setCidade(reclamacao.cidade);
+            setEstado(reclamacao.estado);
             setCategoria(
               {
                 via: "Irregularidades no Asfalto",
@@ -101,12 +110,18 @@ export default function EditarReclamacao() {
     setEnderecoInvalido(false);
     setCepInvalido(false);
     setCategoriaInvalida(false);
+    setBairroInvalido(false);
+    setCidadeInvalida(false);
+    setEstadoInvalido(false);
 
     let cepTemp = false;
     let enderecoTemp = false;
     let descricaoTemp = false;
     let categoriaTemp = false;
     let localTemp = false;
+    let bairroTemp = !bairro;
+    let cidadeTemp = !cidade;
+    let estadoTemp = !estado;
 
     if (!validarCep(cep)) {
       cepTemp = true;
@@ -136,12 +151,30 @@ export default function EditarReclamacao() {
       );
     }
 
+    if (!bairro) {
+      bairroTemp = true;
+      setBairroInvalido(true);
+    }
+
+    if (!cidade) {
+      cidadeTemp = true;
+      setCidadeInvalida(true);
+    }
+
+    if (!estado) {
+      estadoTemp = true;
+      setEstadoInvalido(true);
+    }
+
     if (
       descricaoTemp ||
       enderecoTemp ||
       cepTemp ||
       categoriaTemp ||
-      localTemp
+      localTemp ||
+      bairroTemp ||
+      cidadeTemp ||
+      estadoTemp
     ) {
       setLoadingSalvar(false);
       return;
@@ -166,6 +199,37 @@ export default function EditarReclamacao() {
           "Falta de Iluminação": "iluminacao",
           Outros: "outros",
         }[categoria],
+        bairro: bairro,
+        cidade: cidade,
+        estado: {
+          AC: "AC",
+          AL: "AL",
+          AP: "AP",
+          AM: "AM",
+          BA: "BA",
+          CE: "CE",
+          DF: "DF",
+          ES: "ES",
+          GO: "GO",
+          MA: "MA",
+          MT: "MT",
+          MS: "MS",
+          MG: "MG",
+          PA: "PA",
+          PB: "PB",
+          PR: "PR",
+          PE: "PE",
+          PI: "PI",
+          RR: "RR",
+          RO: "RO",
+          RJ: "RJ",
+          RN: "RN",
+          RS: "RS",
+          SC: "SC",
+          SP: "SP",
+          SE: "SE",
+          TO: "TO",
+        }[estado],
       },
       true
     )
@@ -326,6 +390,59 @@ export default function EditarReclamacao() {
                   placeholder="Ponto de referência"
                   state={complemento}
                   setState={setComplemento}
+                />
+
+                <CTextInput
+                  placeholder="Bairro"
+                  state={bairro}
+                  setState={setBairro}
+                  error={bairroInvalido}
+                  errorMessage="Bairro não pode ser vazio"
+                ></CTextInput>
+
+                <CTextInput
+                  placeholder="Cidade"
+                  state={cidade}
+                  setState={setCidade}
+                  error={cidadeInvalida}
+                  errorMessage="Cidade não pode ser vazio"
+                ></CTextInput>
+
+                <CActionSheet
+                  state={estado}
+                  setState={setEstado}
+                  placeholder="Estado"
+                  itens={[
+                    "AC",
+                    "AL",
+                    "AP",
+                    "AM",
+                    "BA",
+                    "CE",
+                    "DF",
+                    "ES",
+                    "GO",
+                    "MA",
+                    "MT",
+                    "MS",
+                    "MG",
+                    "PA",
+                    "PB",
+                    "PR",
+                    "PE",
+                    "PI",
+                    "RR",
+                    "RO",
+                    "RJ",
+                    "RN",
+                    "RS",
+                    "SC",
+                    "SP",
+                    "SE",
+                    "TO",
+                  ]}
+                  error={estadoInvalido}
+                  errorMessage="Selecione uma opção"
                 />
 
                 <CTextButton

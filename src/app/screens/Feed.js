@@ -22,7 +22,7 @@
   import { faPlus } from "@fortawesome/free-solid-svg-icons";
   import { LocalSvg } from "react-native-svg/css";
 
-  const RECLAMAÇÕES_POR_PAGINA = 10;
+  const RECLAMACOES_POR_PAGINA = 10;
 
   const { height, width } = Dimensions.get("window");
 
@@ -66,7 +66,7 @@
 
   const Feed = observer(() => {
     const { logado } = useLocalSearchParams();
-    const [reclamações, setReclamações] = useState([]);
+    const [reclamacoes, setReclamacoes] = useState([]);
     const [page, setPage] = useState(0);
     const [categoria, setCategoria] = useState("");
     const [loading, setLoading] = useState(false);
@@ -96,14 +96,14 @@
             }
             data.json().then((json) => {
               setCategoria("");
-              if (json.length < RECLAMAÇÕES_POR_PAGINA) {
+              if (json.length < RECLAMACOES_POR_PAGINA) {
                 setPaginaCheia(true);
               }
               if (localPage === 0) {
-                setReclamações(json);
+                setReclamacoes(json);
                 return;
               }
-              setReclamações([...reclamações, ...json]);
+              setReclamacoes([...reclamacoes, ...json]);
             });
           })
           .finally(() => {
@@ -132,14 +132,14 @@
             .json()
             .then((json) => {
               setCategoria(categoria);
-              if (json.length < RECLAMAÇÕES_POR_PAGINA) {
+              if (json.length < RECLAMACOES_POR_PAGINA) {
                 setPaginaCheia(true);
               }
               if (localPage === 0) {
-                setReclamações(json);
+                setReclamacoes(json);
                 return;
               }
-              setReclamações([...reclamações, ...json]);
+              setReclamacoes([...reclamacoes, ...json]);
             })
             .finally(() => {
               setLoading(false);
@@ -173,7 +173,7 @@
             if (logado === "false") {
               Alert.alert(
                 "Atenção!",
-                "Para criar uma reclamação você precisa entrar na sua conta.",
+                "Para criar uma reclamacao você precisa entrar na sua conta.",
                 [
                   {
                     text: "Cancelar",
@@ -316,19 +316,19 @@
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
-                {reclamações &&
-                  reclamações.map((reclamação, index) => (
+                {reclamacoes &&
+                  reclamacoes.map((reclamacao, index) => (
                     <CReclamacaoCard
-                      id={reclamação.id}
-                      nome={reclamação.nome_usuario}
-                      foto={reclamação.foto_usuario}
-                      rua={reclamação.endereco}
-                      descricao={reclamação.descricao}
-                      imagens={reclamação.fotos}
-                      categoria={reclamação.categoria}
-                      numero={reclamação.numero_endereco}
-                      status={reclamação.status}
-                      Curtidas={reclamação.qtd_curtidas}
+                      id={reclamacao.id}
+                      nome={reclamacao.nome_usuario}
+                      foto={reclamacao.foto_usuario}
+                      rua={reclamacao.endereco}
+                      descricao={reclamacao.descricao}
+                      imagens={reclamacao.fotos}
+                      categoria={reclamacao.categoria}
+                      numero={reclamacao.numero_endereco}
+                      status={reclamacao.status}
+                      Curtidas={reclamacao.qtd_curtidas}
                       key={index}
                       logado={logado==="true"}
                     />

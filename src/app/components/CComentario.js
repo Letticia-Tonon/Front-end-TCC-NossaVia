@@ -1,87 +1,50 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import {
     View,
-    Text,
-    TouchableOpacity,
     StyleSheet,
-    Dimensions,
-    Modal,
-    Animated,
-    Pressable,
     Alert,
-    Image,
-    TextInput,
+    Pressable,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {  faComment } from "@fortawesome/free-regular-svg-icons";
+import { faComment } from "@fortawesome/free-regular-svg-icons";
 import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import packageJson from "../../../package.json";
 import { observer } from "mobx-react-lite";
-import userContext from "../contexts/user";
-
-const { width } = Dimensions.get("window");
 
 const CComentario = observer((props) => {
-    const [menuVisible, setMenuVisible] = useState(false);
-    const [commentModalVisible, setCommentModalVisible] = useState(false);
-    const [comment, setComment] = useState("");
-    const slideAnim = useRef(new Animated.Value(width)).current;
+   
+    const textInputRef = useRef(null);
+    const { id, logado, Curtidas } = props;
 
-    const abrirMenu = () => {
-        if (menuVisible) {
-            Animated.timing(slideAnim, {
-                toValue: width,
-                duration: 150,
-                useNativeDriver: true,
-            }).start(() => setMenuVisible(false));
-        } else {
-            setMenuVisible(true);
-            Animated.timing(slideAnim, {
-                toValue: 0,
-                duration: 150,
-                useNativeDriver: true,
-            }).start();
-        }
+    const handleSubmit = async () => {
+        if (!logado) {
+          Alert.alert(
+            "Atenção!",
+            "Para interagir com uma reclamação você precisa entrar na sua conta.",
+            [
+              { text: "Cancelar" },
+                { 
+                  text: "Entrar", 
+                  
+                }
+              ],
+              { cancelable: true }
+            ); 
+            return;
+          }
+            router.push(`screens/DetalheReclamacao?id=${id}&logado=${logado}&Curtidas=${Curtidas}`);
+                // if (textInputRef.current) {
+                //     textInputRef.current.focus();
+                // } 
     };
-
 
     return (
         <View>
             <Pressable
                 style={styles.icon}
-                onPress={() => setCommentModalVisible(true)}
+                onPress={handleSubmit}
             >
                 <FontAwesomeIcon size={30} icon={faComment} />
             </Pressable>
-
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={commentModalVisible}
-                onRequestClose={() => setCommentModalVisible(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Adicionar Comentário</Text>
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Digite seu comentário"
-                            value={comment}
-                            onChangeText={setComment}
-                        />
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => {
-                                setCommentModalVisible(false);
-                            }}
-                        >
-                            <Text style={styles.buttonText}>Enviar</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
-
         </View>
     );
 });
