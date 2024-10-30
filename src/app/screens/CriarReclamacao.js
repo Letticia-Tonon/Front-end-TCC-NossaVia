@@ -145,7 +145,7 @@ export default function CriarReclamacao() {
 
     const imageListBase64 = imageList.map((image) => image.base64);
     await post(
-      "reclamação",
+      "reclamacao",
       {
         descricao: descricao,
         categoria: {
