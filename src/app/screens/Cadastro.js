@@ -24,7 +24,7 @@ import {
   validarCpf,
 } from "../utils/validators";
 import { post } from "../utils/api";
-import { cepMask, phoneMask,cpfMask } from "../utils/masks";
+import { cepMask, phoneMask, cpfMask } from "../utils/masks";
 
 export default function Cadastro() {
   const [loading, setLoading] = useState(false);
@@ -94,7 +94,7 @@ export default function Cadastro() {
 
     if (!validarCpf(cpf)) {
       cpfTemp = true;
-      setCpfInvalido(true); 
+      setCpfInvalido(true);
     }
 
     if (!validarEmail(email)) {
@@ -277,7 +277,7 @@ export default function Cadastro() {
               state={nascimento}
               setState={setNascimento}
               error={dataInvalida}
-              errorMessage="Data inválida"
+              errorMessage="Data inválida: O usuário precisa ser maior que 16 anos"
             ></CDatePicker>
 
             <CActionSheet
