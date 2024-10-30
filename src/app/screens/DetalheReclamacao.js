@@ -22,7 +22,6 @@ import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import CCurtida from "../components/CCurtida";
 import CComentario from "../components/CComentario";
-import { set } from "mobx";
 
 const { height, width } = Dimensions.get("window");
 const ILUMINCAO_ICON = require("../../../assets/icons/falta_iluminacao.svg");
@@ -36,11 +35,9 @@ const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 const DetalheReclamacao = () => {
   const { id } = useLocalSearchParams();
   const [logado] = useState(false);
-  const [Curtidas] = useState(0);
   const [novoComentario, setNovoComentario] = useState("");
   const [comentarios, setComentarios] = useState([]);
   const [page] = useState(10);
-  const [liked, setLiked] = useState(false);
 
   const [marker, setMarker] = useState(null);
   const [foto, setFoto] = useState("");
@@ -59,6 +56,8 @@ const DetalheReclamacao = () => {
   const [imageList, setImageList] = useState([]);
   const [imageIndex, setImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [Curtidas, setCurtidas] = useState(0);
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     const fetchReclamacao = async () => {
@@ -76,6 +75,8 @@ const DetalheReclamacao = () => {
           setCidade(reclamacao.cidade);
           setEstado(reclamacao.estado);
           setComplemento(reclamacao.ponto_referencia);
+          setCurtidas(reclamacao.qnt_curtidas);
+          setLiked(reclamacao.curtido);
           setLatitude(reclamacao.latitude);
           setLongitude(reclamacao.longitude);
           setImageList(reclamacao.fotos);
@@ -141,7 +142,7 @@ const DetalheReclamacao = () => {
       const response = await post("comentario", payload);
       if (response.ok) {
         setNovoComentario("");
-        buscarComentarios(); // Atualiza a lista após enviar
+        buscarComentarios(); 
       } else {
         Alert.alert("Erro ao enviar comentário");
       }
@@ -314,13 +315,13 @@ const DetalheReclamacao = () => {
               <Text style={styles.commentAuthor}>{comentario.nome}</Text>
               <Text style={styles.commentDate}>{comentario.data}</Text>
               <Image
-              source={{ uri: comentario.foto_usuario }}
-              style={{
-                width: 20,
-                height: 20,
-                borderRadius: 10,
-              }}
-            />
+                source={{ uri: comentario.foto_usuario }}
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 10,
+                }}
+              />
               <Text>{comentario.texto}</Text>
             </View>
           ))}
