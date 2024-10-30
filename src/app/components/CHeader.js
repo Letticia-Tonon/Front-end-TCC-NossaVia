@@ -12,7 +12,14 @@ import {
   Image,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faArrowLeft, faCircleUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faCircleUser,
+  faMagnifyingGlass,
+  faArrowRightFromBracket,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import packageJson from "../../../package.json";
@@ -125,6 +132,12 @@ const CHeader = observer((props) => {
             style={[styles.modal, { transform: [{ translateX: slideAnim }] }]}
           >
             <View style={styles.menu}>
+              <TouchableOpacity
+                style={{ alignItems: "center" }}
+                onPress={() => {
+                  router.push({ pathname: "screens/EditarUsuario" });
+                }}
+              >
               {userContext.user && userContext.user.foto ? (
                 <Image
                   source={{ uri: userContext.user.foto }}
@@ -133,9 +146,13 @@ const CHeader = observer((props) => {
               ) : (
                 <FontAwesomeIcon icon={faCircleUser} size={120} color="#000" />
               )}
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={{ fontSize: 15 }}> Meu Perfil</Text>
+                </View>
+              </TouchableOpacity> 
 
               <View style={styles.innerLine} />
-
+              <View style={{justifyContent:"flex-start" }}>
               <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {
@@ -143,26 +160,35 @@ const CHeader = observer((props) => {
                   router.push("screens/MinhasReclamacoes");
                 }}
               >
-                <Text style={styles.menuText}>Minhas reclamações</Text>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <FontAwesomeIcon size={20} icon={faMagnifyingGlass}color="#FF7C33" />
+                  <Text style={styles.menuText}> Minhas reclamações</Text>
+                </View>
               </TouchableOpacity>
 
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {
                   router.push({ pathname: "screens/EditarUsuario" });
                 }}
               >
-                <Text style={styles.menuText}>Visualizar perfil</Text>
-              </TouchableOpacity>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <FontAwesomeIcon size={20} icon={faPenToSquare}color="#FF7C33" />
+                  <Text style={styles.menuText}> Vizualizar Perfil</Text>
+                </View>
+              </TouchableOpacity> */}
 
               <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {
                   abrirMenu();
-                  router.push("screens/EditarSenha");
+                  router.push({ pathname: "screens/CriarReclamacao"});
                 }}
               >
-                <Text style={styles.menuText}>Editar senha</Text>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <FontAwesomeIcon size={20} icon={faPlus} color="#FF7C33" />
+                  <Text style={styles.menuText}> Criar Reclamação</Text>
+                </View>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -172,8 +198,12 @@ const CHeader = observer((props) => {
                   deslogar();
                 }}
               >
-                <Text style={styles.menuText}>Sair</Text>
+                <View style={{ flexDirection: "row", alignItems: "center"}}>
+                  <FontAwesomeIcon size={20} icon={faArrowRightFromBracket} color="#FF7C33"/>
+                  <Text style={styles.menuText}> Sair</Text>
+                </View>
               </TouchableOpacity>
+              </View>
             </View>
             <View>
               <Text style={styles.versao}>Versão: {packageJson.version}</Text>
@@ -249,6 +279,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   menuText: {
+    justifyContent: "flex-end" ,
     fontSize: 22,
     fontWeight: "bold",
   },

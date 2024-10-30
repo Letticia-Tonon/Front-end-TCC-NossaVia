@@ -428,6 +428,18 @@ const EditarUsuario = observer(() => {
 
             <CTextButton
               buttonStyle={{
+                backgroundColor: "#FF7C33",
+                borderWidth: 2,
+                borderColor: "#FFFFFF",
+              }}
+              textStyle={{ color: "#FFFFFF" }}
+              text="Altera Senha"
+              loading={loading}
+              callback={() => { router.push("screens/EditarSenha") }}
+            />
+
+            <CTextButton
+              buttonStyle={{
                 backgroundColor: "#FFFFFF",
                 borderWidth: 2,
                 borderColor: "#ff0022",
