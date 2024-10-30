@@ -80,7 +80,7 @@ const DetalheReclamacao = () => {
           setCidade(reclamacao.cidade);
           setEstado(reclamacao.estado);
           setComplemento(reclamacao.ponto_referencia);
-          setCurtidas(reclamacao.qnt_curtidas);
+          setCurtidas(reclamacao.qtd_curtidas);
           setLiked(reclamacao.curtido);
           setLatitude(reclamacao.latitude);
           setLongitude(reclamacao.longitude);
