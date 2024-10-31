@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { LocalSvg } from "react-native-svg/css";
 import {
   View,
@@ -35,6 +35,8 @@ const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 
 const DetalheReclamacao = () => {
+  const { id, focusComment } = useLocalSearchParams();
+  const commentInputRef = useRef(null);
   const { logado, reclamacaoId } = useLocalSearchParams();
   const [novoComentario, setNovoComentario] = useState("");
   const [comentarios, setComentarios] = useState([]);
@@ -115,11 +117,17 @@ const DetalheReclamacao = () => {
         setInitLoading(false);
         setLoading(false);
       }
+
+      if (focusComment === "true" && commentInputRef.current) {
+        commentInputRef.current.focus();
+      }
     };
 
     fetchReclamacao();
     buscarComentarios(0);
-  }, []);
+  }, [focusComment]);
+
+  console.log(focusComment)
 
   const buscarComentarios = async (localPage) => {
     get(`comentario?reclamacao=${reclamacaoId}&page=${localPage}`)
@@ -311,6 +319,7 @@ const DetalheReclamacao = () => {
             }}
           >
             <CTextBox
+              ref={commentInputRef}
               inputStyle={{
                 height: 80,
               }}

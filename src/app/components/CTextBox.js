@@ -1,9 +1,19 @@
 import { StyleSheet, TextInput, View, Text } from "react-native";
+import React, { useEffect, useRef } from "react";
 
 export default function CTextBox(props) {
+  const textInputRef = useRef(null);
+
+  useEffect(() => {
+    if (props.focusOnLoad && textInputRef.current) {
+      textInputRef.current.focus();
+    }
+  }, [props.focusOnLoad]);
+
   return (
     <View style={{ width: "100%", margin: 8 }}>
       <TextInput
+        ref={textInputRef}
         style={
           props.inputStyle
             ? props.error
