@@ -10,16 +10,17 @@ import {
 import logo from "../../../assets/logo.png";
 import CTextInput from "../components/CTextInput";
 import CTextButton from "../components/CTextButton";
-import { post } from "../utils/api";
+import { post, get } from "../utils/api";
 import { useState, useRef } from "react";
 import { validarEmail } from "../utils/validators";
 
 export default function RecuperarSenha() {
   const [email, setEmail] = useState("");
   const [emailInvalido, setEmailInvalido] = useState(false);
-  const [isEmailSent, setIsEmailSent] = useState(false); 
-  const [codigo, setCodigo] = useState(Array(6).fill(""));   
-  const [codigoInvalido, setCodigoInvalido] = useState(false); 
+  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [codigo, setCodigo] = useState(Array(6).fill(""));
+  const [codigoInvalido, setCodigoInvalido] = useState(false);
+  const [codigoIncorreto, setCodigoIncorreto] = useState(false);
   const inputRefs = useRef([]);
 
   const handleSubmit = async () => {
@@ -56,21 +57,29 @@ export default function RecuperarSenha() {
 
   const handleCodigoSubmit = async () => {
     setCodigoInvalido(false);
+    setCodigoIncorreto(false);
     if (codigo.some((char) => char === "")) {
       setCodigoInvalido(true);
       return;
     }
-
-    console.log("Código enviado:", codigo.join(""));
+    await get(`recuperar-senha?email=${email}&token=${codigo.join("")}`).then(
+      (data) => {
+        if (data.status === 200) {
+          Alert.alert();
+        } else {
+          setCodigoIncorreto(true);
+        }
+      }
+    );
   };
 
   const handleCodigoChange = (text, index) => {
     let newCodigo = [...codigo];
-        newCodigo[index] = text;
+    newCodigo[index] = text;
     setCodigo(newCodigo);
 
     if (text === "" && index > 0) {
-      inputRefs.current[index - 1].focus(); 
+      inputRefs.current[index - 1].focus();
     }
 
     if (text !== "" && index < inputRefs.current.length - 1) {
@@ -103,13 +112,13 @@ export default function RecuperarSenha() {
                     key={index}
                     style={[
                       styles.codeInput,
-                      codigoInvalido && styles.errorBorder,
+                      (codigoInvalido || codigoIncorreto) && styles.errorBorder,
                     ]}
                     maxLength={1}
                     keyboardType="number-pad"
                     value={codigo[index]}
                     onChangeText={(text) => handleCodigoChange(text, index)}
-                    ref={(el) => (inputRefs.current[index] = el)} 
+                    ref={(el) => (inputRefs.current[index] = el)}
                   />
                 ))}
             </View>
@@ -120,6 +129,11 @@ export default function RecuperarSenha() {
               </Text>
             )}
 
+            {codigoIncorreto && (
+              <Text style={styles.errorText}>
+                Código incorreto, verifique seu e-mail e tente novamente.
+              </Text>
+            )}
             <CTextButton
               buttonStyle={{
                 backgroundColor: "#FF7C33",
@@ -127,7 +141,7 @@ export default function RecuperarSenha() {
               textStyle={{
                 color: "#FFFFFF",
               }}
-              text="Enviar"
+              text="Confirmar Token"
               callback={handleCodigoSubmit}
             />
           </>
