@@ -62,6 +62,7 @@ export default function RecuperarSenha() {
       setCodigoInvalido(true);
       return;
     }
+
     await get(`recuperar-senha?email=${email}&token=${codigo.join("")}`).then(
       (data) => {
         if (data.status === 200) {
@@ -71,6 +72,7 @@ export default function RecuperarSenha() {
         }
       }
     );
+
   };
 
   const handleCodigoChange = (text, index) => {

@@ -28,34 +28,34 @@ const { height, width } = Dimensions.get("window");
 
 const categorias = [
   {
-    name: "Asfalto",
+    name: "Irregularidades no Asfalto",
     icon: require("../../../assets/icons/irregularidades_asfalto.svg"),
     id: "via",
   },
   {
-    name: "Calçada",
+    name: "Irregularidades na Calçada",
     icon: require("../../../assets/icons/irregularidades_calcada.svg"),
     id: "calcada",
   },
   {
-    name: "Iluminação",
-    icon: require("../../../assets/icons/falta_iluminacao.svg"),
-    id: "iluminacao",
-  },
-  {
-    name: "Sinalização",
+    name: "Falta de Sinalização",
     icon: require("../../../assets/icons/falta_sinalizacao.svg"),
     id: "sinalizacao",
   },
   {
-    name: "Lixo",
+    name: "Lixo na Via",
     icon: require("../../../assets/icons/lixo_via.svg"),
     id: "lixo",
   },
   {
-    name: "Carro",
+    name: "Veículo Abandonado",
     icon: require("../../../assets/icons/veiculo_abandonado.svg"),
     id: "carro",
+  },
+  {
+    name: "Falta de Iluminação",
+    icon: require("../../../assets/icons/falta_iluminacao.svg"),
+    id: "iluminacao",
   },
   {
     name: "Outros",
@@ -308,7 +308,6 @@ const Feed = observer(() => {
                       width={75}
                       style={{ marginHorizontal: 4 }}
                     />
-                    <Text>{categoria.name}</Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
