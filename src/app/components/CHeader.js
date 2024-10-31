@@ -18,8 +18,8 @@ import {
   faMagnifyingGlass,
   faArrowRightFromBracket,
   faPlus,
+  faHouse,
 } from "@fortawesome/free-solid-svg-icons";
-import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import packageJson from "../../../package.json";
@@ -147,12 +147,25 @@ const CHeader = observer((props) => {
                 <FontAwesomeIcon icon={faCircleUser} size={120} color="#000" />
               )}
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text style={{ fontSize: 15 }}> Meu Perfil</Text>
+                  <Text style={{ fontSize: 15, fontStyle:"bold" }}> Meu Perfil</Text>
                 </View>
               </TouchableOpacity> 
 
               <View style={styles.innerLine} />
               <View style={{justifyContent:"flex-start" }}>
+
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                  router.push("screens/Feed?logado=true");
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <FontAwesomeIcon size={20} icon={faHouse}color="#FF7C33" />
+                  <Text style={styles.menuText}> Início</Text>
+                </View>
+              </TouchableOpacity>
+
               <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {
@@ -166,17 +179,6 @@ const CHeader = observer((props) => {
                 </View>
               </TouchableOpacity>
 
-              {/* <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => {
-                  router.push({ pathname: "screens/EditarUsuario" });
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <FontAwesomeIcon size={20} icon={faPenToSquare}color="#FF7C33" />
-                  <Text style={styles.menuText}> Vizualizar Perfil</Text>
-                </View>
-              </TouchableOpacity> */}
 
               <TouchableOpacity
                 style={styles.menuItem}
