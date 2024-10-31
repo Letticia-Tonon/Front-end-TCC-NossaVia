@@ -9,21 +9,36 @@ import {
 } from "react-native";
 import logo from "../../../assets/logo.png";
 import CTextInput from "../components/CTextInput";
+import CPassInput from "../components/CPassInput";
 import CTextButton from "../components/CTextButton";
-import { post, get } from "../utils/api";
+import { post, get, put } from "../utils/api";
 import { useState, useRef } from "react";
 import { validarEmail } from "../utils/validators";
+import { validarSenha } from "../utils/validators";
+import { router } from "expo-router";
 
 export default function RecuperarSenha() {
+  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [isCodigoSent, setIsCodigoSent] = useState(false);
+
   const [email, setEmail] = useState("");
   const [emailInvalido, setEmailInvalido] = useState(false);
-  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [loadingEmail, setLoadingEmail] = useState(false);
+
   const [codigo, setCodigo] = useState(Array(6).fill(""));
   const [codigoInvalido, setCodigoInvalido] = useState(false);
   const [codigoIncorreto, setCodigoIncorreto] = useState(false);
+  const [loadingSenha, setLoadingSenha] = useState(false);
+
+  const [senhaNova, setSenhaNova] = useState("");
+  const [confirmarSenhaNova, setConfirmarSenhaNova] = useState("");
+  const [senhaNovaInvalida, setSenhaNovaInvalida] = useState(false);
+  const [confirmarSenhaInvalida, setConfirmarSenhaInvalida] = useState(false);
+  const [loadingRecuperar, setLoadingRecuperar] = useState(false);
+
   const inputRefs = useRef([]);
 
-  const handleSubmit = async () => {
+  const handleSubmitEmail = async () => {
     setEmailInvalido(false);
     let emailTemp = false;
 
@@ -55,7 +70,7 @@ export default function RecuperarSenha() {
     });
   };
 
-  const handleCodigoSubmit = async () => {
+  const handleSubmitCodigo = async () => {
     setCodigoInvalido(false);
     setCodigoIncorreto(false);
     if (codigo.some((char) => char === "")) {
@@ -66,13 +81,12 @@ export default function RecuperarSenha() {
     await get(`recuperar-senha?email=${email}&token=${codigo.join("")}`).then(
       (data) => {
         if (data.status === 200) {
-          Alert.alert();
+          setIsCodigoSent(true);
         } else {
           setCodigoIncorreto(true);
         }
       }
     );
-
   };
 
   const handleCodigoChange = (text, index) => {
@@ -93,13 +107,85 @@ export default function RecuperarSenha() {
     }
   };
 
+  const handleSubmitRecuperar = async () => {
+    setSenhaNovaInvalida(false);
+    setConfirmarSenhaInvalida(false);
+    let senhaTemp = false;
+    let confirmarSenhaTemp = false;
+
+    if (
+      !Object.values(validarSenha(senhaNova)).every((item) => item === true)
+    ) {
+      senhaTemp = true;
+      setSenhaNovaInvalida(true);
+    }
+
+    if (senhaNova !== confirmarSenhaNova) {
+      confirmarSenhaTemp = true;
+      setConfirmarSenhaInvalida(true);
+    }
+
+    if (senhaTemp || confirmarSenhaTemp) return;
+
+    await put("recuperar-senha", {
+      email: email,
+      token: codigo.join(""),
+      senhaNova: senhaNova,
+    }).then((data) => {
+      if (data.status === 200) {
+        Alert.alert("Sucesso!", "Sua senha foi alterada com sucesso.", [
+          {
+            text: "OK",
+            onPress: () => {
+              router.push("screens/Login");
+            },
+          },
+        ]);
+        return;
+      }
+      Alert.alert("Ops!", "Ocorreu um erro ao alterar sua senha.");
+    });
+  };
+
   return (
     <View style={{ ...styles.container, width: "100%" }}>
       <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
       <View style={styles.container}>
         <Image source={logo} style={styles.image} />
 
-        {isEmailSent ? (
+        {!isEmailSent && !isCodigoSent ? (
+          <>
+            <Text style={styles.titulo}>Esqueceu a sua senha?</Text>
+            <Text style={styles.texto}>
+              Sem problemas! Informe seu e-mail de cadastro e enviaremos as
+              instruções para que você possa redefinir sua senha.
+            </Text>
+
+            <CTextInput
+              placeholder="E-mail"
+              state={email}
+              setState={setEmail}
+              error={emailInvalido}
+              errorMessage="E-mail inválido"
+            />
+
+            <CTextButton
+              buttonStyle={{
+                backgroundColor: "#FF7C33",
+              }}
+              textStyle={{
+                color: "#FFFFFF",
+              }}
+              text="Enviar"
+              loading={loadingEmail}
+              callback={() => {
+                if (loadingEmail) return;
+                setLoadingEmail(true);
+                handleSubmitEmail().finally(() => setLoadingEmail(false));
+              }}
+            />
+          </>
+        ) : isEmailSent && !isCodigoSent ? (
           <>
             <Text style={styles.titulo}>Esqueceu sua senha?</Text>
             <Text style={styles.texto}>
@@ -144,23 +230,42 @@ export default function RecuperarSenha() {
                 color: "#FFFFFF",
               }}
               text="Confirmar Token"
-              callback={handleCodigoSubmit}
+              loading={loadingSenha}
+              callback={() => {
+                if (loadingSenha) return;
+                setLoadingSenha(true);
+                handleSubmitCodigo().finally(() => setLoadingSenha(false));
+              }}
             />
           </>
         ) : (
           <>
-            <Text style={styles.titulo}>Esqueceu a sua senha?</Text>
+            <Text style={styles.titulo}>Esqueceu sua senha?</Text>
             <Text style={styles.texto}>
-              Sem problemas! Informe seu e-mail de cadastro e enviaremos as
-              instruções para que você possa redefinir sua senha.
+              Informe a nova senha que deseja utilizar.
             </Text>
 
-            <CTextInput
-              placeholder="E-mail"
-              state={email}
-              setState={setEmail}
-              error={emailInvalido}
-              errorMessage="E-mail inválido"
+            <CPassInput
+              placeholder="Nova senha"
+              state={senhaNova}
+              setState={setSenhaNova}
+              error={senhaNovaInvalida}
+              errorMessage="Senha inválida"
+            />
+
+            {senhaNovaInvalida && (
+              <Text style={{ color: "#ff0022" }}>
+                A senha deve conter no mínimo 8 caracteres, uma letra maiúscula,
+                uma letra minúscula, um número e um caractere especial
+              </Text>
+            )}
+
+            <CPassInput
+              placeholder="Confirme sua nova senha"
+              state={confirmarSenhaNova}
+              setState={setConfirmarSenhaNova}
+              error={senhaNova !== confirmarSenhaNova || confirmarSenhaInvalida}
+              errorMessage="As senhas devem ser iguais"
             />
 
             <CTextButton
@@ -170,8 +275,15 @@ export default function RecuperarSenha() {
               textStyle={{
                 color: "#FFFFFF",
               }}
-              text="Enviar"
-              callback={handleSubmit}
+              loading={loadingRecuperar}
+              callback={() => {
+                if (loadingRecuperar) return;
+                setLoadingRecuperar(true);
+                handleSubmitRecuperar().finally(() =>
+                  setLoadingRecuperar(false)
+                );
+              }}
+              text="Redefinir Senha"
             />
           </>
         )}
