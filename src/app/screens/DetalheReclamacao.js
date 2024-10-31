@@ -35,8 +35,7 @@ const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 
 const DetalheReclamacao = () => {
-  const { reclamacaoId } = useLocalSearchParams();
-  const [logado] = useState(false);
+  const { logado, reclamacaoId } = useLocalSearchParams();
   const [novoComentario, setNovoComentario] = useState("");
   const [comentarios, setComentarios] = useState([]);
 
@@ -63,11 +62,12 @@ const DetalheReclamacao = () => {
   const [initLoading, setInitLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [Curtidas, setCurtidas] = useState(0);
+  const [idsComentados, setIdsComentados] = useState([]);
 
   useEffect(() => {
     const fetchReclamacao = async () => {
       try {
-        const response = await get(`reclamacao?id=${reclamacaoId}`);
+        const response = await get(`reclamacao?id=${reclamacaoId}`, true);
         if (response.ok) {
           const reclamacao = await response.json();
           setNome(reclamacao.nome_usuario);
@@ -133,7 +133,13 @@ const DetalheReclamacao = () => {
               setComentarios(json);
               return;
             }
-            setComentarios([...comentarios, ...json]);
+            const filtrado = json.filter((value) => {
+              if (idsComentados.includes(value.id_comenatario)) {
+                return false;
+              }
+              return true;
+            });
+            setComentarios([...comentarios, ...filtrado]);
           });
         } else {
           Alert.alert("Erro ao buscar comentários");
@@ -150,7 +156,8 @@ const DetalheReclamacao = () => {
       if (data.ok) {
         setNovoComentario("");
         data.json().then((json) => {
-          setComentarios([...json, ...comentarios]);
+          setIdsComentados([...idsComentados, json.id_comenatario]);
+          setComentarios([json, ...comentarios]);
         });
       } else {
         Alert.alert("Erro ao enviar comentário");
@@ -181,10 +188,10 @@ const DetalheReclamacao = () => {
         <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
         <CHeader
           titulo={"Detalhes"}
-          logado={true}
+          logado={logado}
           showText={true}
           goBack={true}
-          showIcon={false}
+          showIcon={true}
         />
         <PagerView
           style={styles.imagePlaceholder}

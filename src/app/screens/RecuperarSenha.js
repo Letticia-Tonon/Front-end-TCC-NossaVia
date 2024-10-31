@@ -60,8 +60,6 @@ export default function RecuperarSenha() {
       setCodigoInvalido(true);
       return;
     }
-
-    console.log("Código enviado:", codigo.join(""));
   };
 
   const handleCodigoChange = (text, index) => {
