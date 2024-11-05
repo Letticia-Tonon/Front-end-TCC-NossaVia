@@ -69,10 +69,11 @@ export default function Cadastro() {
     setTelefoneInvalido(false);
     setEnderecoInvalido(false);
     setConfirmarSenhaInvalida(false);
-    setBairro(false);
-    setCidade(false);
-    setEstado(false);
-    setCpf(false);
+    setBairroInvalido(false);
+    setCidadeInvalido(false);
+    setEstadoInvalido(false);
+    setCpfInvalido(false);
+
     let nomeTemp = false;
     let emailTemp = false;
     let senhaTemp = false;
@@ -270,6 +271,7 @@ export default function Cadastro() {
               keyboardType="numeric"
               mask={cpfMask}
               errorMessage="CPF não pode ser vazio"
+              maxLength={14}
             ></CTextInput>
 
             <CDatePicker

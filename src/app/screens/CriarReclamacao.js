@@ -55,6 +55,7 @@ export default function CriarReclamacao() {
   const [categoriaInvalida, setCategoriaInvalida] = useState(false);
   const [descricaoInvalida, setDescricaoInvalida] = useState(false);
   const [enderecoInvalido, setEnderecoInvalido] = useState(false);
+  const [numeroInvalido, setNumeroInvalido] = useState(false);
   const [cepInvalido, setCepInvalido] = useState(false);
   const [bairroInvalido, setBairroInvalido] = useState(false);
   const [cidadeInvalido, setCidadeInvalido] = useState(false);
@@ -65,9 +66,11 @@ export default function CriarReclamacao() {
     setDescricaoInvalida(false);
     setEnderecoInvalido(false);
     setCepInvalido(false);
-    setBairro(false);
-    setCidade(false);
-    setEstado(false);
+    setBairroInvalido(false);
+    setCidadeInvalido(false);
+    setEstadoInvalido(false);
+    setNumeroInvalido(false);
+
     let imagemTemp = false;
     let categoriaTemp = false;
     let descricaoTemp = false;
@@ -77,6 +80,7 @@ export default function CriarReclamacao() {
     let bairroTemp = false;
     let cidadeTemp = false;
     let estadoTemp = false;
+    let numeroInvalidoTemp = false;
 
     if (imageList.length === 0) {
       imagemTemp = true;
@@ -96,12 +100,12 @@ export default function CriarReclamacao() {
       setCategoriaInvalida(true);
     }
 
-    if (!endereco) {
+    if (!endereco.trim()) {
       enderecoTemp = true;
       setEnderecoInvalido(true);
     }
 
-    if (!descricao) {
+    if (!descricao.trim()) {
       descricaoTemp = true;
       setDescricaoInvalida(true);
     }
@@ -114,12 +118,12 @@ export default function CriarReclamacao() {
       );
     }
 
-    if (!bairro) {
+    if (!bairro.trim()) {
       bairroTemp = true;
       setBairroInvalido(true);
     }
 
-    if (!cidade) {
+    if (!cidade.trim()) {
       cidadeTemp = true;
       setCidadeInvalido(true);
     }
@@ -127,6 +131,11 @@ export default function CriarReclamacao() {
     if (!estado) {
       estadoTemp = true;
       setEstadoInvalido(true);
+    }
+
+    if (!numero.trim()) {
+      numeroInvalidoTemp = true;
+      setNumeroInvalido(true);
     }
 
     if (
@@ -138,7 +147,8 @@ export default function CriarReclamacao() {
       cepTemp ||
       bairroTemp ||
       cidadeTemp ||
-      estadoTemp
+      estadoTemp ||
+      numeroInvalidoTemp
     ) {
       return;
     }
@@ -468,6 +478,8 @@ export default function CriarReclamacao() {
               placeholder="Número aproximado"
               state={numero}
               setState={setNumero}
+              error={numeroInvalido}
+              errorMessage="Campo obrigatório"
             ></CTextInput>
 
             <CTextInput

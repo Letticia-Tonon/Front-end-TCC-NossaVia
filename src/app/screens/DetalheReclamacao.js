@@ -127,8 +127,6 @@ const DetalheReclamacao = () => {
     buscarComentarios(0);
   }, [focusComment]);
 
-  console.log(focusComment)
-
   const buscarComentarios = async (localPage) => {
     get(`comentario?reclamacao=${reclamacaoId}&page=${localPage}`)
       .then((data) => {

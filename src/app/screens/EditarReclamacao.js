@@ -54,6 +54,7 @@ export default function EditarReclamacao() {
   const [bairroInvalido, setBairroInvalido] = useState(false);
   const [cidadeInvalida, setCidadeInvalida] = useState(false);
   const [estadoInvalido, setEstadoInvalido] = useState(false);
+  const [numeroInvalido, setNumeroInvalido] = useState(false);
 
   const fetchReclamacao = async () => {
     get(`reclamacao?id=${id}`, true)
@@ -113,27 +114,29 @@ export default function EditarReclamacao() {
     setBairroInvalido(false);
     setCidadeInvalida(false);
     setEstadoInvalido(false);
+    setNumeroInvalido(false);
 
     let cepTemp = false;
     let enderecoTemp = false;
     let descricaoTemp = false;
     let categoriaTemp = false;
     let localTemp = false;
-    let bairroTemp = !bairro;
-    let cidadeTemp = !cidade;
-    let estadoTemp = !estado;
+    let bairroTemp = false;
+    let cidadeTemp = false;
+    let estadoTemp = false;
+    let numeroInvalidoTemp = false;
 
     if (!validarCep(cep)) {
       cepTemp = true;
       setCepInvalido(true);
     }
 
-    if (!endereco) {
+    if (!endereco.trim()) {
       enderecoTemp = true;
       setEnderecoInvalido(true);
     }
 
-    if (!descricao) {
+    if (!descricao.trim()) {
       descricaoTemp = true;
       setDescricaoInvalida(true);
     }
@@ -151,12 +154,12 @@ export default function EditarReclamacao() {
       );
     }
 
-    if (!bairro) {
+    if (!bairro.trim()) {
       bairroTemp = true;
       setBairroInvalido(true);
     }
 
-    if (!cidade) {
+    if (!cidade.trim()) {
       cidadeTemp = true;
       setCidadeInvalida(true);
     }
@@ -164,6 +167,11 @@ export default function EditarReclamacao() {
     if (!estado) {
       estadoTemp = true;
       setEstadoInvalido(true);
+    }
+
+    if (!numero.trim()) {
+      numeroInvalidoTemp = true;
+      setNumeroInvalido(true);
     }
 
     if (
@@ -174,13 +182,14 @@ export default function EditarReclamacao() {
       localTemp ||
       bairroTemp ||
       cidadeTemp ||
-      estadoTemp
+      estadoTemp ||
+      numeroInvalidoTemp
     ) {
       setLoadingSalvar(false);
       return;
     }
 
-    put(
+    await put(
       `reclamacao?id=${id}`,
       {
         descricao: descricao,
@@ -384,6 +393,8 @@ export default function EditarReclamacao() {
                   placeholder="Número aproximado"
                   state={numero}
                   setState={setNumero}
+                  error={numeroInvalido}
+                  errorMessage="Campo obrigatório"
                 />
 
                 <CTextInput
@@ -455,7 +466,7 @@ export default function EditarReclamacao() {
                   text="Salvar"
                   loading={loadingSalvar}
                   callback={() => {
-                    handleSubmit();
+                    handleSubmit().finally(() => setLoadingSalvar(false));
                   }}
                 />
               </View>
