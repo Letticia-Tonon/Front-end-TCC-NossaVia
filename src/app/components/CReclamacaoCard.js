@@ -44,62 +44,64 @@ const CReclamacaoCard = ({
   const [imageIndex, setImageIndex] = useState(0);
 
   return (
-    <Pressable
-      onPress={() => {
-        if (showDetalhes) {
-          router.push(`screens/DetalheReclamacao?reclamacaoId=${id}&logado=${logado}`);
-        }
-      }}
-    >
-      <View style={styles.card}>
-        <View style={styles.center}>
-          <PagerView
-            style={styles.imagePlaceholder}
-            initialPage={0}
-            onPageSelected={(e) => {
-              setImageIndex(e.nativeEvent.position);
-            }}
-          >
-            {imagens.map((image, index) => (
-              <View style={styles.page} key={index}>
-                <Image source={{ uri: image }} style={styles.ReclamacaoImage} />
-                {status === "resolvido" && (
-                  <View style={styles.status}>
-                    <Text
-                      style={{
-                        color: "#FFF",
-                        textAlign: "center",
-                        fontWeight: "bold",
-                        fontSize: 15,
-                      }}
-                    >
-                      Este problema foi resolvido!
-                    </Text>
-                  </View>
-                )}
-              </View>
-            ))}
-          </PagerView>
+    <View style={styles.card}>
+      <View style={styles.center}>
+        <PagerView
+          style={styles.imagePlaceholder}
+          initialPage={0}
+          onPageSelected={(e) => {
+            setImageIndex(e.nativeEvent.position);
+          }}
+        >
+          {imagens.map((image, index) => (
+            <View style={styles.page} key={index}>
+              <Image source={{ uri: image }} style={styles.ReclamacaoImage} />
+              {status === "resolvido" && (
+                <View style={styles.status}>
+                  <Text
+                    style={{
+                      color: "#FFF",
+                      textAlign: "center",
+                      fontWeight: "bold",
+                      fontSize: 15,
+                    }}
+                  >
+                    Este problema foi resolvido!
+                  </Text>
+                </View>
+              )}
+            </View>
+          ))}
+        </PagerView>
 
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 5,
-              marginTop: 8,
-              alignItems: "center",
-            }}
-          >
-            {imagens.map((image, index) => (
-              <FontAwesomeIcon
-                icon={faCircle}
-                size={imageIndex === index ? 11 : 8}
-                color="#666666"
-                key={index}
-              ></FontAwesomeIcon>
-            ))}
-          </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 5,
+            marginTop: 8,
+            alignItems: "center",
+          }}
+        >
+          {imagens.map((image, index) => (
+            <FontAwesomeIcon
+              icon={faCircle}
+              size={imageIndex === index ? 11 : 8}
+              color="#666666"
+              key={index}
+            ></FontAwesomeIcon>
+          ))}
         </View>
+      </View>
+      <Pressable
+        onPress={() => {
+          if (showDetalhes) {
+            router.push(
+              `screens/DetalheReclamacao?reclamacaoId=${id}&logado=${logado}`
+            );
+          }
+        }}
+      >
         <View style={styles.content}>
           <View style={styles.overlayIcons}>
             <Image
@@ -160,8 +162,8 @@ const CReclamacaoCard = ({
             </View>
           </View>
         </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </View>
   );
 };
 
