@@ -1,6 +1,6 @@
 import { StyleSheet, Text, Pressable, View } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCalendar } from "@fortawesome/free-solid-svg-icons/faCalendar";
+import { faCalendar } from "@fortawesome/free-regular-svg-icons";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
 const INPUT_HEIGHT = 50;

@@ -85,7 +85,9 @@ const CHeader = observer((props) => {
             </TouchableOpacity>
           )}
 
-          {props.showText ? (
+          {props.showText && props.titulo == "feed" ? (
+            <FontAwesomeIcon style={{marginLeft: 10}} size={25} icon={faHouse} color="#FF7C33" />
+          ) : props.showText ? (
             <Text style={styles.title}>{props.titulo}</Text>
           ) : (
             <Text style={styles.title}></Text>
@@ -138,73 +140,86 @@ const CHeader = observer((props) => {
                   router.push({ pathname: "screens/EditarUsuario" });
                 }}
               >
-              {userContext.user && userContext.user.foto ? (
-                <Image
-                  source={{ uri: userContext.user.foto }}
-                  style={{ width: 120, height: 120, borderRadius: 120 }}
-                />
-              ) : (
-                <FontAwesomeIcon icon={faCircleUser} size={120} color="#000" />
-              )}
+                {userContext.user && userContext.user.foto ? (
+                  <Image
+                    source={{ uri: userContext.user.foto }}
+                    style={{ width: 120, height: 120, borderRadius: 120 }}
+                  />
+                ) : (
+                  <FontAwesomeIcon
+                    icon={faCircleUser}
+                    size={120}
+                    color="#000"
+                  />
+                )}
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text style={{ fontSize: 15, fontStyle:"bold" }}> Meu Perfil</Text>
+                  <Text style={{ fontSize: 15, fontStyle: "bold" }}>
+                    {" "}
+                    Meu Perfil
+                  </Text>
                 </View>
-              </TouchableOpacity> 
+              </TouchableOpacity>
 
               <View style={styles.innerLine} />
-              <View style={{justifyContent:"flex-start" }}>
+              <View style={{ justifyContent: "flex-start" }}>
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => {
+                    router.push("screens/Feed?logado=true");
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <FontAwesomeIcon size={20} icon={faHouse} color="#FF7C33" />
+                    <Text style={styles.menuText}> Início</Text>
+                  </View>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => {
-                  router.push("screens/Feed?logado=true");
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <FontAwesomeIcon size={20} icon={faHouse}color="#FF7C33" />
-                  <Text style={styles.menuText}> Início</Text>
-                </View>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => {
+                    abrirMenu();
+                    router.push("screens/MinhasReclamacoes");
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <FontAwesomeIcon
+                      size={20}
+                      icon={faMagnifyingGlass}
+                      color="#FF7C33"
+                    />
+                    <Text style={styles.menuText}> Minhas reclamações</Text>
+                  </View>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => {
-                  abrirMenu();
-                  router.push("screens/MinhasReclamacoes");
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <FontAwesomeIcon size={20} icon={faMagnifyingGlass}color="#FF7C33" />
-                  <Text style={styles.menuText}> Minhas reclamações</Text>
-                </View>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => {
+                    abrirMenu();
+                    router.push({ pathname: "screens/CriarReclamacao" });
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <FontAwesomeIcon size={20} icon={faPlus} color="#FF7C33" />
+                    <Text style={styles.menuText}> Criar Reclamação</Text>
+                  </View>
+                </TouchableOpacity>
 
-
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => {
-                  abrirMenu();
-                  router.push({ pathname: "screens/CriarReclamacao"});
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <FontAwesomeIcon size={20} icon={faPlus} color="#FF7C33" />
-                  <Text style={styles.menuText}> Criar Reclamação</Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => {
-                  abrirMenu();
-                  deslogar();
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center"}}>
-                  <FontAwesomeIcon size={20} icon={faArrowRightFromBracket} color="#FF7C33"/>
-                  <Text style={styles.menuText}> Sair</Text>
-                </View>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => {
+                    abrirMenu();
+                    deslogar();
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <FontAwesomeIcon
+                      size={20}
+                      icon={faArrowRightFromBracket}
+                      color="#FF7C33"
+                    />
+                    <Text style={styles.menuText}> Sair</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
             <View>
@@ -220,7 +235,6 @@ const CHeader = observer((props) => {
 const styles = StyleSheet.create({
   headerContainer: {
     width: width,
-    paddingTop: 10,
   },
   topLine: {
     backgroundColor: "#FF7C33",
@@ -246,7 +260,8 @@ const styles = StyleSheet.create({
     paddingRight: 5,
   },
   iconContainer: {
-    padding: 5,
+    paddingHorizontal: 5,
+    paddingVertical: 7,
   },
   title: {
     fontSize: 20,
@@ -281,7 +296,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   menuText: {
-    justifyContent: "flex-end" ,
+    justifyContent: "flex-end",
     fontSize: 22,
     fontWeight: "bold",
   },

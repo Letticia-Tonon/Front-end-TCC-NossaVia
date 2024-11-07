@@ -18,9 +18,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faCamera,
   faPlus,
-  faTrash,
-  faPencil,
 } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
 import { put, del } from "../utils/api";
@@ -263,13 +262,13 @@ const EditarUsuario = observer(() => {
                   />
                   <Pressable style={styles.editIcon} onPress={pickImage}>
                     <FontAwesomeIcon
-                      icon={faPencil}
+                      icon={faPenToSquare}
                       size={30}
                       color="#FF7C33"
                     />
                   </Pressable>
                   <Pressable style={styles.trashIcon} onPress={removeImage}>
-                    <FontAwesomeIcon icon={faTrash} size={30} color="#FF7C33" />
+                    <FontAwesomeIcon icon={faTrashCan} size={30} color="#FF7C33" />
                   </Pressable>
                 </View>
               ) : (
@@ -503,7 +502,7 @@ const styles = StyleSheet.create({
   },
   trashIcon: {
     position: "absolute",
-    bottom: 40,
+    bottom: 50,
     right: -50,
     backgroundColor: "#fff",
     borderRadius: 50,
@@ -511,7 +510,7 @@ const styles = StyleSheet.create({
   },
   editIcon: {
     position: "absolute",
-    top: 40,
+    top: 50,
     right: -50,
     backgroundColor: "#fff",
     borderRadius: 50,

@@ -19,7 +19,7 @@ import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import PagerView from "react-native-pager-view";
 import * as Location from "expo-location";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faCamera } from "@fortawesome/free-solid-svg-icons/faCamera";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
@@ -362,7 +362,7 @@ export default function CriarReclamacao() {
                       }}
                     >
                       <FontAwesomeIcon
-                        icon={faTrash}
+                        icon={faTrashCan}
                         size={30}
                         color="#FF7C33"
                       ></FontAwesomeIcon>

@@ -217,7 +217,7 @@ const Feed = observer(() => {
         <View style={styles.container}>
           <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
           <CHeader
-            titulo={"Feed"}
+            titulo={"feed"}
             logado={logado === "true"}
             showText={logado === "true"}
             goBack={false}

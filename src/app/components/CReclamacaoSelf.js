@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Alert } from "react-native";
 import { LocalSvg } from "react-native-svg/css";
 import {
@@ -11,10 +11,8 @@ import {
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCircle,faTrash, } from "@fortawesome/free-solid-svg-icons";
-import {
-  faPenToSquare,
-} from "@fortawesome/free-regular-svg-icons";
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import CActionSheet from "./CActionSheet";
 import { router } from "expo-router";
 import { del, put } from "../utils/api";
@@ -84,7 +82,10 @@ const CReclamacaoSelf = ({
             try {
               const response = await del(`reclamacao?id=${id}`, true);
               if (response.status !== 200) {
-                Alert.alert("Ops!", "Não foi possível deletar essa reclamação.");
+                Alert.alert(
+                  "Ops!",
+                  "Não foi possível deletar essa reclamação."
+                );
                 return;
               }
               if (deleteReclamacao) deleteReclamacao(id);
@@ -161,7 +162,7 @@ const CReclamacaoSelf = ({
 
           <View style={styles.buttonContainer}>
             <Pressable style={styles.icon} onPress={deletarReclamacao}>
-              <FontAwesomeIcon size={23} icon={faTrash} />
+              <FontAwesomeIcon size={25} icon={faTrashCan} />
             </Pressable>
 
             <Pressable
