@@ -14,14 +14,17 @@ import {
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import CHeader from "../components/CHeader";
-import { get, post } from "../utils/api";
+import { get, post, del } from "../utils/api";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import CCurtida from "../components/CCurtida";
 import CTextBox from "../components/CTextBox";
+import { observer } from "mobx-react-lite";
+import userContext from "../contexts/user";
 
 const RECLAMACOES_POR_PAGINA = 10;
 
@@ -34,8 +37,9 @@ const LIXO_ICON = require("../../../assets/icons/lixo_via.svg");
 const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 
-const DetalheReclamacao = () => {
-  const { id, focusComment } = useLocalSearchParams();
+const DetalheReclamacao = observer(() => {
+  const id = userContext.user.id;
+
   const commentInputRef = useRef(null);
   const { logado, reclamacaoId } = useLocalSearchParams();
   const [novoComentario, setNovoComentario] = useState("");
@@ -117,15 +121,11 @@ const DetalheReclamacao = () => {
         setInitLoading(false);
         setLoading(false);
       }
-
-      if (focusComment === "true" && commentInputRef.current) {
-        commentInputRef.current.focus();
-      }
     };
 
     fetchReclamacao();
     buscarComentarios(0);
-  }, [focusComment]);
+  }, []);
 
   const buscarComentarios = async (localPage) => {
     get(`comentario?reclamacao=${reclamacaoId}&page=${localPage}`)
@@ -169,6 +169,48 @@ const DetalheReclamacao = () => {
         Alert.alert("Erro ao enviar comentário");
       }
     });
+  };
+
+  const deleteComentario = async (idComentario) => {
+    Alert.alert(
+      "Atenção!",
+      "Ao confirmar, o comentário será permanentemente excluído.",
+      [
+        {
+          text: "Cancelar",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            if (loading) return;
+            setLoading(true);
+            try {
+              const response = await del(`comentario?id=${idComentario}`, true);
+              if (response.status !== 200) {
+                Alert.alert(
+                  "Ops!",
+                  "Não foi possível deletar esse comentário."
+                );
+                return;
+              }
+              setComentarios(
+                comentarios.filter(
+                  (comentario) => comentario.id_comenatario !== idComentario
+                )
+              );
+            } catch (error) {
+              Alert.alert(
+                "Erro",
+                "Não foi possível deletar o comentário. Tente novamente."
+              );
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   if (initLoading) {
@@ -338,7 +380,7 @@ const DetalheReclamacao = () => {
         </View>
         <View
           style={{
-            width: "85%",
+            width: "100%",
           }}
         >
           {comentarios.map((comentario, index) => (
@@ -372,6 +414,8 @@ const DetalheReclamacao = () => {
               <View
                 style={{
                   marginLeft: 10,
+                  display: "flex",
+                  flex: 1,
                 }}
               >
                 <View
@@ -391,15 +435,34 @@ const DetalheReclamacao = () => {
                     comentario.criacao.split(" ")[1].split(":")[1]
                   }`}</Text>
                 </View>
-                <Text>{comentario.texto}</Text>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Text style={{ flex: 1, flexWrap: "wrap" }}>
+                    {comentario.texto}
+                  </Text>
+                </View>
               </View>
+              {comentario.id_usuario === id && (
+                <Pressable
+                  onPress={() => {
+                    deleteComentario(comentario.id_comenatario);
+                  }}
+                  style={{ justifyContent: "flex-end", marginRight: 10 }}
+                >
+                  <FontAwesomeIcon size={20} icon={faTrashCan} />
+                </Pressable>
+              )}
             </View>
           ))}
         </View>
       </View>
     </ScrollView>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
