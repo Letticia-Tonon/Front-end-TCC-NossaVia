@@ -25,6 +25,7 @@ import CCurtida from "../components/CCurtida";
 import CTextBox from "../components/CTextBox";
 import { observer } from "mobx-react-lite";
 import userContext from "../contexts/user";
+import { router } from "expo-router";
 
 const RECLAMACOES_POR_PAGINA = 10;
 
@@ -38,10 +39,11 @@ const CARRO_ICON = require("../../../assets/icons/veiculo_abandonado.svg");
 const OUTROS_ICON = require("../../../assets/icons/outros.svg");
 
 const DetalheReclamacao = observer(() => {
-  const id = userContext.user.id;
+  const id = userContext && userContext.user ? userContext.user.id : null;
 
   const commentInputRef = useRef(null);
-  const { logado, reclamacaoId } = useLocalSearchParams();
+
+  const { logado, reclamacaoId, focusComment } = useLocalSearchParams();
   const [novoComentario, setNovoComentario] = useState("");
   const [comentarios, setComentarios] = useState([]);
 
@@ -157,6 +159,21 @@ const DetalheReclamacao = observer(() => {
   };
 
   const enviarComentario = async () => {
+    if (logado === "false") {
+      Alert.alert(
+        "Atenção!",
+        "Para interagir com uma reclamação você precisa entrar na sua conta.",
+        [
+          { text: "Cancelar" },
+          {
+            text: "Entrar",
+            onPress: () => router.push("screens/Login"),
+          },
+        ],
+        { cancelable: true }
+      );
+      return;
+    }
     const payload = { texto: novoComentario, reclamacao: reclamacaoId };
     post("comentario", payload, true).then((data) => {
       if (data.ok) {
@@ -359,14 +376,33 @@ const DetalheReclamacao = observer(() => {
             }}
           >
             <CTextBox
-              ref={commentInputRef}
+              autofocus={focusComment === "true"}
               inputStyle={{
                 height: 80,
               }}
+              ref={commentInputRef}
               placeholder="Adicione um comentário..."
               maxLength={500}
               state={novoComentario}
               setState={setNovoComentario}
+              onFocus={() => {
+                if (logado === "false") {
+                  commentInputRef.current.blur()
+                  Alert.alert(
+                    "Atenção!",
+                    "Para interagir com uma reclamação você precisa entrar na sua conta.",
+                    [
+                      { text: "Cancelar" },
+                      {
+                        text: "Entrar",
+                        onPress: () => router.push("screens/Login"),
+                      },
+                    ],
+                    { cancelable: true }
+                  );
+                  return;
+                }
+              }}
             />
             <Pressable onPress={enviarComentario}>
               <FontAwesomeIcon

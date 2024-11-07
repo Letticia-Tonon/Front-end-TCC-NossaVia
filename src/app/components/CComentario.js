@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { View, StyleSheet, Alert, Pressable } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
@@ -6,7 +6,6 @@ import { router } from "expo-router";
 import { observer } from "mobx-react-lite";
 
 const CComentario = observer((props) => {
-  const textInputRef = useRef(null);
   const { idReclamacao, logado } = props;
   const id = idReclamacao;
 
@@ -19,13 +18,16 @@ const CComentario = observer((props) => {
           { text: "Cancelar" },
           {
             text: "Entrar",
+            onPress: () => router.push("screens/Login"),
           },
         ],
         { cancelable: true }
       );
       return;
     }
-    router.push(`screens/DetalheReclamacao?reclamacaoId=${id}&logado=${logado}&focusComment=true`);
+    router.push(
+      `screens/DetalheReclamacao?reclamacaoId=${id}&logado=${logado}&focusComment=true`
+    );
   };
 
   return (

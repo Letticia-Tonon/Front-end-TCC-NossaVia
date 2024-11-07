@@ -1,19 +1,18 @@
 import { StyleSheet, TextInput, View, Text } from "react-native";
-import React, { useEffect, useRef } from "react";
+import React, { useImperativeHandle, forwardRef, useRef } from "react";
 
-export default function CTextBox(props) {
-  const textInputRef = useRef(null);
-
-  useEffect(() => {
-    if (props.focusOnLoad && textInputRef.current) {
-      textInputRef.current.focus();
-    }
-  }, [props.focusOnLoad]);
+const CTextBox = forwardRef((props, ref) => {
+  const internalInputRef = useRef();
+  useImperativeHandle(ref, () => ({
+    blur: () => {
+      internalInputRef.current.blur();
+    },
+  }));
 
   return (
     <View style={{ width: "100%", margin: 8 }}>
       <TextInput
-        ref={textInputRef}
+        autoFocus={props.autofocus}
         style={
           props.inputStyle
             ? props.error
@@ -33,13 +32,15 @@ export default function CTextBox(props) {
             props.setState(text);
           }
         }}
+        onFocus={props.onFocus}
+        ref={internalInputRef}
       ></TextInput>
       {props.error && props.errorMessage && (
         <Text style={{ color: "#ff0022" }}>{props.errorMessage}</Text>
       )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   input: {
@@ -59,3 +60,5 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
 });
+
+export default CTextBox;
