@@ -26,34 +26,34 @@ const { height, width } = Dimensions.get("window");
 
 const categorias = [
   {
-    name: "Asfalto",
+    name: "Irregularidades no Asfalto",
     icon: require("../../../assets/icons/irregularidades_asfalto.svg"),
     id: "via",
   },
   {
-    name: "Calçada",
+    name: "Irregularidades na Calçada",
     icon: require("../../../assets/icons/irregularidades_calcada.svg"),
     id: "calcada",
   },
   {
-    name: "Iluminação",
-    icon: require("../../../assets/icons/falta_iluminacao.svg"),
-    id: "iluminacao",
-  },
-  {
-    name: "Sinalização",
+    name: "Falta de Sinalização",
     icon: require("../../../assets/icons/falta_sinalizacao.svg"),
     id: "sinalizacao",
   },
   {
-    name: "Lixo",
+    name: "Lixo na Via",
     icon: require("../../../assets/icons/lixo_via.svg"),
     id: "lixo",
   },
   {
-    name: "Carro",
+    name: "Veículo Abandonado",
     icon: require("../../../assets/icons/veiculo_abandonado.svg"),
     id: "carro",
+  },
+  {
+    name: "Falta de Iluminação",
+    icon: require("../../../assets/icons/falta_iluminacao.svg"),
+    id: "iluminacao",
   },
   {
     name: "Outros",
@@ -84,7 +84,7 @@ const MinhasReclamacoes = observer(() => {
       locationContext.location.coords.longitude
     ) {
       get(`minhas-reclamacoes?&page=${localPage}`, true)
-        .then((data) => {
+        .then(async (data) => {
           if (data.status !== 200) {
             if (initLoading) {
               setError(true);
@@ -93,7 +93,7 @@ const MinhasReclamacoes = observer(() => {
             }
             return;
           }
-          data.json().then((json) => {
+          await data.json().then((json) => {
             setCategoria("");
             if (json.length < RECLAMACOES_POR_PAGINA) {
               setPaginaCheia(true);
@@ -123,14 +123,13 @@ const MinhasReclamacoes = observer(() => {
       return get(
         `minhas-reclamacoes?&page=${localPage}&categoria=${categoria.id}`,
         true
-      ).then((data) => {
-        if (data.status !== 200) {
-          Alert.alert("Erro", "Não foi possível carregar as reclamações.");
-          return;
-        }
-        data
-          .json()
-          .then((json) => {
+      )
+        .then(async (data) => {
+          if (data.status !== 200) {
+            Alert.alert("Erro", "Não foi possível carregar as reclamações.");
+            return;
+          }
+          await data.json().then((json) => {
             setCategoria(categoria);
             if (json.length < RECLAMACOES_POR_PAGINA) {
               setPaginaCheia(true);
@@ -140,11 +139,11 @@ const MinhasReclamacoes = observer(() => {
               return;
             }
             setReclamacoes([...reclamacoes, ...json]);
-          })
-          .finally(() => {
-            setLoading(false);
           });
-      });
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   };
 
@@ -219,7 +218,8 @@ const MinhasReclamacoes = observer(() => {
                   style={{ justifyContent: "center", alignItems: "center" }}
                 >
                   <Text style={{ fontSize: 20, textAlign: "center" }}>
-                    Não foi possível carregar as suas reclamações nesse momento...
+                    Não foi possível carregar as suas reclamações nesse
+                    momento...
                   </Text>
                   <Text style={{ fontSize: 20, textAlign: "center" }}>
                     Tente novamente em alguns instantes.
@@ -288,7 +288,6 @@ const MinhasReclamacoes = observer(() => {
                         width={75}
                         style={{ marginHorizontal: 4 }}
                       />
-                      <Text>{categoria.name}</Text>
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
@@ -346,7 +345,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     shadowOffset: { width: 2, height: 2 },
-    elevation: 8, 
+    elevation: 8,
   },
   iconContainer: {
     display: "flex",

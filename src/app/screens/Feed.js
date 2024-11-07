@@ -86,7 +86,7 @@ const Feed = observer(() => {
         `reclamacao?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}`,
         true
       )
-        .then((data) => {
+        .then(async (data) => {
           if (data.status !== 200) {
             if (initLoading) {
               setError(true);
@@ -95,7 +95,7 @@ const Feed = observer(() => {
             }
             return;
           }
-          data.json().then((json) => {
+          await data.json().then((json) => {
             setCategoria("");
             if (json.length < RECLAMACOES_POR_PAGINA) {
               setPaginaCheia(true);
@@ -125,14 +125,13 @@ const Feed = observer(() => {
       return get(
         `reclamacao?longitude=${locationContext.location.coords.longitude}&latitude=${locationContext.location.coords.latitude}&page=${localPage}&categoria=${categoria.id}`,
         true
-      ).then((data) => {
-        if (data.status !== 200) {
-          Alert.alert("Erro", "Não foi possível carregar as reclamações.");
-          return;
-        }
-        data
-          .json()
-          .then((json) => {
+      )
+        .then(async (data) => {
+          if (data.status !== 200) {
+            Alert.alert("Erro", "Não foi possível carregar as reclamações.");
+            return;
+          }
+          await data.json().then((json) => {
             setCategoria(categoria);
             if (json.length < RECLAMACOES_POR_PAGINA) {
               setPaginaCheia(true);
@@ -142,12 +141,12 @@ const Feed = observer(() => {
               return;
             }
             setReclamacoes([...reclamacoes, ...json]);
-          })
-          .finally(() => {
-            setInitLoading(false);
-            setLoading(false);
           });
-      });
+        })
+        .finally(() => {
+          setInitLoading(false);
+          setLoading(false);
+        });
     }
   };
 
