@@ -29,15 +29,16 @@ import { post, get } from "../utils/api";
 import { cepMask } from "../utils/masks";
 import { validarCep } from "../utils/validators";
 import { router } from "expo-router";
-import locationContext from "../contexts/location";
 
 const { width } = Dimensions.get("window");
 
 export default function CriarReclamacao() {
   const [loading, setLoading] = useState(false);
+  const [initLoading, setInitLoading] = useState(true);
 
   const [categoria, setCategoria] = useState("");
-  const [location, setLocation] = useState(false);
+  const [latitudeInicial, setLatitudeInicial] = useState(null);
+  const [longitudeInicial, setLongitudeInicial] = useState(null);
   const [marker, setMarker] = useState(null);
   const [imageList, setImageList] = useState([]);
   const [imageIndex, setImageIndex] = useState(0);
@@ -284,13 +285,17 @@ export default function CriarReclamacao() {
       return;
     }
 
-    let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
-    locationContext.set(location);
+    const loc = await Location.getCurrentPositionAsync({});
+    if (loc.coords && loc.coords.latitude && loc.coords.longitude) {
+      setLatitudeInicial(loc.coords.latitude);
+      setLongitudeInicial(loc.coords.longitude);
+    }
   };
+
   useEffect(() => {
-    getLocation();
+    getLocation().finally(() => setInitLoading(false));
   }, []);
+
   return (
     <ActionSheetProvider>
       <ScrollView>
@@ -430,30 +435,31 @@ export default function CriarReclamacao() {
               maxLength={500}
             ></CTextBox>
 
-            <MapView
-              provider={PROVIDER_GOOGLE}
-              style={styles.map}
-              region={
-                location.coords &&
-                location.coords.latitude &&
-                location.coords.longitude && {
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                  latitudeDelta: 0.005,
-                  longitudeDelta: 0.005,
+            {!initLoading && (
+              <MapView
+                provider={PROVIDER_GOOGLE}
+                style={styles.map}
+                region={
+                    latitudeInicial && longitudeInicial && {
+                    latitude: latitudeInicial,
+                    longitude: longitudeInicial,
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005,
+                  }
                 }
-              }
-              onPress={(event) => {
-                setLatitude(event.nativeEvent.coordinate.latitude);
-                setLongitude(event.nativeEvent.coordinate.longitude);
-                setMarker({
-                  latitude: event.nativeEvent.coordinate.latitude,
-                  longitude: event.nativeEvent.coordinate.longitude,
-                });
-              }}
-            >
-              {marker && <Marker coordinate={marker} />}
-            </MapView>
+                onPress={(event) => {
+                  setLatitude(event.nativeEvent.coordinate.latitude);
+                  setLongitude(event.nativeEvent.coordinate.longitude);
+                  setMarker({
+                    latitude: event.nativeEvent.coordinate.latitude,
+                    longitude: event.nativeEvent.coordinate.longitude,
+                  });
+                }}
+              >
+                {marker && <Marker coordinate={marker} />}
+              </MapView>
+            )}
+
 
             <CTextInput
               placeholder="CEP"
