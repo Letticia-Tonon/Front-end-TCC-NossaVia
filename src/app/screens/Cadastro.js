@@ -11,7 +11,7 @@ import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
 import CTextButton from "../components/CTextButton";
 import CActionSheet from "../components/CActionSheet";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import CDatePicker from "../components/CDatePicker";
 import CHeader from "../components/CHeader";
@@ -23,7 +23,7 @@ import {
   validarData,
   validarCpf,
 } from "../utils/validators";
-import { post } from "../utils/api";
+import { post, viacep } from "../utils/api";
 import { cepMask, phoneMask, cpfMask } from "../utils/masks";
 
 export default function Cadastro() {
@@ -239,6 +239,22 @@ export default function Cadastro() {
         router.push("screens/Login");
       });
   };
+
+  useEffect(() => {
+    if (cep.length === 9) {
+      viacep(cep).then((data) => {
+        if (data.status === 200) {
+          data.json().then((data) => {
+            if (!data || data.erro) return;
+            setEndereco(data.logradouro);
+            setBairro(data.bairro);
+            setCidade(data.localidade);
+            setEstado(data.uf);
+          });
+        }
+      });
+    }
+  }, [cep]);
 
   return (
     <ActionSheetProvider>

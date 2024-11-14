@@ -62,3 +62,7 @@ export const del = async (endpoint, authorization = false) => {
   });
   return response;
 };
+
+export const viacep = async (cep) => {
+  return await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+}

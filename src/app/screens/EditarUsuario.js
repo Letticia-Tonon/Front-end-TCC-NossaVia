@@ -19,7 +19,7 @@ import { faCamera, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
-import { put, del, get } from "../utils/api";
+import { put, del, get, viacep } from "../utils/api";
 import { validarTelefone, validarCep, validarData } from "../utils/validators";
 import { observer } from "mobx-react-lite";
 import userContext from "../contexts/user";
@@ -72,6 +72,22 @@ const EditarUsuario = observer(() => {
       });
     });
   }, []);
+
+  useEffect(() => {
+    if (cep.length === 9) {
+      viacep(cep).then((data) => {
+        if (data.status === 200) {
+          data.json().then((data) => {
+            if (!data || data.erro) return;
+            setEndereco(data.logradouro);
+            setBairro(data.bairro);
+            setCidade(data.localidade);
+            setEstado(data.uf);
+          });
+        }
+      });
+    }
+  }, [cep]);
 
   const deletar = async () => {
     Alert.alert(
