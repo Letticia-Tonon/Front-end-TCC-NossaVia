@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -15,14 +15,11 @@ import CActionSheet from "../components/CActionSheet";
 import CDatePicker from "../components/CDatePicker";
 import CHeader from "../components/CHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faCamera,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
-import { put, del } from "../utils/api";
+import { put, del, get } from "../utils/api";
 import { validarTelefone, validarCep, validarData } from "../utils/validators";
 import { observer } from "mobx-react-lite";
 import userContext from "../contexts/user";
@@ -65,6 +62,16 @@ const EditarUsuario = observer(() => {
   const [bairroInvalido, setBairroInvalido] = useState(false);
   const [cidadeInvalida, setCidadeInvalida] = useState(false);
   const [estadoInvalido, setEstadoInvalido] = useState(false);
+
+  useEffect(() => {
+    get("usuario", true).then((data) => {
+      data.json().then((json) => {
+        if (data.status === 200) {
+          userContext.set(json);
+        }
+      });
+    });
+  }, []);
 
   const deletar = async () => {
     Alert.alert(
@@ -268,7 +275,11 @@ const EditarUsuario = observer(() => {
                     />
                   </Pressable>
                   <Pressable style={styles.trashIcon} onPress={removeImage}>
-                    <FontAwesomeIcon icon={faTrashCan} size={30} color="#FF7C33" />
+                    <FontAwesomeIcon
+                      icon={faTrashCan}
+                      size={30}
+                      color="#FF7C33"
+                    />
                   </Pressable>
                 </View>
               ) : (
@@ -281,6 +292,8 @@ const EditarUsuario = observer(() => {
                 </View>
               )}
             </Pressable>
+
+            <Text style={styles.pontuacao}>Pontuação: {userContext.user.pontuacao}</Text>
 
             <CTextInput
               placeholder="Nome"
@@ -434,7 +447,9 @@ const EditarUsuario = observer(() => {
               textStyle={{ color: "#FFFFFF" }}
               text="Altera Senha"
               loading={loading}
-              callback={() => { router.push("screens/EditarSenha") }}
+              callback={() => {
+                router.push("screens/EditarSenha");
+              }}
             />
 
             <CTextButton
@@ -523,6 +538,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#666666",
   },
+  pontuacao: {
+    fontSize: 18,
+    marginBottom: 10,
+  }
 });
 
 export default EditarUsuario;
