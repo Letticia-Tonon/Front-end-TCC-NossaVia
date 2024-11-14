@@ -25,7 +25,7 @@ export default function CTextInput(props) {
           }
           placeholder={props.placeholder}
           secureTextEntry={!showPassword}
-          placeholderTextColor="#555555"
+          placeholderTextColor="#888"
           onChangeText={(text) => {
             if (props.setState) {
               props.setState(text);

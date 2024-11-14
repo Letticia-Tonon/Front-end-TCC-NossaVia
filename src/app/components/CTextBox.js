@@ -25,7 +25,7 @@ const CTextBox = forwardRef((props, ref) => {
         placeholder={props.placeholder}
         value={props.state}
         multiline={true}
-        placeholderTextColor="#555555"
+        placeholderTextColor="#888"
         maxLength={props.maxLength}
         onChangeText={(text) => {
           if (props.setState) {

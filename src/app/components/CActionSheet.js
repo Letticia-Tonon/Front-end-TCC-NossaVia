@@ -33,7 +33,7 @@ export default function CActionSheet(props) {
         }
         onPress={onPress}
       >
-        <Text style={styles.text}>
+        <Text style={props.state ? styles.text : {...styles.text, color: "#888"}}>
           {props.state ? props.state : props.placeholder}
         </Text>
         <View style={styles.icon}>
@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     borderColor: "#555555",
     width: "85%",
-    color: "#555555",
   },
   icon: {
     display: "flex",
