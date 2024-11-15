@@ -23,7 +23,7 @@ import {
   validarData,
   validarCpf,
 } from "../utils/validators";
-import { post, viacep } from "../utils/api";
+import { post, get } from "../utils/api";
 import { cepMask, phoneMask, cpfMask } from "../utils/masks";
 
 export default function Cadastro() {
@@ -242,7 +242,7 @@ export default function Cadastro() {
 
   useEffect(() => {
     if (cep.length === 9) {
-      viacep(cep).then((data) => {
+      get(`localizacao/viacep?cep=${cep}`).then((data) => {
         if (data.status === 200) {
           data.json().then((data) => {
             if (!data || data.erro) return;

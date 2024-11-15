@@ -296,6 +296,40 @@ export default function CriarReclamacao() {
     getLocation().finally(() => setInitLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (cep.length === 9) {
+      get(`localizacao/viacep?cep=${cep}`).then((data) => {
+        if (data.status === 200) {
+          data.json().then((data) => {
+            if (!data || data.erro) return;
+            setEndereco(data.logradouro);
+            setBairro(data.bairro);
+            setCidade(data.localidade);
+            setEstado(data.uf);
+            get(`localizacao/geocode?endereco=${data.logradouro} - ${data.bairro}, ${data.localidade} - ${data.uf}, ${cep}`).then((data) => {
+              data.json().then((data) => {
+                try {
+                  let lat = data.latitude;
+                  let lng = data.longitude;
+                  if (lat === latitudeInicial) {
+                    lat += 0.00001;
+                  }
+                  if (lng === longitudeInicial) {
+                    lng += 0.00001;
+                  }
+                  setLatitudeInicial(lat);
+                  setLongitudeInicial(lng);
+                } catch (e) {
+
+                }
+              })
+            })
+          });
+        }
+      });
+    }
+  }, [cep]);
+
   return (
     <ActionSheetProvider>
       <ScrollView>
@@ -435,12 +469,24 @@ export default function CriarReclamacao() {
               maxLength={500}
             ></CTextBox>
 
+            <CTextInput
+              placeholder="CEP"
+              state={cep}
+              setState={setCep}
+              mask={cepMask}
+              error={cepInvalido}
+              errorMessage="Campo obrigatório"
+              maxLength={9}
+              keyboardType="numeric"
+            />
+
             {!initLoading && (
               <MapView
                 provider={PROVIDER_GOOGLE}
                 style={styles.map}
                 region={
-                    latitudeInicial && longitudeInicial && {
+                  latitudeInicial &&
+                  longitudeInicial && {
                     latitude: latitudeInicial,
                     longitude: longitudeInicial,
                     latitudeDelta: 0.005,
@@ -459,18 +505,6 @@ export default function CriarReclamacao() {
                 {marker && <Marker coordinate={marker} />}
               </MapView>
             )}
-
-
-            <CTextInput
-              placeholder="CEP"
-              state={cep}
-              setState={setCep}
-              mask={cepMask}
-              error={cepInvalido}
-              errorMessage="Campo obrigatório"
-              maxLength={9}
-              keyboardType="numeric"
-            />
 
             <CTextInput
               placeholder="Endereço"

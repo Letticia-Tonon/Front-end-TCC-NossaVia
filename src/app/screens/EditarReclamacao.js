@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -41,6 +41,8 @@ export default function EditarReclamacao() {
   const [complemento, setComplemento] = useState("");
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
+  const [latitudeInicial, setLatitudeInicial] = useState(null);
+  const [longitudeInicial, setLongitudeInicial] = useState(null);
   const [imageList, setImageList] = useState([]);
   const [imageIndex, setImageIndex] = useState(0);
   const [bairro, setBairro] = useState("");
@@ -55,6 +57,8 @@ export default function EditarReclamacao() {
   const [cidadeInvalida, setCidadeInvalida] = useState(false);
   const [estadoInvalido, setEstadoInvalido] = useState(false);
   const [numeroInvalido, setNumeroInvalido] = useState(false);
+  
+  const isMountingRef = useRef(true);
 
   const fetchReclamacao = async () => {
     get(`reclamacao?id=${id}`, true)
@@ -68,6 +72,8 @@ export default function EditarReclamacao() {
             setComplemento(reclamacao.ponto_referencia);
             setLatitude(reclamacao.latitude);
             setLongitude(reclamacao.longitude);
+            setLatitudeInicial(reclamacao.latitude);
+            setLongitudeInicial(reclamacao.longitude);
             setImageList(reclamacao.fotos);
             setBairro(reclamacao.bairro);
             setCidade(reclamacao.cidade);
@@ -97,12 +103,6 @@ export default function EditarReclamacao() {
       })
       .finally(() => setLoading(false));
   };
-
-  useEffect(() => {
-    if (id) {
-      fetchReclamacao();
-    }
-  }, []);
 
   const handleSubmit = async () => {
     if (loadingSalvar) return;
@@ -256,6 +256,47 @@ export default function EditarReclamacao() {
       .finally(() => setLoadingSalvar(false));
   };
 
+  useEffect(() => {
+    if (id) {
+      fetchReclamacao();
+    }
+    isMountingRef.current = false;
+  }, []);
+
+  useEffect(() => {
+    if (cep.length === 9 && !isMountingRef.current) {
+      get(`localizacao/viacep?cep=${cep}`).then((data) => {
+        if (data.status === 200) {
+          data.json().then((data) => {
+            if (!data || data.erro) return;
+            setEndereco(data.logradouro);
+            setBairro(data.bairro);
+            setCidade(data.localidade);
+            setEstado(data.uf);
+            get(`localizacao/geocode?endereco=${data.logradouro} - ${data.bairro}, ${data.localidade} - ${data.uf}, ${cep}`).then((data) => {
+              data.json().then((data) => {
+                try {
+                  let lat = data.latitude;
+                  let lng = data.longitude;
+                  if (lat === latitudeInicial) {
+                    lat += 0.00001;
+                  }
+                  if (lng === longitudeInicial) {
+                    lng += 0.00001;
+                  }
+                  setLatitudeInicial(lat);
+                  setLongitudeInicial(lng);
+                } catch (e) {
+
+                }
+              })
+            })
+          });
+        }
+      });
+    }
+  }, [cep]);
+
   return (
     <ActionSheetProvider>
       <ScrollView>
@@ -346,14 +387,25 @@ export default function EditarReclamacao() {
                   maxLength={500}
                 />
 
+                <CTextInput
+                  placeholder="CEP"
+                  state={cep}
+                  setState={setCep}
+                  mask={cepMask}
+                  error={cepInvalido}
+                  errorMessage="Campo obrigatório"
+                  maxLength={9}
+                  keyboardType="numeric"
+                />
+
                 <MapView
                   provider={PROVIDER_GOOGLE}
                   style={styles.map}
                   region={
-                    latitude &&
-                    longitude && {
-                      latitude: Number(latitude),
-                      longitude: Number(longitude),
+                    latitudeInicial &&
+                    longitudeInicial && {
+                      latitude: Number(latitudeInicial),
+                      longitude: Number(longitudeInicial),
                       latitudeDelta: 0.005,
                       longitudeDelta: 0.005,
                     }
@@ -369,17 +421,6 @@ export default function EditarReclamacao() {
                 >
                   {marker && <Marker coordinate={marker} />}
                 </MapView>
-
-                <CTextInput
-                  placeholder="CEP"
-                  state={cep}
-                  setState={setCep}
-                  mask={cepMask}
-                  error={cepInvalido}
-                  errorMessage="Campo obrigatório"
-                  maxLength={9}
-                  keyboardType="numeric"
-                />
 
                 <CTextInput
                   placeholder="Endereço"
