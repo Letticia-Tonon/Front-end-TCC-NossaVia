@@ -4,7 +4,8 @@
       "android": {
         "buildType": "apk",
         "env": {
-          "EXPO_PUBLIC_BASE_URL": "EXPO_PUBLIC_BASE_URL"
+          "EXPO_PUBLIC_BASE_URL": "EXPO_PUBLIC_BASE_URL",
+          "EXPO_PUBLIC_GOOGLE_API_KEY": "EXPO_PUBLIC_GOOGLE_API_KEY"
         }
       }
     },

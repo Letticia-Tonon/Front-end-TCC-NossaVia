@@ -11,6 +11,7 @@ Para mais detalhes sobre a documentação visitar [Documentacao-TCC-NossaVia](ht
 ## Dependências
 
 - Configurar a URL base do back-end na variável de ambiente `EXPO_PUBLIC_BASE_URL` em um arquivo .env
+- Configurar o token da api do google na variável de ambiente `EXPO_PUBLIC_GOOGLE_API_KEY` em um arquivo .env
 - Instalar as dependências com o comando:
 ```shell
 npm i

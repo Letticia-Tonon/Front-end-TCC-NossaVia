@@ -2,7 +2,7 @@
   "expo": {
     "name": "nossavia",
     "slug": "nossavia",
-    "version": "3.0.0",
+    "version": "4.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -23,7 +23,7 @@
       "package": "com.frsouzaa.nossavia",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyD-90ewwkdJ78ApkIUY6i9iCO6Msdf47L0"
+          "apiKey": ""
         }
       }
     },
