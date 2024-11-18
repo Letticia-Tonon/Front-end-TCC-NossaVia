@@ -185,7 +185,7 @@ const CReclamacaoSelf = ({
                 setState={(value) => {
                   current = status;
                   put(
-                    `reclamacão?id=${id}`,
+                    `reclamacao?id=${id}`,
                     {
                       status: {
                         "Não resolvida": "nao_resolvido",

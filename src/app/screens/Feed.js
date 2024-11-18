@@ -175,7 +175,7 @@ const Feed = observer(() => {
           if (logado === "false") {
             Alert.alert(
               "Atenção!",
-              "Para criar uma reclamacao você precisa entrar na sua conta.",
+              "Para criar uma reclamação você precisa entrar na sua conta.",
               [
                 {
                   text: "Cancelar",
