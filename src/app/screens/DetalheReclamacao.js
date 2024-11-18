@@ -174,6 +174,16 @@ const DetalheReclamacao = observer(() => {
       );
       return;
     }
+    if (novoComentario === null || novoComentario.trim() === "") {
+      setNovoComentario("");
+      Alert.alert(
+        "Atenção!",
+        "O comentário não pode estar vazio.",
+        [{ text: "OK" }],
+        { cancelable: true }
+      );
+      return;
+    }
     const payload = { texto: novoComentario, reclamacao: reclamacaoId };
     post("comentario", payload, true).then((data) => {
       if (data.ok) {
@@ -387,7 +397,7 @@ const DetalheReclamacao = observer(() => {
               setState={setNovoComentario}
               onFocus={() => {
                 if (logado === "false") {
-                  commentInputRef.current.blur()
+                  commentInputRef.current.blur();
                   Alert.alert(
                     "Atenção!",
                     "Para interagir com uma reclamação você precisa entrar na sua conta.",
