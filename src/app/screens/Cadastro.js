@@ -59,6 +59,8 @@ export default function Cadastro() {
   const [estadoInvalido, setEstadoInvalido] = useState(false);
   const [cpfInvalido, setCpfInvalido] = useState(false);
 
+  const [cpfMessage, setCpfMessage] = useState("CPF não pode ser vazio");
+
   const handleSubmit = async () => {
     setNomeInvalido(false);
     setEmailInvalido(false);
@@ -94,6 +96,8 @@ export default function Cadastro() {
     }
 
     if (!validarCpf(cpf)) {
+      if (!cpf) setCpfMessage("CPF não pode ser vazio");
+      else setCpfMessage("CPF inválido");
       cpfTemp = true;
       setCpfInvalido(true);
     }
@@ -286,7 +290,7 @@ export default function Cadastro() {
               error={cpfInvalido}
               keyboardType="numeric"
               mask={cpfMask}
-              errorMessage="CPF não pode ser vazio"
+              errorMessage={cpfMessage}
               maxLength={14}
             ></CTextInput>
 
