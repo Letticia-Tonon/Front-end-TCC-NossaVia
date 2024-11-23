@@ -263,10 +263,10 @@ const DetalheReclamacao = observer(() => {
         <StatusBar backgroundColor="#FF7C33" barStyle="light-content" />
         <CHeader
           titulo={"Detalhes"}
-          logado={logado}
+          logado={logado == "true"}
           showText={true}
           goBack={true}
-          showIcon={true}
+          showIcon={logado == "true"}
         />
         <PagerView
           style={styles.imagePlaceholder}
