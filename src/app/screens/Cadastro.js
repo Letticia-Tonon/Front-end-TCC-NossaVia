@@ -6,6 +6,8 @@ import {
   Text,
   Alert,
   StatusBar,
+  Pressable,
+  Modal,
 } from "react-native";
 import CTextInput from "../components/CTextInput";
 import CPassInput from "../components/CPassInput";
@@ -25,6 +27,10 @@ import {
 } from "../utils/validators";
 import { post, get } from "../utils/api";
 import { cepMask, phoneMask, cpfMask } from "../utils/masks";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faXmarkCircle } from "@fortawesome/free-regular-svg-icons";
+import { set } from "mobx";
+import { width } from "@fortawesome/free-solid-svg-icons/faEye";
 
 export default function Cadastro() {
   const [loading, setLoading] = useState(false);
@@ -44,6 +50,7 @@ export default function Cadastro() {
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
   const [cpf, setCpf] = useState("");
+  const [termoDeUso, setTermoDeUso] = useState(false);
 
   const [nomeInvalido, setNomeInvalido] = useState(false);
   const [emailInvalido, setEmailInvalido] = useState(false);
@@ -58,8 +65,10 @@ export default function Cadastro() {
   const [cidadeInvalido, setCidadeInvalido] = useState(false);
   const [estadoInvalido, setEstadoInvalido] = useState(false);
   const [cpfInvalido, setCpfInvalido] = useState(false);
+  const [mensagemTermoDeUso, setMensagemTermoDeUso] = useState(false);
 
   const [cpfMessage, setCpfMessage] = useState("CPF não pode ser vazio");
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const handleSubmit = async () => {
     setNomeInvalido(false);
@@ -75,6 +84,7 @@ export default function Cadastro() {
     setCidadeInvalido(false);
     setEstadoInvalido(false);
     setCpfInvalido(false);
+    setMensagemTermoDeUso(!termoDeUso);
 
     let nomeTemp = false;
     let emailTemp = false;
@@ -175,7 +185,8 @@ export default function Cadastro() {
       bairroTemp ||
       cidadeTemp ||
       estadoTemp ||
-      cpfTemp
+      cpfTemp || 
+      !termoDeUso
     ) {
       return;
     }
@@ -437,6 +448,67 @@ export default function Cadastro() {
               errorMessage="Selecione uma opção"
             />
 
+            <View
+              style={{
+                width: "100%",
+                marginTop: 8,
+                marginBottom: mensagemTermoDeUso ? 4 : 8,
+                flexDirection: "row",
+              }}
+            >
+              <Pressable
+                style={{
+                  height: 24,
+                  width: 24,
+                  borderBlockColor: "#000",
+                  borderWidth: 2,
+                  borderRadius: 13,
+                  borderColor: termoDeUso ? "#FF7C33" : "#888",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onPress={() => {
+                  setTermoDeUso(!termoDeUso);
+                }}
+              >
+                {termoDeUso && (
+                  <View
+                    style={{
+                      height: 15,
+                      width: 15,
+                      borderRadius: 8,
+                      backgroundColor: "#FF7C33",
+                    }}
+                  ></View>
+                )}
+              </Pressable>
+              <Text
+                style={{
+                  marginLeft: 8,
+                  fontSize: 15,
+                  color: "#888",
+                }}
+              >
+                Li e concordo com os{" "}
+                <Text
+                  style={{ color: "#888", fontWeight: "bold" }}
+                  onPress={() => {
+                    setMenuVisible(true);
+                  }}
+                >
+                  Termos de Uso
+                </Text>
+              </Text>
+            </View>
+            {mensagemTermoDeUso && (
+              <View style={{ width: "100%", marginBottom: 8 }}>
+                <Text style={{ color: "#ff0022", textAlign: "left" }}>
+                  Para criar uma conta é necessário concordar com os termos de
+                  uso
+                </Text>
+              </View>
+            )}
+
             <CTextButton
               buttonStyle={{
                 backgroundColor: "#FF7C33",
@@ -453,6 +525,162 @@ export default function Cadastro() {
               }}
             />
           </View>
+          <Modal
+            animationType="none"
+            transparent={true}
+            visible={menuVisible}
+            onRequestClose={() => {
+              setMenuVisible(false);
+            }}
+          >
+            <Pressable
+              style={{
+                flex: 1,
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                justifyContent: "flex-start",
+                padding: 22,
+              }}
+              onPress={() => {
+                setMenuVisible(false);
+              }}
+            >
+              <ScrollView borderRadius={15}>
+                <View backgroundColor="#fff" paddingBottom={10}>
+                  <Pressable>
+                    <Pressable
+                      style={{ alignItems: "flex-end" }}
+                      onPress={() => {
+                        setMenuVisible(false);
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faXmarkCircle}
+                        size={30}
+                        color="#666666"
+                        style={{ margin: 12 }}
+                      ></FontAwesomeIcon>
+                    </Pressable>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        textAlign: "center",
+                        fontSize: 17,
+                      }}
+                    >
+                      Termos de Uso do Aplicativo Nossa Via
+                    </Text>
+                    <Text
+                      style={{ paddingHorizontal: 22, textAlign: "justify" }}
+                    >
+                      {"\n"}
+                      Última atualização: 16/11/2024
+                      {"\n\n"}
+                      1. Aceitação dos Termos
+                      {"\n\n"}
+                      Ao acessar e usar o aplicativo Nossa Via, você concorda em
+                      cumprir e estar sujeito a estes Termos de Uso. Se não
+                      concordar com alguma parte destes termos, você não deve
+                      utilizar o aplicativo.
+                      {"\n\n"}
+                      2. Descrição do Serviço
+                      {"\n\n"}O Nossa Via é um aplicativo que permite aos
+                      usuários registrar e relatar problemas encontrados em vias
+                      públicas, utilizando fotos e descrições. O objetivo é
+                      promover a melhoria das condições das vias urbanas e
+                      facilitar a comunicação com as autoridades competentes.
+                      {"\n\n"}
+                      3. Requisitos de Idade
+                      {"\n\n"}O uso do aplicativo é restrito a usuários com 16
+                      anos ou mais. Ao se cadastrar, o usuário declara ter a
+                      idade mínima necessária.
+                      {"\n\n"}
+                      4. Cadastro e Responsabilidades do Usuário
+                      {"\n\n"}
+                      4.1 Para utilizar o aplicativo, é necessário realizar um
+                      cadastro, fornecendo informações precisas e atualizadas. O
+                      usuário é responsável pela veracidade dos dados
+                      fornecidos.
+                      {"\n\n"}
+                      4.2 O usuário deve manter a confidencialidade de suas
+                      credenciais de acesso e é responsável por qualquer
+                      atividade que ocorra em sua conta.
+                      {"\n\n"}
+                      5. Uso do Aplicativo
+                      {"\n\n"}
+                      5.1 O usuário concorda em utilizar o aplicativo de maneira
+                      responsável e em conformidade com a legislação vigente.
+                      {"\n\n"}
+                      5.2 É proibido:
+                      {"\n\n"}
+                      Postar conteúdo que seja ofensivo, difamatório,
+                      discriminatório ou inadequado. Postar imagens de pessoas
+                      sem o seu consentimento. Compartilhar informações falsas
+                      ou enganosas sobre os problemas reportados.
+                      {"\n\n"}
+                      6. Garantia de Veracidade das Denúncias
+                      {"\n\n"}
+                      Os usuários são responsáveis pela veracidade das
+                      informações e imagens enviadas através do aplicativo. O
+                      Nossa Via se reserva o direito de investigar e, se
+                      necessário, remover conteúdos que não cumpram estas
+                      diretrizes.
+                      {"\n\n"}
+                      7. Propriedade Intelectual
+                      {"\n\n"}
+                      Todo o conteúdo e funcionalidades do aplicativo,
+                      incluindo, mas não se limitando a, textos, imagens,
+                      logotipos e design, são de propriedade do Nossa Via ou de
+                      seus licenciadores. O uso não autorizado pode resultar em
+                      ações legais.
+                      {"\n\n"}
+                      8. Modificação e Rescisão dos Termos
+                      {"\n\n"}O Nossa Via reserva-se o direito de modificar
+                      estes Termos de Uso a qualquer momento. As alterações
+                      serão publicadas no aplicativo e entrarão em vigor
+                      imediatamente após a publicação. O uso contínuo do
+                      aplicativo após as alterações implica aceitação dos novos
+                      termos.
+                      {"\n\n"}
+                      9. Isenção de Responsabilidade
+                      {"\n\n"}O Nossa Via não se responsabiliza por danos
+                      diretos, indiretos, incidentais ou consequentes
+                      resultantes do uso ou da incapacidade de uso do
+                      aplicativo. Os usuários são incentivados a verificar a
+                      precisão das informações relatadas.
+                      {"\n\n"}
+                      10. Legislação Aplicável
+                      {"\n\n"}
+                      Este Termo de Uso é regido pelas leis da República
+                      Federativa do Brasil. Qualquer litígio decorrente destes
+                      termos deverá ser resolvido no foro da comarca onde está
+                      situada a sede do Nossa Via.
+                      {"\n\n"}
+                      11. Contato
+                      {"\n\n"}
+                      Para esclarecimentos sobre estes Termos de Uso, entre em
+                      contato conosco através do e-mail: nossavia.tcc@gmail.com
+                    </Text>
+                    <View style={{ alignItems: "center" }}>
+                      <CTextButton
+                        buttonStyle={{
+                          backgroundColor: "#FF7C33",
+                          width: "90%",
+                        }}
+                        textStyle={{
+                          color: "#FFFFFF",
+                        }}
+                        text="Concordar"
+                        callback={() => {
+                          setTermoDeUso(true);
+                          setMenuVisible(false);
+                        }}
+                      />
+                    </View>
+                  </Pressable>
+                </View>
+              </ScrollView>
+            </Pressable>
+          </Modal>
         </View>
       </ScrollView>
     </ActionSheetProvider>

@@ -61,10 +61,10 @@ const Login = observer(() => {
         ></CPassInput>
 
         <View style={styles.viewLinks}>
-          <Text style={{ color: "#a9a9a9" }}>
+          <Text style={{ color: "#888" }}>
             Esqueceu sua senha?{" "}
             <Text
-              style={{ color: "#a9a9a9", fontWeight: "bold" }}
+              style={{ color: "#888", fontWeight: "bold" }}
               onPress={() => router.push("screens/RecuperarSenha")}
             >
               Clique aqui
@@ -89,10 +89,10 @@ const Login = observer(() => {
         ></CTextButton>
 
         <View style={styles.viewLinks}>
-          <Text style={{ color: "#a9a9a9", justifyContent: "left" }}>
+          <Text style={{ color: "#888", justifyContent: "left" }}>
             Ainda não tem uma conta?{" "}
             <Text
-              style={{ color: "#a9a9a9", fontWeight: "bold" }}
+              style={{ color: "#888", fontWeight: "bold" }}
               onPress={() => router.push("screens/Cadastro")}
             >
               Cadastre-se
