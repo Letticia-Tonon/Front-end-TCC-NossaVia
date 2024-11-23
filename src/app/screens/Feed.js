@@ -324,8 +324,7 @@ const Feed = observer(() => {
                     <ActivityIndicator size={60} color="#FF7C33" />
                   </View>
                 </View>
-              ) : (
-                reclamacoes &&
+              ) : reclamacoes.length !== 0 ? (
                 reclamacoes.map((reclamacao, index) => (
                   <CReclamacaoCard
                     id={reclamacao.id}
@@ -343,6 +342,28 @@ const Feed = observer(() => {
                     key={index}
                   />
                 ))
+              ) : (
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: height / 2 - 100,
+                  }}
+                >
+                  <View
+                    style={{ justifyContent: "center", alignItems: "center" }}
+                  >
+                    {categoria ? (
+                      <Text style={{ fontSize: 20, textAlign: "center" }}>
+                        Não foi encontrada nenhuma reclamação para essa categoria no momento.
+                      </Text>
+                    ) : (
+                      <Text style={{ fontSize: 20, textAlign: "center" }}>
+                        Não foi encontrada nenhuma reclamação no momento.
+                      </Text>
+                    )}
+                  </View>
+                </View>
               )}
             </View>
           )}
