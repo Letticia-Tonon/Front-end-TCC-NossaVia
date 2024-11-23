@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import CComentario from "./CComentario";
 import CCurtida from "./CCurtida";
 
@@ -158,6 +158,12 @@ const CReclamacaoCard = ({
                 {showComentario && (
                   <CComentario logado={logado} idReclamacao={id} />
                 )}
+              </View>
+              <View style={{marginRight: 8}}>
+                <FontAwesomeIcon
+                  icon={faMagnifyingGlass}
+                  size={30}
+                ></FontAwesomeIcon>
               </View>
             </View>
           </View>
