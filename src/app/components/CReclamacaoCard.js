@@ -159,12 +159,14 @@ const CReclamacaoCard = ({
                   <CComentario logado={logado} idReclamacao={id} />
                 )}
               </View>
-              <View style={{marginRight: 8}}>
-                <FontAwesomeIcon
-                  icon={faMagnifyingGlass}
-                  size={30}
-                ></FontAwesomeIcon>
-              </View>
+              {showComentario && (
+                <View style={{marginRight: 8}}>
+                  <FontAwesomeIcon
+                    icon={faMagnifyingGlass}
+                    size={30}
+                  ></FontAwesomeIcon>
+                </View>
+              )}
             </View>
           </View>
         </View>
