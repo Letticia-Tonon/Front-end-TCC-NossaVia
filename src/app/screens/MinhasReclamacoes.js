@@ -192,21 +192,7 @@ const MinhasReclamacoes = observer(() => {
               showIcon={true}
             />
 
-            {initLoading ? (
-              <View
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: height / 2 - 100,
-                }}
-              >
-                <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
-                  <ActivityIndicator size={60} color="#FF7C33" />
-                </View>
-              </View>
-            ) : error ? (
+            {error ? (
               <View
                 style={{
                   justifyContent: "center",
@@ -291,7 +277,21 @@ const MinhasReclamacoes = observer(() => {
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
-                {reclamacoes &&
+                {initLoading ? (
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: height / 2 - 100,
+                    }}
+                  >
+                    <View
+                      style={{ justifyContent: "center", alignItems: "center" }}
+                    >
+                      <ActivityIndicator size={60} color="#FF7C33" />
+                    </View>
+                  </View>
+                ) : reclamacoes.length !== 0 ? (
                   reclamacoes.map((reclamacao, index) => (
                     <CReclamacaoSelf
                       id={reclamacao.id}
@@ -306,7 +306,46 @@ const MinhasReclamacoes = observer(() => {
                       numero={reclamacao.numero_endereco}
                       deleteReclamacao={deleteReclamacao}
                     />
-                  ))}
+                  ))
+                ) : (
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: height / 2 - 150,
+                    }}
+                  >
+                    <View
+                      style={{ justifyContent: "center", alignItems: "center" }}
+                    >
+                      {categoria ? (
+                        <Text style={{ fontSize: 20, textAlign: "center" }}>
+                          Você ainda não fez nenhuma reclamação nessa categoria.
+                        </Text>
+                      ) : (
+                        <Text style={{ fontSize: 20, textAlign: "center" }}>
+                          Você ainda não fez nenhuma reclamação.
+                        </Text>
+                      )}
+                      <Text
+                        style={{
+                          marginTop: 10,
+                          fontSize: 15,
+                          textAlign: "center",
+                        }}
+                        onPress={() => {
+                          router.push({ pathname: "screens/CriarReclamacao" });
+                        }}
+                      >
+                        Clique{" "}
+                        <Text style={{ color: "#FF7C33", fontWeight: "bold" }}>
+                          aqui
+                        </Text>{" "}
+                        para realizar uma reclamação.
+                      </Text>
+                    </View>
+                  </View>
+                )}
               </View>
             )}
           </View>
@@ -328,7 +367,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    width: "90%",
+    width: "95%",
   },
   floatingButton: {
     position: "absolute",
