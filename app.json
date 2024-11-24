@@ -2,7 +2,7 @@
   "expo": {
     "name": "nossavia",
     "slug": "nossavia",
-    "version": "4.2.3",
+    "version": "4.3.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
