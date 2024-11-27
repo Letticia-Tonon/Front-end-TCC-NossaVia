@@ -8,8 +8,9 @@ import {
   Text,
   ActivityIndicator,
 } from "react-native";
-import { useLocalSearchParams, router } from "expo-router";
+import { router } from "expo-router";
 import { observer } from "mobx-react-lite";
+import novaDenunciaContext from "../contexts/novaDenuncia";
 import CHeader from "../components/CHeader";
 import CReclamacaoCard from "../components/CReclamacaoCard";
 import { useEffect, useState } from "react";
@@ -21,10 +22,15 @@ const RECLAMACOES_POR_PAGINA = 10;
 const { height, width } = Dimensions.get("window");
 
 const Feed = observer(() => {
-  const params = useLocalSearchParams();
+  const novaDenuncia =
+    novaDenunciaContext && novaDenunciaContext.novaDenuncia
+      ? novaDenunciaContext.novaDenuncia
+      : null;
+
   const [reclamacoes, setReclamacoes] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [paginaCheia, setPaginaCheia] = useState(false);
   const [initLoading, setInitLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -98,12 +104,22 @@ const Feed = observer(() => {
   };
 
   useEffect(() => {
-    const data = JSON.parse(params.data);
-    setLongitude(data.longitude);
-    setLatitude(data.latitude);
-    setCategoria(data.categoria);
-    setReclamacoes(data.reclamacoes);
-    setPayload(data.payload);
+    if (novaDenuncia == null) {
+      Alert.alert("Ops!", "Erro ao tentar buscar reclamações próximas.", [
+        {
+          text: "OK",
+          onPress: () => {
+            router.push({ pathname: "screens/CriarReclamacao" });
+          },
+        },
+      ]);
+      return;
+    }
+    setLongitude(novaDenuncia.longitude);
+    setLatitude(novaDenuncia.latitude);
+    setCategoria(novaDenuncia.categoria);
+    setReclamacoes(novaDenuncia.reclamacoes);
+    setPayload(novaDenuncia.payload);
     if (initLoading) setInitLoading(false);
   }, []);
 
@@ -197,11 +213,11 @@ const Feed = observer(() => {
             color: "#FFFFFF",
           }}
           text="Encontrei meu problema, cancelar criação"
-          loading={loading}
+          loading={submitLoading}
           callback={() => {
-            if (loading) return;
-            setLoading(true);
-            handleSubmitCancelar().finally(() => setLoading(false));
+            if (submitLoading) return;
+            setSubmitLoading(true);
+            handleSubmitCancelar().finally(() => setSubmitLoading(false));
           }}
         ></CTextButton>
         <CTextButton
@@ -214,11 +230,11 @@ const Feed = observer(() => {
             color: "#FFFFFF",
           }}
           text="Não encontrei minha reclamação, continuar com a criação"
-          loading={loading}
+          loading={submitLoading}
           callback={() => {
-            if (loading) return;
-            setLoading(true);
-            handleSubmitContinuar().finally(() => setLoading(false));
+            if (submitLoading) return;
+            setSubmitLoading(true);
+            handleSubmitContinuar().finally(() => setSubmitLoading(false));
           }}
         ></CTextButton>
       </View>

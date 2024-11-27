@@ -29,10 +29,12 @@ import { post, get } from "../utils/api";
 import { cepMask } from "../utils/masks";
 import { validarCep } from "../utils/validators";
 import { router } from "expo-router";
+import { observer } from "mobx-react-lite";
+import novaDenunciaContext from "../contexts/novaDenuncia";
 
 const { width } = Dimensions.get("window");
 
-export default function CriarReclamacao() {
+const CriarReclamacao = observer(() => {
   const [loading, setLoading] = useState(false);
   const [initLoading, setInitLoading] = useState(true);
 
@@ -226,19 +228,16 @@ export default function CriarReclamacao() {
               [
                 {
                   text: "OK",
-                  onPress: () =>
-                    router.push({
-                      pathname: "screens/ReclamacoesProximas",
-                      params: {
-                        data: JSON.stringify({
-                          latitude: latitude,
-                          longitude: longitude,
-                          categoria: id_categoria,
-                          reclamacoes: json,
-                          payload: payload,
-                        }),
-                      },
-                    }),
+                  onPress: () => {
+                    novaDenunciaContext.set({
+                      latitude: latitude,
+                      longitude: longitude,
+                      categoria: id_categoria,
+                      reclamacoes: json,
+                      payload: payload,
+                    });
+                    router.push("screens/ReclamacoesProximas");
+                  },
                 },
               ],
               { cancelable: true }
@@ -306,7 +305,9 @@ export default function CriarReclamacao() {
             setBairro(data.bairro);
             setCidade(data.localidade);
             setEstado(data.uf);
-            get(`localizacao/geocode?endereco=${data.logradouro} - ${data.bairro}, ${data.localidade} - ${data.uf}, ${cep}`).then((data) => {
+            get(
+              `localizacao/geocode?endereco=${data.logradouro} - ${data.bairro}, ${data.localidade} - ${data.uf}, ${cep}`
+            ).then((data) => {
               data.json().then((data) => {
                 try {
                   let lat = data.latitude;
@@ -319,11 +320,9 @@ export default function CriarReclamacao() {
                   }
                   setLatitudeInicial(lat);
                   setLongitudeInicial(lng);
-                } catch (e) {
-
-                }
-              })
-            })
+                } catch (e) {}
+              });
+            });
           });
         }
       });
@@ -601,7 +600,7 @@ export default function CriarReclamacao() {
       </ScrollView>
     </ActionSheetProvider>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -650,3 +649,5 @@ const styles = StyleSheet.create({
     right: 10,
   },
 });
+
+export default CriarReclamacao;
